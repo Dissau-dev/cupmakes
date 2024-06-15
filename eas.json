@@ -1,0 +1,21 @@
+{
+  "cli": {
+    "version": ">= 9.0.8"
+  },
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+   
+    "production": {}
+  },
+  "submit": {
+    "production": {}
+  }
+}

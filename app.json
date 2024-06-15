@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "bavery-dev-app",
+    "name": "Cupmakes",
     "slug": "bavery-dev-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#D12489"
     },
     "ios": {
       "supportsTablet": true
@@ -17,11 +17,17 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#D12489"
+      },
+      "package": "com.mauriciogaraco.baverydevapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a801122b-a85c-4a5f-a3c1-77c3b765bf76"
+      }
     }
   }
 }
