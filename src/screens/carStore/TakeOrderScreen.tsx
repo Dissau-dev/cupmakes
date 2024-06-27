@@ -45,7 +45,7 @@ export const TakeOrderScreen = () => {
 
   useEffect(() => {
     formatLineItems();
-    //console.log(line_Items);
+    console.log(line_Items);
   }, []);
 
   const onSubmitDelivery = async (data: any) => {

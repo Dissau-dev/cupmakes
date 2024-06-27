@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Alert } from "react-native";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { cleanCart, selectProducts } from "../../store/slices/cartSlice";
 import { selectUser } from "../../store/slices/userSlice";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useCreateOrderMutation } from "../../store/api/productsApi";
 import { Button, TextInput } from "react-native-paper";
 import { palette } from "../../theme/colors";
@@ -12,10 +12,23 @@ import TextInputController from "../atoms/formControls/TextInputController";
 import Toast from "react-native-toast-message";
 import { Fontisto } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import {
+  CardField,
+  Token,
+  initPaymentSheet,
+  usePaymentSheet,
+  useStripe,
+} from "@stripe/stripe-react-native";
+import axios from "axios";
+import AccounDetail from "../../screens/Profile/AccounDetail";
 
 export const TakePickUp = () => {
+  const [cardDetails, setCardDetails] = useState<any>();
+  const [loadingBtn, setloadingBtn] = useState(false);
+
   const products = useAppSelector(selectProducts);
   const currentUser = useAppSelector(selectUser);
+  const [isConfirm, setisConfirm] = useState(false);
   const [delivery, { isLoading }] = useCreateOrderMutation();
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
@@ -28,7 +41,6 @@ export const TakePickUp = () => {
     defaultValues: {
       name: currentUser?.first_name || "",
       lastName: currentUser?.last_name || "",
-      address_1: "",
       phone: "+1 ",
     },
   });
@@ -46,36 +58,180 @@ export const TakePickUp = () => {
   useEffect(() => {
     formatLineItems();
     //console.log(line_Items);
+    initialisePaymenSheet();
   }, []);
+  const Api_Url = "http://localhost:8000/payment-sheet";
+  const [ready, setReady] = useState(false);
+  const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
+
+  const { createToken } = useStripe();
+
+  const initialisePaymenSheet = async () => {
+    {
+      /*  const { paymentIntent, ephemeralKey, customer } =
+      await fetchPaymentSheetParams(); */
+    }
+    const paymentIntent =
+      "pi_3PW5lG2eZvKYlo2C0XRTgCTd_secret_WFjYPmZ7jQNw2HuSDDiYEtmXU";
+    const customer = "cus_QMpQuknRTMDiRM";
+    const ephemeralKey =
+      "ek_test_YWNjdF8xMDMyRDgyZVp2S1lsbzJDLHh0U2FMWThRY0VZS21NQnFrcWx0MGdRdXVFVnVaeTc_00ZDEvlgjG";
+
+    const { error } = await initPaymentSheet({
+      customerId: customer,
+      customerEphemeralKeySecret: ephemeralKey,
+      paymentIntentClientSecret: paymentIntent,
+      merchantDisplayName: "Example Inc",
+      allowsDelayedPaymentMethods: true,
+    });
+    if (error) {
+      Alert.alert(`Error code : ${error.code}`);
+    } else {
+      setReady(true);
+
+      console.log("No hay error en InitPaymentSheet");
+    }
+  };
+
+  const fetchParams = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000");
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchPaymentSheetParams = async () => {
+    setloadingBtn(true);
+    try {
+      const response = await axios.post(Api_Url);
+      setloadingBtn(false);
+      const { paymentIntent, ephemeralKey, customer } = response.data;
+      console.log(response.data);
+
+      return {
+        paymentIntent,
+        ephemeralKey,
+        customer,
+      };
+    } catch (error) {
+      console.log(error);
+      setloadingBtn(false);
+    }
+    const response = await axios.post(Api_Url);
+    setloadingBtn(false);
+    const { paymentIntent, ephemeralKey, customer } = response.data;
+    console.log(response.data);
+
+    return {
+      paymentIntent,
+      ephemeralKey,
+      customer,
+    };
+  };
+
+  async function onBuy() {
+    const { error } = await presentPaymentSheet();
+
+    if (error) {
+      console.log("Payment Sheet Error: ", error);
+      Alert.alert(
+        `Error code : ${error.code}, message: ${
+          error.message || "Unknown error"
+        }, stripeErrorCode: ${error.stripeErrorCode || "N/A"}, declineCode: ${
+          error.declineCode || "N/A"
+        }`
+      );
+    } else {
+      Alert.alert("Success, the payment has been completed");
+      setReady(false);
+    }
+  }
+
+  const _createToken = async () => {
+    if (!cardDetails?.complete) {
+      Alert.alert("Please enter complete card details");
+      return;
+    }
+
+    const billingDetails = { email: "mauriciogaraco@gmail.com" }; // Opcional
+    const { error, token } = await createToken({
+      type: "Card",
+      name: "David Wallace",
+      currency: "eur",
+    });
+
+    if (error) {
+      Alert.alert(
+        `Error code: ${error.code}`,
+        error.message || "An unknown error occurred"
+      );
+      console.log(`Error: ${JSON.stringify(error)}`);
+    } else {
+      console.log(token);
+      Alert.alert("Success", `The token was created successfully! token: `);
+    }
+  };
+
+  const fetchPaymentIntentClientSecret = async () => {
+    try {
+      const response = await axios.post(
+        "https://api.stripe.com/v1/payment_intents",
+        new URLSearchParams({
+          amount: "1099",
+          currency: "usd",
+        }).toString(),
+        {
+          headers: {
+            //   Authorization: `Bearer ${secretCase}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      console.log("esta es la resp.data :" + response.data);
+      return response.data.client_secret;
+    } catch (error) {
+      console.log("aqui es el error :" + error);
+      return;
+    }
+  };
 
   const onSubmitDelivery = async (data: any) => {
-    const loginData = {
-      customer_id: currentUser?.id, // Reemplaza esto con el ID del cliente
-      payment_method: "stripe", // Reemplaza con tu método de pago deseado
-      payment_method_title: "Stripe", // Reemplaza con el título del método de pago
+    const orderData = {
+      payment_method: "stripe",
+      payment_method_title: "Credit Card (Stripe)",
       set_paid: true,
       billing: {
         first_name: data.name,
         last_name: data.lastName,
-        address_1: data.address_1,
+        address_1: data.address,
         city: "AnyTown",
         postcode: "12345",
         country: "US",
-        email: currentUser?.email,
+        email: "correo@ejemplo.com",
         phone: data.phone,
       },
-      line_items: line_Items,
+      payment_details: {
+        token: "",
+      },
+      line_items: [
+        {
+          product_id: 435, // Reemplaza con el ID del producto real
+          quantity: 1,
+        },
+      ],
     };
     //@ts-ignore
-    await delivery(loginData)
+    await delivery(orderData)
       .unwrap()
       .then(() => {
         Toast.show({
           type: "success",
           text1: "Success",
-          text2: `Your order has been received`,
+          text2: "Your order has been received",
         });
-
+        console.log("esta es la loginData:" + orderData);
         //@ts-ignore
         navigation.navigate("SuccessOrder");
       })
@@ -87,130 +243,135 @@ export const TakePickUp = () => {
         });
       });
   };
-  return (
-    <View>
-      <View style={stylesRegister.formContainer}>
-        <View style={{ marginHorizontal: "auto" }}>
-          <TextInputController
-            controller={{
-              name: "name",
-              rules: {
-                required: {
-                  value: true,
-                  message: "name required",
-                },
-              },
-              control: control as any,
-            }}
-            style={styles.input}
-            placeholder="name"
-            dense
-            //  textColor={palette.se}
-            autoCapitalize={"none"}
-            returnKeyType="next"
-            left={
-              <TextInput.Icon
-                icon={() => (
-                  <Fontisto name="person" size={18} color="#c1c1c1" />
-                )}
-                color={(isTextInputFocused) => "#c1c1c1"}
-              />
-            }
-          />
-          <TextInputController
-            controller={{
-              name: "lastName",
-              rules: {
-                required: {
-                  value: true,
-                  message: "last name required",
-                },
-              },
-              control: control as any,
-            }}
-            style={styles.input}
-            placeholder="last name"
-            dense
-            //  textColor={palette.se}
-            autoCapitalize={"none"}
-            returnKeyType="next"
-            left={
-              <TextInput.Icon
-                icon={() => (
-                  <Fontisto name="person" size={18} color="#c1c1c1" />
-                )}
-                color={(isTextInputFocused) => "#c1c1c1"}
-              />
-            }
-          />
-          {/*   <TextInputController
-            controller={{
-              name: "address_1",
-              rules: {
-                required: {
-                  value: true,
-                  message: " address required",
-                },
-              },
-              control: control as any,
-            }}
-            style={styles.input}
-            placeholder="adress"
-            dense
-            //  textColor={palette.secondary}
-            autoCapitalize={"none"}
-            returnKeyType="next"
-            left={
-              <TextInput.Icon
-                icon={() => <Fontisto name="home" size={18} color="#c1c1c1" />}
-                color={(isTextInputFocused) => "#c1c1c1"}
-              />
-            }
-          /> */}
-          <TextInputController
-            controller={{
-              name: "phone",
-              rules: {
-                required: {
-                  value: true,
-                  message: "phone required",
-                },
-              },
-              control: control as any,
-            }}
-            style={styles.input}
-            placeholder="phone number"
-            dense
-            //  textColor={palette.se}
-            autoCapitalize={"none"}
-            returnKeyType="next"
-            left={
-              <TextInput.Icon
-                icon={() => <Fontisto name="phone" size={18} color="#c1c1c1" />}
-                color={(isTextInputFocused) => "#c1c1c1"}
-              />
-            }
-          />
-        </View>
 
-        <Button
-          style={[stylesRegister.btnLogIn]}
-          mode="contained"
-          buttonColor={palette.primary}
-          rippleColor={palette.datesFilter}
-          onPress={handleSubmit(onSubmitDelivery)}
-          textColor={palette.white}
-          loading={isSubmitting}
-          disabled={(isDirty && !isValid) || isSubmitting || isLoading}
-          labelStyle={stylesRegister.textLogIn}
-        >
-          {isSubmitting ? "Confirming" : "Confirm"}
-        </Button>
+  return (
+    <View style={styles.container}>
+      <View style={{ marginHorizontal: "auto" }}>
+        <TextInputController
+          controller={{
+            name: "name",
+            rules: {
+              required: {
+                value: true,
+                message: "name required",
+              },
+            },
+            control: control as any,
+          }}
+          style={styles.input}
+          placeholder="name"
+          dense
+          //  textColor={palette.se}
+          autoCapitalize={"none"}
+          returnKeyType="next"
+          left={
+            <TextInput.Icon
+              icon={() => <Fontisto name="person" size={18} color="#c1c1c1" />}
+              color={(isTextInputFocused) => "#c1c1c1"}
+            />
+          }
+        />
+        <TextInputController
+          controller={{
+            name: "lastName",
+            rules: {
+              required: {
+                value: true,
+                message: "last name required",
+              },
+            },
+            control: control as any,
+          }}
+          style={styles.input}
+          placeholder="last name"
+          dense
+          //  textColor={palette.se}
+          autoCapitalize={"none"}
+          returnKeyType="next"
+          left={
+            <TextInput.Icon
+              icon={() => <Fontisto name="person" size={18} color="#c1c1c1" />}
+              color={(isTextInputFocused) => "#c1c1c1"}
+            />
+          }
+        />
+
+        <TextInputController
+          controller={{
+            name: "phone",
+            rules: {
+              required: {
+                value: true,
+                message: "phone required",
+              },
+            },
+            control: control as any,
+          }}
+          style={styles.input}
+          placeholder="phone number"
+          dense
+          //  textColor={palette.se}
+          autoCapitalize={"none"}
+          returnKeyType="next"
+          left={
+            <TextInput.Icon
+              icon={() => <Fontisto name="phone" size={18} color="#c1c1c1" />}
+              color={(isTextInputFocused) => "#c1c1c1"}
+            />
+          }
+        />
       </View>
+      {/*   <CardField
+        postalCodeEnabled={false}
+        placeholders={{
+          number: "4242 4242 4242 4242",
+        }}
+        cardStyle={styles.card}
+        style={styles.cardContainer}
+        onCardChange={(cardDetails) => setCardDetails(cardDetails)}
+      /> */}
+
+      <Button
+        rippleColor={"#c1c1c1"}
+        mode="contained"
+        //  onPress={fetchParams}
+        // loading={loadingBtn}
+        // disabled={loadingBtn}
+        onPress={fetchParams}
+        //  loading={isLoading || loading}
+        disabled={isLoading || loading || !ready}
+      >
+        Pagar
+      </Button>
     </View>
   );
 };
 
+function buildTestTokenParams(type: Token.Type): Token.CreateParams {
+  switch (type) {
+    case "Pii":
+      return {
+        type: "Pii",
+        personalId: "000000000",
+      };
+    case "Card":
+      return {
+        type: "Card",
+        name: "David Wallace",
+        currency: "eur",
+      };
+    case "BankAccount":
+      return {
+        type: "BankAccount",
+        accountNumber: "000123456789",
+        routingNumber: "110000000", // Routing number is REQUIRED for US bank accounts
+        country: "US",
+        currency: "usd",
+      };
+    default:
+      throw new Error(`Unsupported token type`);
+  }
+}
 const styles = StyleSheet.create({
   viewContainer: {
     marginRight: 40,
@@ -219,9 +380,13 @@ const styles = StyleSheet.create({
     // flex: 1,
     // backgroundColor: "#20a17c",
   },
-
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 16,
+  },
   formContainer: {
-    // flex: 1,
+    //flex: 1,
     paddingVertical: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -240,11 +405,20 @@ const styles = StyleSheet.create({
 
     marginTop: 10,
   },
+  card: {
+    backgroundColor: "#FFFFFF",
+    color: "#000000",
+  },
+  cardContainer: {
+    height: 50,
+    marginVertical: 30,
+  },
 });
 export const stylesRegister = StyleSheet.create({
   scrollViewContainer: {
     backgroundColor: "#fff",
   },
+
   containerStyle: {
     alignSelf: "center",
     width: widthScreen,

@@ -26,14 +26,16 @@ interface initialState {
 
   products: products[];
   lineItems: lineItems[];
-  fullPrice: number
+  fullPrice: number,
+  lastUpdated: string | number | null,
 }
 
 const initialState : initialState = {
 
 products: [],
 lineItems: [],
-fullPrice: 0
+fullPrice: 0,
+lastUpdated: null,
 }
 const cartSlice = createSlice({
   name: 'cart',
@@ -53,6 +55,7 @@ const cartSlice = createSlice({
       } else {
         state.products.push(item);
       }
+      state.lastUpdated = Date.now();
       const calculatedFullPrice = state.products.reduce((total, item) => total + item.totalItemPrice, 0);
       state.fullPrice = Number(calculatedFullPrice.toFixed(2));
     },

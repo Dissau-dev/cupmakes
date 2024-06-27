@@ -28,25 +28,29 @@ import { validateEmail } from "../../utils/validation";
 import { loginStyles } from "../../theme/loginTheme";
 import { useGetUserByEmailQuery } from "../../store/api/authApi";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchUserByEmail } from "../../store/slices/userSlice";
+import { fetchUserByEmail, selectUser } from "../../store/slices/userSlice";
 
-import { AuthenticationParamList } from "../../routes/types";
+import { AuthenticationParamList, ProfileParamList } from "../../routes/types";
+import RenderItemNavList from "../../components/atoms/RenderItemNavList";
+import { Baner } from "../../components/atoms/Baner";
 
 //import { AuthContext } from '../../Redux/authContext'
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
-interface Props
-  extends StackScreenProps<AuthenticationParamList, "LoginScreen"> {}
+const Data = [{}];
+
+interface Props extends StackScreenProps<ProfileParamList, "ProfileScreen"> {}
 
 export const ProfileScreen = ({ navigation }: Props) => {
   const [loading, setloading] = useState(false);
   const [showRegister, setshowRegister] = useState(false);
   const [showLogin, setshowLogin] = useState(true);
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user.user);
+
   const [showPassword, setShowPassword] = useState(false);
+  const currentUser = useAppSelector(selectUser);
 
   const {
     handleSubmit,
@@ -86,89 +90,82 @@ export const ProfileScreen = ({ navigation }: Props) => {
         style={stylesRegister.scrollViewContainer}
         showsVerticalScrollIndicator={false}
       >
-        <View style={stylesRegister.containerStyle}>
-          <View style={stylesRegister.sliderContainerStyle}></View>
-          <Image
-            source={require("../../../assets/images/2.png")}
-            style={{
-              width: width * 0.98,
-              height: height * 0.2,
-              justifyContent: "center",
-              alignContent: "center",
-            }}
-          />
-        </View>
-
-        <View style={stylesRegister.viewContainer}>
+        <Baner />
+        <Text
+          style={{
+            textAlign: "center",
+            marginHorizontal: 20,
+            fontFamily: "Avanta-Medium",
+            fontSize: 36,
+            marginTop: 40,
+            color: "#646464",
+          }}
+        >
+          Hello {currentUser?.first_name} {currentUser?.last_name}
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            marginHorizontal: 50,
+            justifyContent: "space-evenly",
+            marginTop: 12,
+          }}
+        >
           <Text
             style={{
-              fontFamily: "Poppins-Medium",
-              fontSize: 30,
               textAlign: "center",
+              color: "#646464",
+              fontFamily: "Avanta-Medium",
+              fontSize: 24,
             }}
-          ></Text>
-          <View style={stylesRegister.formContainer}>
-            <View style={{ marginHorizontal: "auto" }}>
-              <TextInputController
-                controller={{
-                  name: "email",
-                  rules: {
-                    required: {
-                      value: true,
-                      message: "email required",
-                    },
-                    validate: { validateEmail },
-                  },
-                  control: control as any,
-                }}
-                style={styles.input}
-                placeholder="email@example.com"
-                dense
-                textColor={palette.secondary}
-                autoCapitalize={"none"}
-                keyboardType="email-address"
-                returnKeyType="next"
-                left={
-                  <TextInput.Icon
-                    icon={() => (
-                      <Fontisto name="email" size={22} color="#c1c1c1" />
-                    )}
-                    color={(isTextInputFocused) => "#c1c1c1"}
-                  />
-                }
-              />
-            </View>
-
-            <Button
-              style={[stylesRegister.btnLogIn]}
-              mode="contained"
-              buttonColor={palette.primary}
-              rippleColor={palette.datesFilter}
-              onPress={handleSubmit(onSubmit)}
-              textColor={palette.white}
-              loading={isSubmitting}
-              disabled={(isDirty && !isValid) || isSubmitting || loading}
-              labelStyle={stylesRegister.textLogIn}
+          >
+            Not {currentUser?.first_name} {currentUser?.last_name} ?
+          </Text>
+          <TouchableOpacity>
+            <Text
+              style={{
+                textAlign: "center",
+                color: palette.secondary,
+                fontFamily: "Avanta-Medium",
+                fontSize: 24,
+              }}
             >
-              {isSubmitting ? "Loading" : "Log in"}
-            </Button>
-
-            <View style={loginStyles.newUserContainer}>
-              <Text style={{ fontSize: 20, fontFamily: "Avanta-Medium" }}>
-                You do not have an account?
-              </Text>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => navigation.navigate("RegisterScreen")}
-              >
-                <Text style={loginStyles.btnRegisterText}>
-                  {""} Sign up here
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+              {"Log out "}
+            </Text>
+          </TouchableOpacity>
         </View>
-        <View style={{ height: 100 }} />
+        <View style={{ marginTop: height * 0.1 }}>
+          <RenderItemNavList
+            icon={"basket"}
+            text="Orders"
+            onPress={() => navigation.navigate("OrdersScreen")}
+          />
+          <RenderItemNavList
+            icon={"home"}
+            text="Address"
+            onPress={() => navigation.navigate("AddressScreen")}
+          />
+          <RenderItemNavList
+            icon={"account"}
+            text="Account-Details"
+            onPress={() => navigation.navigate("AccountDetails")}
+          />
+          <RenderItemNavList
+            icon={"folder-heart-outline"}
+            text="Wishlist"
+            onPress={() => navigation.navigate("WishListScreen")}
+          />
+          <RenderItemNavList
+            icon={"file"}
+            text="Compare"
+            onPress={() => console.log("s")}
+          />
+          <RenderItemNavList
+            icon={"logout"}
+            text="Log out"
+            onPress={() => console.log("s")}
+          />
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );

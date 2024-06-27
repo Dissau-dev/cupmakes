@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React from "react";
+import React, { useState } from "react";
 
 import { CarNavigator } from "./CarNavigator";
 
@@ -17,6 +17,11 @@ import { selectProducts } from "../store/slices/cartSlice";
 import { selectAuth } from "../store/slices/userSlice";
 import { AuthNavigator } from "./AuthNavigator";
 import { ProfileNavigator } from "./ProfileNavigato";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 //import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const viewBox = Platform.OS === "ios" ? "20 -550 100 1500" : "100 100 50 50";
@@ -42,6 +47,23 @@ const AndroidBottomTab = createBottomTabNavigator<TabsParamList>();
 const AndroidBottomTabs = () => {
   const products = useAppSelector(selectProducts);
   const isAuth = useAppSelector(selectAuth);
+
+  const badgeScale = useSharedValue(1);
+  const lastUpdated = useAppSelector((state) => state.cart.lastUpdated);
+  React.useEffect(() => {
+    if (lastUpdated) {
+      badgeScale.value = withTiming(1.5, { duration: 200 }, () => {
+        badgeScale.value = withTiming(1, { duration: 200 });
+      });
+    }
+  }, [lastUpdated]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: badgeScale.value }],
+    };
+  });
+
   return (
     <AndroidBottomTab.Navigator
       initialRouteName="HomeNavigator"
@@ -115,9 +137,19 @@ const AndroidBottomTabs = () => {
                     style={{ marginLeft: 22, bottom: 12, position: "absolute" }}
                   >
                     {products.length === 0 ? null : (
-                      <Badge style={{ backgroundColor: palette.primary }}>
-                        {products.length > 9 ? "9+" : products.length}
-                      </Badge>
+                      <Animated.View style={animatedStyle}>
+                        <Badge
+                          style={{
+                            backgroundColor: palette.primary,
+                            elevation: 1,
+                            position: "absolute",
+                            left: 0,
+                            bottom: 2,
+                          }}
+                        >
+                          {products.length > 9 ? "9+" : products.length}
+                        </Badge>
+                      </Animated.View>
                     )}
                   </View>
 

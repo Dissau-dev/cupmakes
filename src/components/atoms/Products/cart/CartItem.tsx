@@ -1,9 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { palette } from "../../../../theme/colors";
 import { heightScrenn, widthScreen } from "../../../../theme/styles/global";
-import { TextInput } from "react-native-paper";
+import { Button, Dialog, Modal, Portal, TextInput } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
 
 import {
@@ -15,6 +22,10 @@ import {
 } from "../../../../store/slices/cartSlice";
 import { useForm } from "react-hook-form";
 import TextInputController from "../../formControls/TextInputController";
+
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { ModalComponent } from "../../ModalComponent";
+import { ModalCartContent } from "./ModalCartContent";
 
 interface Props {
   item: any;
@@ -92,6 +103,15 @@ export const CartItem = ({ item }: Props) => {
       console.log("console:" + products[0].quantity);
     }
   };
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const hideModal = () => {
+    setModalVisible(false);
+  };
+  const showModal = () => {
+    setModalVisible(true);
+  };
+
   return (
     <View
       style={{
@@ -100,6 +120,7 @@ export const CartItem = ({ item }: Props) => {
         flexDirection: "row",
         backgroundColor: "#f4f7f78d",
         borderBottomWidth: 1,
+        flex: 1,
       }}
     >
       <View
@@ -176,7 +197,30 @@ export const CartItem = ({ item }: Props) => {
                   marginTop: heightScrenn * 0.01,
                 }}
               >
-                <TextInputController
+                <TouchableOpacity
+                  onPress={showModal}
+                  style={{
+                    width: 40,
+                    alignContent: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: palette.secondary,
+                      fontSize: 18,
+                      borderRightColor: "#eee",
+                      borderLeftColor: "#eee",
+                      borderRightWidth: 1,
+                      borderLeftWidth: 1,
+                    }}
+                  >
+                    {item.quantity}
+                  </Text>
+                </TouchableOpacity>
+
+                {/*   <TextInputController
                   controller={{
                     name: "quantity",
                     rules: {
@@ -204,7 +248,7 @@ export const CartItem = ({ item }: Props) => {
                   autoCapitalize={"none"}
                   keyboardType="numeric"
                   returnKeyType="next"
-                />
+                /> */}
               </View>
               <TouchableOpacity
                 style={{
@@ -270,6 +314,12 @@ export const CartItem = ({ item }: Props) => {
           $ {item.totalItemPrice}
         </Text>
       </View>
+      <ModalComponent
+        item={item}
+        titleModal="Select Quantity"
+        onClose={hideModal}
+        visible={modalVisible}
+      />
     </View>
   );
 };

@@ -7,7 +7,7 @@ import { palette } from "../../../theme/colors";
 type ControlProps = Omit<ControllerProps, "render">;
 
 interface TextInputControllerProps extends TextInputProps {
-  controller: ControlProps;
+  controller?: ControlProps;
 }
 
 export default function TextInputController(props: TextInputControllerProps) {

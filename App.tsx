@@ -19,6 +19,7 @@ import { injectStore } from "./src/services/APIServer";
 import { PaperProvider } from "react-native-paper";
 import { ThemeProvider } from "./src/Context/theme/ThemeContext";
 import { CombinedLightTheme } from "./src/theme/colors";
+import StripeConfig from "./src/screens/carStore/StripeConfig";
 
 /*
 import { Navigator } from './src/Navigator/Navigator';
@@ -46,17 +47,19 @@ export default function App() {
   const persistor = persistStore(store);
 
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor} loading={<LoadingPage title="" />}>
-        <SafeAreaProvider>
-          <ThemeProvider>
-            <PaperProvider theme={CombinedLightTheme}>
-              <AppEntry />
-            </PaperProvider>
-          </ThemeProvider>
-        </SafeAreaProvider>
-      </PersistGate>
-    </Provider>
+    <StripeConfig>
+      <Provider store={store}>
+        <PersistGate persistor={persistor} loading={<LoadingPage title="" />}>
+          <SafeAreaProvider>
+            <ThemeProvider>
+              <PaperProvider theme={CombinedLightTheme}>
+                <AppEntry />
+              </PaperProvider>
+            </ThemeProvider>
+          </SafeAreaProvider>
+        </PersistGate>
+      </Provider>
+    </StripeConfig>
   );
 }
 

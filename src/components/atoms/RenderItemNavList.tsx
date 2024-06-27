@@ -8,8 +8,8 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
-import { colors, palette } from "../../theme/colors";
+import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
+import { palette } from "../../theme/colors";
 
 interface NavListProps {
   onPress: any;
@@ -39,10 +39,10 @@ const RenderItemNavList = ({
           <View style={styles.listItemDescription}>
             {icon && (
               <View style={{ marginEnd: centered ? 0 : 10 }}>
-                <FontAwesome5
+                <MaterialCommunityIcons
                   name={icon}
                   color={iconColor || palette.secondary}
-                  size={15}
+                  size={20}
                 />
               </View>
             )}
@@ -62,7 +62,7 @@ const RenderItemNavList = ({
           )}
         </>
       )}
-      <FontAwesome5 name="chevron-right" size={15} color={palette.secondary} />
+      <FontAwesome6 name="chevron-right" size={18} color={palette.secondary} />
     </TouchableOpacity>
   );
 };
@@ -92,7 +92,8 @@ const styles = StyleSheet.create({
     // width: 100
   },
   listItemText: {
-    fontSize: 15,
+    fontSize: 20,
+    fontFamily: "Avanta-Medium",
     // fontWeight: "500",
     color: palette.secondary,
     width: 200,

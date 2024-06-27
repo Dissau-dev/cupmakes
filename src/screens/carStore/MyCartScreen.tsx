@@ -120,7 +120,7 @@ export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
         ListEmptyComponent={<EmptyCart />}
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
-        // onScroll={onScroll}
+        onScroll={onScroll}
       />
 
       {products.length > 0 ? (
@@ -166,11 +166,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   fabStyle: {
-    bottom: heightScrenn * 0.03,
-    //right: 16,
-    left: 16,
+    bottom: heightScrenn * 0.02,
+    right: widthScreen * 0.03,
+
+    // left: 16,
     backgroundColor: palette.primary,
-    color: "green",
     position: "absolute",
   },
 });

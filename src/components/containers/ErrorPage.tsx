@@ -7,6 +7,7 @@ import { Button } from "react-native-paper";
 
 //import { ThemeContext } from "../../context/theme/ThemeContext";
 import { palette } from "../../theme/colors";
+import FocusAwareStatusBar from "../atoms/FocusAwareStatusBar";
 
 interface Props {
   message?: string | boolean;
@@ -24,6 +25,11 @@ export const ErrorPage = ({ message, onRecovery }: Props) => {
 
   return (
     <View style={[styles.container, { backgroundColor: palette.white }]}>
+      <FocusAwareStatusBar
+        barStyle={"default"}
+        backgroundColor={palette.primary}
+        translucent={false}
+      />
       <Image
         source={error}
         style={{

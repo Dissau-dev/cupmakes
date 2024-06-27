@@ -26,6 +26,7 @@ import cartSlice from "./slices/cartSlice";
 import userSlice from "./slices/userSlice";
 import witchesSlice from "./slices/witchesSlice";
 import productSlice from "./slices/productSlice";
+import addressesSlice from "./slices/addressesSlice";
 
 
 
@@ -34,7 +35,7 @@ const persistConfig = {
   key: "root",
   storage: AsyncStorage,
 
-  whitelist: ["config","cart", "user","witches"],
+  whitelist: ["config","cart", "user","witches","addresses"],
 };
 
 const rootReducer = combineReducers({
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
    cart: cartSlice,
   witches: witchesSlice,
   product: productSlice,
+  addresses: addressesSlice,
    user: userSlice,
   [api.reducerPath]: api.reducer,
   

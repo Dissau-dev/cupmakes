@@ -23,21 +23,20 @@ import {
   TextInput,
 } from "react-native-paper";
 
-import { globals } from "../../theme/styles/global";
-import Layout from "../../utils/Layout";
-import {  palette } from "../../theme/colors";
-import { ThemeContext } from "../../Context/theme/ThemeContext";
-import { MyCard } from "./MyCard";
-import { MyAccountRequest } from "./MyAccountRequest";
-import { useGetAccountQuery } from "../../store/api/cardApi";
-import { mask } from "react-native-mask-text";
+import { globals, heightScrenn, widthScreen } from "../../theme/styles/global";
 
+import { palette } from "../../theme/colors";
+import { ThemeContext } from "../../Context/theme/ThemeContext";
+
+import { MyAccountRequest } from "./MyAccountRequest";
+
+import { mask } from "react-native-mask-text";
 
 export interface PickerItem {
   label: string;
   value: string;
   amount: number | string;
-  address: string
+  address: string;
 }
 
 export interface MyPickerProps {
@@ -45,7 +44,7 @@ export interface MyPickerProps {
   data: any;
   value: any;
   onChangeValue: Function;
- 
+
   icon?: any;
   isLoading?: boolean;
   isSearchable?: boolean;
@@ -53,7 +52,7 @@ export interface MyPickerProps {
   error?: any;
   refChild?: any;
   titleInModal?: string;
-  notFoundText?: string
+  notFoundText?: string;
 
   actionAtSelected?: Function;
   disabled?: boolean;
@@ -74,9 +73,8 @@ export const MyPickerTransfer = ({
   disabled,
   titleInModal,
   inputStyle,
-  notFoundText
+  notFoundText,
 }: MyPickerProps) => {
-  const { data: account} = useGetAccountQuery();
   const { theme } = useContext(ThemeContext);
 
   //Modal
@@ -86,16 +84,11 @@ export const MyPickerTransfer = ({
 
   //Search bar
 
-
-
-
   //Content
   const [dataStore, setDataStore] = useState([]);
   useEffect(() => {
     setDataStore(data);
   }, [data]);
-
-  
 
   const onCheckedValue = (itemValue: string) => {
     onChangeValue(itemValue);
@@ -103,51 +96,25 @@ export const MyPickerTransfer = ({
   };
 
   const renderItem = ({ item }: { item: PickerItem }) => (
-
-
-     <TouchableOpacity  onPress={() => {
-      onCheckedValue(item.value);
-      actionAtSelected && actionAtSelected();
-    }}> 
-    <View
-      style={{
-        flexDirection: "row",
-        marginHorizontal:-10
+    <TouchableOpacity
+      onPress={() => {
+        onCheckedValue(item.value);
+        actionAtSelected && actionAtSelected();
       }}
     >
-     
-
-      
-         
-      {/*  <MyAccountRequest address="112 345 765 123"
+      <View
+        style={{
+          flexDirection: "row",
+          marginHorizontal: -10,
+        }}
+      >
+        {/*  <MyAccountRequest address="112 345 765 123"
       logo={require('../../../assets/images/aceñaLogo.jpeg')}
       vence="11/24"
       issueEntity="Tecopos"
       />*/}
-        
-            <MyCard 
-            address={mask(item.address,"**** **** 9999")}
-           
-             logo={
-              item.label ==='Gelato'? require(`../../../assets/images/Gelato.png`)
-              : item.label ==='Aceña'?  require(`../../../assets/images/Aceña.png`)
-              :  require(`../../../assets/images/Tecopos.png`)
-            }
-            
-             amount={item.amount}
-             onPress={() => {
-              onCheckedValue(item.value);
-              actionAtSelected && actionAtSelected();
-            }}
-                     
-            />
-       
-         
-         
-       
-      
-    </View>
-   </TouchableOpacity> 
+      </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -199,7 +166,7 @@ export const MyPickerTransfer = ({
             outlineStyle={{
               borderRadius: 10,
               backgroundColor: palette.white,
-              height:50,
+              height: 50,
             }}
             placeholderTextColor={palette.icons}
             mode="outlined"
@@ -208,16 +175,14 @@ export const MyPickerTransfer = ({
             contentStyle={{ fontWeight: "600", fontSize: 15 }}
             autoCapitalize="none"
             style={{
-              
-                width: 280,
-                height: 50,
-                backgroundColor: palette.white,
-                borderColor: palette.icons,
-                // borderRadius: 100,
-                // paddingLeft: 20,
-               marginBottom:10,
-                marginVertical: 5,
-           
+              width: 280,
+              height: 50,
+              backgroundColor: palette.white,
+              borderColor: palette.icons,
+              // borderRadius: 100,
+              // paddingLeft: 20,
+              marginBottom: 10,
+              marginVertical: 5,
             }}
             value={
               (value &&
@@ -229,7 +194,6 @@ export const MyPickerTransfer = ({
             onBlur={hideModal}
             editable={false}
             ref={refChild}
-            
             right={
               <TextInput.Icon
                 onPress={disabled ? () => {} : showModal}
@@ -243,7 +207,7 @@ export const MyPickerTransfer = ({
                       name="chevron-down-outline"
                       size={23}
                       style={[disabled && { opacity: 0.4 }]}
-                      color={'#c1c1c1'}
+                      color={"#c1c1c1"}
                     />
                   )
                 }
@@ -259,10 +223,14 @@ export const MyPickerTransfer = ({
                     <ActivityIndicator color={palette.icons} />
                   ) : (
                     <Ionicons
-                      name={label==='Selecciona negocio'?   "location-sharp":"card-outline"}
+                      name={
+                        label === "Selecciona negocio"
+                          ? "location-sharp"
+                          : "card-outline"
+                      }
                       size={23}
                       style={[disabled && { opacity: 0.4 }]}
-                      color={'#c1c1c1'}
+                      color={"#c1c1c1"}
                     />
                   )
                 }
@@ -309,7 +277,7 @@ export const MyPickerTransfer = ({
           onRequestClose={hideModal}
           transparent={true}
         >
-       {/*   <View
+          {/*   <View
             style={{
               flex: 1,
               justifyContent: "center",
@@ -394,28 +362,30 @@ export const MyPickerTransfer = ({
             </View>
             </View> 
           </View>*/}
-           <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={styles.header}>
-              <Text style={styles.title}> Cuentas</Text>
-              <Button
-               rippleColor={palette.primary}
-               onPress={hideModal}>
-                <Text><Fontisto name="close" size={20} color={'#fff'}/></Text>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View style={styles.header}>
+                <Text style={styles.title}> Cuentas</Text>
+                <Button rippleColor={palette.primary} onPress={hideModal}>
+                  <Text>
+                    <Fontisto name="close" size={20} color={"#fff"} />
+                  </Text>
                 </Button>
+              </View>
+              {/* <Text style={styles.selectAccountText}></Text>*/}
+              <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14 }}>
+                Seleccione la cuenta que desea asociar a la solicitud de la
+                tarjeta :
+              </Text>
+              <FlatList
+                data={data}
+                renderItem={renderItem}
+                // keyExtractor={item => item.id}
+                contentContainerStyle={styles.flatListContent}
+                showsVerticalScrollIndicator={false}
+              />
             </View>
-           {/* <Text style={styles.selectAccountText}></Text>*/}
-           <Text style={{fontFamily:'Poppins-Medium',
-               fontSize:14}}>Seleccione la cuenta que desea asociar a la solicitud de la tarjeta :</Text>
-            <FlatList
-              data={data}
-              renderItem={renderItem}
-             // keyExtractor={item => item.id}
-              contentContainerStyle={styles.flatListContent}
-              showsVerticalScrollIndicator={false}
-            />
           </View>
-        </View>
         </Modal>
       </View>
     </View>
@@ -433,46 +403,46 @@ const styles = StyleSheet.create({
     height: 55,
     marginTop: 1,
   },
- /* header: {
+  /* header: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 8,
   },*/
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
     margin: 16,
-    height: Layout.window.height * 0.72,
-    width: Layout.window.width * 0.9,
-    backgroundColor: 'white',
+    height: heightScrenn * 0.72,
+    width: widthScreen * 0.9,
+    backgroundColor: "white",
     borderRadius: 20,
-    
-    alignItems: 'center',
+
+    alignItems: "center",
     elevation: 5,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 10,
     backgroundColor: palette.primary,
-    height:50,
-    width: Layout.window.width * 0.9,
-    borderTopLeftRadius:16 ,
-    borderTopRightRadius:16 
+    height: 50,
+    width: widthScreen,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
   },
   title: {
-    justifyContent:'center',
-              textAlign:'center',
-               margin:6,
-               marginLeft:14,
-               fontSize:20,
-    fontFamily:'Poppins-Medium',
-    color:'white'
+    justifyContent: "center",
+    textAlign: "center",
+    margin: 6,
+    marginLeft: 14,
+    fontSize: 20,
+    fontFamily: "Poppins-Medium",
+    color: "white",
   },
   selectAccountText: {
     marginBottom: 10,
@@ -483,7 +453,7 @@ const styles = StyleSheet.create({
   item: {
     padding: 20,
     borderBottomWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
   },
   address: {
     fontSize: 18,
@@ -504,7 +474,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
   },
- /* title: {
+  /* title: {
     marginVertical: 16,
     fontSize: 16,
     opacity: 0.9,

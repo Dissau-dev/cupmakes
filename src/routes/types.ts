@@ -1,3 +1,4 @@
+import { OrdersDetail } from '../screens/carStore/OrdersDetail';
 
 
 
@@ -52,4 +53,11 @@ export type ProductsParamList = {
 export type ProfileParamList = {
   
   ProfileScreen: undefined;
+  OrdersScreen:undefined,
+  OrdersDetail:undefined,
+  AddressScreen: undefined,
+  AccountDetails: undefined,
+  WishListScreen:undefined,
+  CompareScreen:undefined
+
 }

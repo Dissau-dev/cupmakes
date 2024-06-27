@@ -3,40 +3,38 @@ import {
   View,
   StyleSheet,
   Text,
+  Platform,
   Modal,
   TouchableOpacity,
   FlatList,
+  Image,
   //   TextInput,
   ViewStyle,
   StyleProp,
 } from "react-native";
-import { Fontisto, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 import {
   ActivityIndicator,
-  Button,
+  Dialog,
+  Divider,
   RadioButton,
   Searchbar,
   TextInput,
 } from "react-native-paper";
 
-import { globals } from "../../theme/styles/global";
-import Layout from "../../utils/Layout";
+import { globals, heightScrenn, widthScreen } from "../../theme/styles/global";
+
 import { palette } from "../../theme/colors";
-import { ThemeContext } from "../../Context/theme/ThemeContext";
-import { Image } from "expo-image";
 
 export interface PickerItem {
   label: string;
   value: string;
-  imageSrc?: string;
-  blurhash?: string;
 }
 
 export interface MyPickerProps {
   label: string;
   data: any;
-
   value: any;
   onChangeValue: Function;
 
@@ -70,8 +68,6 @@ export const MyPicker = ({
   inputStyle,
   notFoundText,
 }: MyPickerProps) => {
-  const { theme } = useContext(ThemeContext);
-
   //Modal
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
@@ -103,55 +99,35 @@ export const MyPicker = ({
   };
 
   const renderItem = ({ item }: { item: PickerItem }) => (
-    <TouchableOpacity
-      onPress={() => {
-        onCheckedValue(item.value);
-        actionAtSelected && actionAtSelected();
+    <View
+      style={{
+        // flexDirection: "row",
+        //alignItems: "center",
+        paddingEnd: 25,
       }}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          paddingEnd: Layout.window.width * 0.5,
-          maxWidth: "95%",
+      {/* <RadioButton
+        value={item.value}
+        color={palette.primary}
+        uncheckedColor={palette.lightPrimary}
+        status={value === item.value ? "checked" : "unchecked"}
+        onPress={() => {
+          onCheckedValue(item.value);
+          actionAtSelected && actionAtSelected();
         }}
+      /> */}
+      <TouchableOpacity
+        onPress={() => {
+          onCheckedValue(item.value);
+          actionAtSelected && actionAtSelected();
+        }}
+        style={{ width: widthScreen, padding: 16 }}
       >
-        <View
-          style={{
-            width: 45,
-            height: 45,
-            borderWidth: 2,
-            borderRadius: 100,
-            borderColor: "#c1c1c1",
-            marginVertical: 5,
-
-            marginHorizontal: 10,
-          }}
-        >
-          {item.imageSrc === null ? (
-            <Image
-              source={require("../../../assets/images/genericImage.jpg")}
-              style={{ width: 41, height: 41, borderRadius: 100 }}
-              placeholder={item.blurhash}
-            />
-          ) : (
-            <>
-              <Image
-                source={{
-                  uri: `https://apidevpay.tecopos.com${item.imageSrc}`,
-                }}
-                style={{ width: 41, height: 41, borderRadius: 100 }}
-                placeholder={item.blurhash}
-              />
-            </>
-          )}
-        </View>
-
         <Text
           style={{
-            fontSize: 16,
-            fontFamily: "Poppins-Medium",
+            textAlign: "left",
+            fontSize: 20,
+            fontFamily: "Avanta-Medium",
           }}
           // style={[
           //     value === item.value
@@ -161,8 +137,9 @@ export const MyPicker = ({
         >
           {item.label}
         </Text>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+      <Divider />
+    </View>
   );
 
   return (
@@ -179,27 +156,54 @@ export const MyPicker = ({
           onPress={disabled ? () => {} : showModal}
           style={{ width: "100%", alignItems: "center" }}
         >
+          {/* <View
+            style={[
+              visible
+                ? { borderColor: theme.colors.primary }
+                : { borderColor: colors.grey },
+              styles.input,
+              inputStyle,
+            ]}
+          > */}
+          {/* <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginHorizontal: 16,
+              marginVertical: 6.9,
+            }}
+          >
+            {icon && (
+              <Ionicons
+                name={icon}
+                size={23}
+                style={[
+                  {
+                    marginEnd: 5,
+                  },
+                  disabled && { opacity: 0.4 },
+                ]}
+              />
+            )} */}
           <TextInput
             placeholder={label}
             outlineStyle={{
               borderRadius: 10,
               backgroundColor: palette.white,
-              height: 50,
             }}
             placeholderTextColor={palette.icons}
             mode="outlined"
             outlineColor={palette.icons}
-            activeOutlineColor={palette.primary}
+            activeOutlineColor={palette.secondary}
             contentStyle={{ fontWeight: "600", fontSize: 15 }}
             autoCapitalize="none"
             style={{
-              width: 280,
-              height: 50,
-              backgroundColor: palette.icons,
-              color: palette.darkGray,
               borderColor: palette.icons,
-              // borderRadius: 100,
-              // paddingLeft: 20,
+              fontSize: 15,
+              fontWeight: "300",
+              width: 300,
+              marginBottom: 5,
             }}
             value={
               (value &&
@@ -214,8 +218,8 @@ export const MyPicker = ({
             right={
               <TextInput.Icon
                 onPress={disabled ? () => {} : showModal}
-                color={palette.primary}
-                rippleColor={palette.white}
+                color={palette.darkGray}
+                rippleColor={palette.datesFilter}
                 icon={() =>
                   isLoading ? (
                     <ActivityIndicator color={palette.icons} />
@@ -224,36 +228,28 @@ export const MyPicker = ({
                       name="chevron-down-outline"
                       size={23}
                       style={[disabled && { opacity: 0.4 }]}
-                      color={"#c1c1c1"}
-                    />
-                  )
-                }
-              />
-            }
-            left={
-              <TextInput.Icon
-                onPress={disabled ? () => {} : showModal}
-                color={palette.primary}
-                rippleColor={palette.white}
-                icon={() =>
-                  isLoading ? (
-                    <ActivityIndicator color={palette.icons} />
-                  ) : (
-                    <Ionicons
-                      name={
-                        label === "Selecciona negocio"
-                          ? "location-sharp"
-                          : "card-outline"
-                      }
-                      size={23}
-                      style={[disabled && { opacity: 0.4 }]}
-                      color={"#c1c1c1"}
+                      color={palette.secondary}
                     />
                   )
                 }
               />
             }
           />
+          {/* {error && (
+              <Ionicons
+                name="alert-circle-outline"
+                size={23}
+                // color={theme.error}
+              />
+            )}
+            <Ionicons
+              name="chevron-down-outline"
+              size={23}
+              style={[disabled && { opacity: 0.4 }]}
+              color={palette.circularProgressBar}
+            />
+          </View> */}
+          {/* </View> */}
         </TouchableOpacity>
         {!!error && (
           <Text
@@ -279,31 +275,50 @@ export const MyPicker = ({
           onRequestClose={hideModal}
           transparent={true}
         >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <View style={styles.header}>
-                <Text style={styles.title}> Entidades</Text>
-                <Button rippleColor={palette.primary} onPress={hideModal}>
-                  <Text>
-                    <Fontisto name="close" size={20} color={"#fff"} />
-                  </Text>
-                </Button>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.65)",
+            }}
+          >
+            <View
+              style={{
+                padding: 20,
+                // paddingHorizontal: 20,
+                borderRadius: 10,
+                backgroundColor: "white",
+                height: heightScrenn * 0.58,
+                width: widthScreen * 0.9,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={{ fontSize: 24, fontFamily: "Avanta-Medium" }}>
+                  Select a state{" "}
+                </Text>
+                <TouchableOpacity onPress={hideModal}>
+                  <Ionicons name="close" size={24} />
+                </TouchableOpacity>
               </View>
-              {/* <Text style={styles.selectAccountText}></Text>*/}
 
               {/* Search bar */}
               {isSearchable && (
                 <Searchbar
                   value={textValue}
                   onChangeText={onTextChange}
-                  style={[globals.search, { width: "90%" }]}
+                  style={[globals.search, { width: "100%" }]}
                   inputStyle={globals.searchInput}
-                  selectionColor={palette.primary}
-                  placeholder="Buscar"
+                  placeholder="Search"
                   placeholderTextColor={palette.icons}
                   returnKeyType="search"
                   autoCapitalize="none"
-                  cursorColor={palette.primary}
+                  cursorColor={palette.secondary}
                   clearButtonMode="while-editing"
                   // editable={isSearching && data.length === 0}
                   enablesReturnKeyAutomatically
@@ -313,7 +328,7 @@ export const MyPicker = ({
                         <Ionicons
                           name={"search-outline"}
                           size={18}
-                          color={palette.primary}
+                          color={palette.secondary}
                           style={{ fontWeight: "bold" }}
                         />
                       )}
@@ -323,38 +338,78 @@ export const MyPicker = ({
                   //   console.log(nativeEvent.text);
                   // }}
 
-                  iconColor={palette.primary}
+                  iconColor={palette.secondary}
                   // editable={!isLoading && !isFetching}
                 />
+                // <View
+                //   style={[styles.textBackground, { marginHorizontal: -15 }]}
+                // >
+                //   <TextInput
+                //     placeholder="Buscar..."
+                //     style={{
+                //       ...styles.searchInput,
+                //       top: Platform.OS === "ios" ? 0 : 2,
+                //     }}
+                //     autoCapitalize="none"
+                //     autoCorrect={false}
+                //     value={textValue}
+                //     onChangeText={onTextChange}
+                //   />
+                //   <Ionicons name="search-outline" color="grey" size={24} />
+                // </View>
               )}
-              {dataStore.length === 0 ? (
-                <Text
+              {/* Content */}
+              {data.length === 0 ? (
+                <View
                   style={{
-                    fontFamily: "Poppins-Medium",
-                    fontSize: 14,
-                    maxWidth: "90%",
+                    alignItems: "center",
                   }}
                 >
-                  Sin resutados{" "}
-                </Text>
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginHorizontal: 50,
+                    }}
+                  >
+                    <Text style={styles.title}>{notFoundText || ""}</Text>
+                  </View>
+                </View>
+              ) : isSearching && dataStore.length === 0 ? (
+                <View
+                  style={{
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginHorizontal: 50,
+                    }}
+                  >
+                    <Text style={styles.title}>
+                      There are no results to show
+                    </Text>
+                  </View>
+                </View>
               ) : (
-                <Text
-                  style={{
-                    fontFamily: "Poppins-Medium",
-                    fontSize: 14,
-                    maxWidth: "90%",
-                  }}
-                >
-                  Seleccione la entidad deseada
-                </Text>
+                <View style={{ flex: 1 }}>
+                  {/*  <Text
+                    style={[
+                      // globals.h6Medium,
+                      { marginVertical: 10, textAlign: "center" },
+                    ]}
+                  >
+                    {titleInModal ? titleInModal : `Seleccione una opción`}
+                  </Text> */}
+                  <FlatList
+                    data={dataStore}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.value}
+                  />
+                </View>
               )}
-              {/* cambiar el render item */}
-              <FlatList
-                data={dataStore}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.value}
-                showsVerticalScrollIndicator={false}
-              />
             </View>
           </View>
         </Modal>
@@ -364,54 +419,20 @@ export const MyPicker = ({
 };
 
 const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-
-  modalView: {
-    margin: 16,
-    height: Layout.window.height * 0.72,
-    width: Layout.window.width * 0.9,
-    backgroundColor: "white",
-    borderRadius: 20,
-
-    alignItems: "center",
-    elevation: 5,
-  },
-  header: {
+  container: {
+    backgroundColor: "rgba(0,0,0,0.1)",
+    marginStart: 45,
+    marginVertical: Platform.OS === "ios" ? 15 : 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
-    backgroundColor: palette.primary,
-    height: 50,
-    width: Layout.window.width * 0.9,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    height: 55,
+    marginTop: 1,
   },
-  title: {
-    justifyContent: "center",
-    textAlign: "center",
-    margin: 6,
-    marginLeft: 14,
-    fontSize: 20,
-    fontFamily: "Poppins-Medium",
-    color: "white",
-  },
-  selectAccountText: {
-    marginBottom: 10,
-  },
-  flatListContent: {
-    paddingBottom: 20,
-  },
-  item: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
   },
   address: {
     fontSize: 18,
@@ -432,9 +453,15 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
   },
-
+  title: {
+    marginVertical: 16,
+    fontSize: 16,
+    opacity: 0.9,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
   input: {
-    width: "100%",
+    width: 100,
     marginVertical: 8,
     borderWidth: 1,
     borderRadius: 10,

@@ -3,13 +3,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { CarParamList, ProfileParamList } from "./types";
 import AppBar from "../components/containers/AppBar";
 import React from "react";
-import { CarScreen } from "../screens/carStore/CarScreen";
-import { MyCartScreen } from "../screens/carStore/MyCartScreen";
-import { MyOrderScreen } from "../screens/carStore/MyOrderScreen";
-import { TakeOrderScreen } from "../screens/carStore/TakeOrderScreen";
-import { OrdersDetail } from "../screens/carStore/OrdersDetail";
-import { SuccessOrder } from "../screens/carStore/SuccessOrder";
+
 import { ProfileScreen } from "../screens/Profile/ProfileScreen";
+import { WishListScreen } from "../screens/Profile/WishListScreen";
+import { OrdersScreen } from "../screens/Profile/OrdersScreen";
+import AccounDetail from "../screens/Profile/AccounDetail";
+import AddressScreen from "../screens/Profile/AddressScreen";
 
 const Stack = createStackNavigator<ProfileParamList>();
 
@@ -32,14 +31,38 @@ export const ProfileNavigator = () => {
     >
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
 
-      {/*<Stack.Screen
-        name="ViewTicket"
-        component={ViewTicket}
+      <Stack.Screen
+        name="WishListScreen"
+        component={WishListScreen}
         options={({ route, navigation }) => ({
           headerShown: true,
-          title: route.params.titleScreen,
+          title: "Wishlist",
         })}
-      />*/}
+      />
+      <Stack.Screen
+        name="OrdersScreen"
+        component={OrdersScreen}
+        options={({ route, navigation }) => ({
+          headerShown: true,
+          title: "My orders",
+        })}
+      />
+      <Stack.Screen
+        name="AccountDetails"
+        component={AccounDetail}
+        options={({ route, navigation }) => ({
+          headerShown: true,
+          title: "Acount Details",
+        })}
+      />
+      <Stack.Screen
+        name="AddressScreen"
+        component={AddressScreen}
+        options={({ route, navigation }) => ({
+          headerShown: true,
+          title: "My Addresses",
+        })}
+      />
     </Stack.Navigator>
   );
 };

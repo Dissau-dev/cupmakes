@@ -19,6 +19,7 @@
     "axios": "^1.7.2",
     "base-64": "^1.0.0",
     "blurhash": "^2.0.5",
+    "cors": "^2.8.5",
     "expo": "~51.0.8",
     "expo-dev-client": "~4.0.14",
     "expo-image": "^1.12.9",
@@ -27,6 +28,7 @@
     "expo-paypal": "^1.4.1",
     "expo-splash-screen": "^0.27.4",
     "expo-status-bar": "~1.12.1",
+    "express": "^4.19.2",
     "lottie-react-native": "^6.7.2",
     "moment": "^2.30.1",
     "moti": "^0.22.0",
@@ -46,7 +48,8 @@
     "react-native-toast-message": "^2.2.0",
     "react-native-web": "~0.19.10",
     "react-redux": "^9.1.2",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "stripe": "^16.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity, View, Text, Image } from "react-native";
+import { TouchableOpacity, View, Text, Image, StyleSheet } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { palette } from "../../../theme/colors";
 import { Products } from "../../../services/Interfaces";
@@ -7,6 +7,14 @@ import { heightScrenn, widthScreen } from "../../../theme/styles/global";
 import StarRating from "../StarRating";
 import { addLineItems, addProduct } from "../../../store/slices/cartSlice";
 import { useAppDispatch } from "../../../store/hooks";
+import Animated, {
+  Easing,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated";
 
 interface Props {
   item: Products;
@@ -27,13 +35,62 @@ export const Description = ({ item }: Props) => {
       setcount(count - 1);
     }
   };
+
+  const bubbleX = useSharedValue(0);
+  const bubbleY = useSharedValue(0);
+  const bubbleOpacity = useSharedValue(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const startAnimation = () => {
+    setIsAnimating(true);
+
+    // Reset values to start the animation again
+    bubbleX.value = 0;
+    bubbleY.value = 0;
+    bubbleOpacity.value = 1;
+
+    bubbleX.value = withTiming(300, {
+      duration: 1000,
+      easing: Easing.inOut(Easing.quad),
+    });
+
+    bubbleY.value = withTiming(500, {
+      duration: 1000,
+      easing: Easing.inOut(Easing.quad),
+    });
+
+    bubbleOpacity.value = withDelay(
+      800,
+      withTiming(
+        0,
+        {
+          duration: 200,
+          easing: Easing.inOut(Easing.quad),
+        },
+        () => {
+          runOnJS(setIsAnimating)(false); // Set isAnimating to false after animation ends
+        }
+      )
+    );
+  };
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: bubbleX.value }, { translateY: bubbleY.value }],
+      opacity: bubbleOpacity.value,
+    };
+  });
+
   const handleAddToCart = (item: any) => {
     const { id, name, price, images } = item;
     const quantity = count;
     const totalItemPrice = quantity * price;
-
-    dispatch(addProduct({ id, name, price, quantity, images, totalItemPrice }));
-    dispatch(addLineItems({ id, quantity }));
+    startAnimation();
+    setTimeout(() => {
+      dispatch(
+        addProduct({ id, name, price, quantity, images, totalItemPrice })
+      );
+      dispatch(addLineItems({ id, quantity }));
+    }, 200);
   };
   const [disabled, setDisabled] = useState<boolean>(true);
   const [count, setcount] = useState(1);
@@ -181,9 +238,10 @@ export const Description = ({ item }: Props) => {
             </View>
 
             <TouchableOpacity
+              disabled={isAnimating}
               onPress={() => handleAddToCart(item)}
               style={{
-                backgroundColor: palette.secondary,
+                backgroundColor: palette.primary,
                 justifyContent: "center",
                 padding: 6,
                 borderRadius: 10,
@@ -204,9 +262,23 @@ export const Description = ({ item }: Props) => {
                 Add To cart
               </Text>
             </TouchableOpacity>
+            {isAnimating && (
+              <Animated.View style={[styles.bubble, animatedStyle]} />
+            )}
           </View>
         </View>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  bubble: {
+    position: "absolute",
+    left: widthScreen * 0.36,
+    width: 20,
+    height: 20,
+    borderRadius: 15,
+    backgroundColor: palette.primary,
+  },
+});

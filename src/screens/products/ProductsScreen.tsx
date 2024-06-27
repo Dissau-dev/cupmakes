@@ -47,7 +47,10 @@ import {
 import { useGetAllCategoriesQuery } from "../../store/api/productsApi";
 import StarRating from "../../components/atoms/StarRating";
 import { styles } from "../../../App";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Fontisto } from "@expo/vector-icons";
+import TextInputController from "../../components/atoms/formControls/TextInputController";
+import { useForm } from "react-hook-form";
+import TextInputControllerHolderName from "../../components/atoms/formControls/TextInputControllerHolderName";
 
 interface ProtectedScreenProps
   extends StackScreenProps<ProductsParamList, "ProductsScreen"> {}
@@ -82,6 +85,8 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
   const [categories, setCategories] = useState(categoriesData);
   const [searchCategoryQuery, setSearchCategoryQuery] = useState("");
 
+  const [showSearch, setShowSearch] = useState(false);
+
   const showDialog = () => setVisible(true);
   const hideDialog = () => {
     // Restaurar los estados temporales a los finales cuando se cierra el diálogo
@@ -95,6 +100,20 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
   useEffect(() => {
     dispatch(fetchProducts(1)); // Cargar la primera página al montar el componente
   }, [dispatch]);
+
+  const {
+    handleSubmit,
+    control,
+    setFocus,
+    formState: { isSubmitting, isValid, isDirty },
+  } = useForm({
+    defaultValues: {
+      minPrice: "0",
+      maxPrice: "1000",
+      searchCategory: "",
+      goblalSearch: "",
+    },
+  });
 
   const applyLocalFilters = () => {
     let filtered = [...items];
@@ -153,6 +172,7 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
   };
 
   const clearFilters = () => {
+    setShowSearch(false);
     setSelectedCategories([]);
     setSelectedRating(null);
     setPriceRange([0, 1000]);
@@ -198,123 +218,20 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
   };
 
   const filterCategories = () => {
-    return categories?.filter((category) =>
+    return categoriesData?.filter((category) =>
       category.name.toLowerCase().includes(searchCategoryQuery.toLowerCase())
     );
   };
 
-  const renderHeader = () => {
-    return (
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            margin: 10,
-            maxWidth: widthScreen * 0.58,
-          }}
-        >
-          {selectedCategories.map((id) => (
-            <Button
-              key={id}
-              onPress={() => removeCategoryFilter(id)}
-              style={stylesP.chip}
-              rippleColor={"#f0ecec"}
-            >
-              <Text style={stylesP.chipText}>
-                {categories?.find((category) => category.id === id)?.name}{" "}
-                <AntDesign name="close" size={14} />
-              </Text>
-            </Button>
-          ))}
-          {selectedRating !== null && (
-            <Button
-              onPress={removeRatingFilter}
-              style={stylesP.chip}
-              rippleColor={"#f0ecec"}
-            >
-              <Text style={stylesP.chipText}>
-                Rating: {selectedRating}
-                <AntDesign name="star" size={12} />{" "}
-                <AntDesign name="close" size={14} />
-              </Text>
-            </Button>
-          )}
-          {(priceRange[0] > 0 || priceRange[1] < 1000) && (
-            <Button
-              onPress={removePriceFilter}
-              style={stylesP.chip}
-              rippleColor={"#f0ecec"}
-            >
-              <Text style={stylesP.chipText}>
-                Price: {priceRange[0]} - {priceRange[1]}{" "}
-                <AntDesign name="close" size={14} />
-              </Text>
-            </Button>
-          )}
-          {/*    {search && (
-          <Chip onClose={removeSearchFilter} style={{ margin: 4 }}>
-            Buscar: {search}
-          </Chip>
-        )}*/}
-          {/*  {(selectedCategories.length > 0 ||
-          selectedRating !== null ||
-          priceRange[0] > 0 ||
-          priceRange[1] < 1000 ||
-          search) && (
-          <Button onPress={clearFilters} style={stylesP.cleanBtn}>
-            <Text style={stylesP.cleanText}>
-              <MaterialIcons
-                name="cleaning-services"
-                size={20}
-                color="#fff"
-              />
-              {"  "}Clean
-            </Text>
-          </Button>
-        )} */}
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
+  const onChangeSearch = (text: string) => {
+    setTempSearch(text);
+    setTimeout(() => {
+      setSearch(text);
+    }, 1000);
+  };
 
-            marginVertical: 10,
-          }}
-        >
-          <IconButton
-            icon={() => <AntDesign name="search1" size={24} color="black" />}
-            iconColor={palette.darkGray}
-            size={20}
-            onPress={() =>
-              navigation.navigate("SearchProducts", {
-                titleScreen: "Search",
-              })
-            }
-          />
-          <>
-            <IconButton
-              icon={() => <AntDesign name="filter" size={24} color="black" />}
-              iconColor={palette.darkGray}
-              size={20}
-              onPress={showDialog}
-            />
-            {(selectedCategories.length > 0 ||
-              selectedRating !== null ||
-              priceRange[0] > 0 ||
-              priceRange[1] < 1000 ||
-              search) && (
-              <IconButton
-                icon={() => <Octicons name="trash" size={24} color="black" />}
-                iconColor={palette.darkGray}
-                size={20}
-                onPress={clearFilters}
-              />
-            )}
-          </>
-        </View>
-      </View>
-    );
+  const renderHeader = () => {
+    return <View></View>;
   };
 
   const renderDialogContent = () => {
@@ -322,12 +239,30 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
       case "categories":
         return (
           <View style={{ marginVertical: heightScrenn * 0.04 }}>
-            <TextInput
-              placeholder="search"
+            <TextInputControllerHolderName
+              controller={{
+                name: "searchCategory",
+                control: control as any,
+              }}
+              placeholder="Search Categories"
               keyboardType="web-search"
               value={searchCategoryQuery}
               onChangeText={(text) => setSearchCategoryQuery(text)}
+              dense
+              activeOutlineColor={palette.secondary}
+              autoCapitalize={"none"}
+              returnKeyType="next"
+              style={{ width: widthScreen * 0.9 }}
+              left={
+                <TextInput.Icon
+                  icon={() => (
+                    <Fontisto name="search" size={22} color="#c1c1c1" />
+                  )}
+                  color={(isTextInputFocused) => "#c1c1c1"}
+                />
+              }
             />
+
             {categoriesData && (
               <FlatList
                 data={filterCategories()} // Mostrar solo los elementos correspondientes a las páginas cargadas
@@ -339,6 +274,7 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
                   >
                     <Checkbox
                       color={palette.secondary}
+                      uncheckedColor="#c1c1c1"
                       status={
                         tempSelectedCategories.includes(item.id)
                           ? "checked"
@@ -360,35 +296,6 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
                 )}
               />
             )}
-
-            {/*filterCategories()?.map(
-              (category: { id: number; name: string }) => (
-                <View
-                  key={category.id}
-                  style={{ flexDirection: "row", alignItems: "center" }}
-                >
-                  <Checkbox
-                    color={palette.secondary}
-                    status={
-                      tempSelectedCategories.includes(category.id)
-                        ? "checked"
-                        : "unchecked"
-                    }
-                    onPress={() => {
-                      const newCategories = tempSelectedCategories.includes(
-                        category.id
-                      )
-                        ? tempSelectedCategories.filter(
-                            (id) => id !== category.id
-                          )
-                        : [...tempSelectedCategories, category.id];
-                      setTempSelectedCategories(newCategories);
-                    }}
-                  />
-                  <Text style={stylesP.titleCategory}>{category.name}</Text>
-                </View>
-              )
-            )*/}
           </View>
         );
       case "rating":
@@ -397,9 +304,14 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
             {[1, 2, 3, 4, 5].map((rating) => (
               <View
                 key={rating}
-                style={{ flexDirection: "row", alignItems: "center" }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 3,
+                }}
               >
                 <Checkbox
+                  uncheckedColor="#c1c1c1"
                   color={palette.secondary}
                   status={
                     tempSelectedRating === rating ? "checked" : "unchecked"
@@ -417,22 +329,62 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
         );
       case "price":
         return (
-          <View style={{ marginVertical: heightScrenn * 0.04 }}>
-            <TextInput
-              placeholder="Precio mínimo"
-              keyboardType="numeric"
+          <View
+            style={{
+              marginVertical: heightScrenn * 0.04,
+              flexDirection: "row",
+              flexWrap: "wrap",
+            }}
+          >
+            <Text style={stylesP.textPrice}>Min Price :</Text>
+            <TextInputControllerHolderName
+              controller={{
+                name: "minPrice",
+                rules: {
+                  required: {
+                    value: true,
+                    message: "Min price required",
+                  },
+                },
+                control: control as any,
+              }}
               value={tempPriceRange[0].toString()}
               onChangeText={(text) =>
                 setTempPriceRange([parseInt(text) || 0, tempPriceRange[1]])
               }
-            />
-            <TextInput
-              placeholder="Precio máximo"
+              //  style={styles.input}
+              placeholder="Min price"
+              dense
+              activeOutlineColor={palette.secondary}
+              autoCapitalize={"none"}
               keyboardType="numeric"
+              returnKeyType="next"
+              style={stylesP.inputPrice}
+            />
+            <Text style={stylesP.textPrice}>Max Price :</Text>
+            <TextInputControllerHolderName
+              controller={{
+                name: "maxPrice",
+                rules: {
+                  required: {
+                    value: true,
+                    message: "Max price required",
+                  },
+                },
+                control: control as any,
+              }}
               value={tempPriceRange[1].toString()}
               onChangeText={(text) =>
-                setTempPriceRange([tempPriceRange[0], parseInt(text) || 100])
+                setTempPriceRange([tempPriceRange[0], parseInt(text) || 0])
               }
+              //  style={styles.input}
+              placeholder="Max price"
+              dense
+              activeOutlineColor={palette.secondary}
+              autoCapitalize={"none"}
+              keyboardType="numeric"
+              returnKeyType="next"
+              style={stylesP.inputPrice}
             />
           </View>
         );
@@ -495,6 +447,11 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
           </View>
         );
     }
+  };
+
+  const onDeleteSearch = () => {
+    setShowSearch(!showSearch);
+    setSearch(""), setTempSearch("");
   };
 
   return (
@@ -590,7 +547,148 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
           onEndReached={loadMoreProducts}
           onEndReachedThreshold={0.5}
           showsVerticalScrollIndicator={false}
-          ListHeaderComponent={renderHeader}
+          ListHeaderComponent={
+            <View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <View />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginVertical: 10,
+                    marginLeft: 18,
+                  }}
+                >
+                  {showSearch && (
+                    <TextInputControllerHolderName
+                      controller={{
+                        name: "globalSearch",
+                        control: control as any,
+                      }}
+                      placeholder="Search Products"
+                      keyboardType="web-search"
+                      value={tempSearch}
+                      onChangeText={(text) => onChangeSearch(text)}
+                      dense
+                      activeOutlineColor={palette.secondary}
+                      autoCapitalize={"none"}
+                      returnKeyType="next"
+                      style={{
+                        width: widthScreen * 0.6,
+
+                        // marginTop: 14,
+                        // marginLeft: 6,
+                      }}
+                      left={
+                        <TextInput.Icon
+                          icon={() => (
+                            <Fontisto name="search" size={20} color="#c1c1c1" />
+                          )}
+                          color={(isTextInputFocused) => "#c1c1c1"}
+                        />
+                      }
+                    />
+                  )}
+                  <View
+                    style={{ flexDirection: "row", right: widthScreen * 0.04 }}
+                  >
+                    <IconButton
+                      icon={() => (
+                        <MaterialIcons
+                          name={!showSearch ? "search" : "search-off"}
+                          size={28}
+                          color={"#424141"}
+                        />
+                      )}
+                      size={14}
+                      onPress={onDeleteSearch}
+                    />
+
+                    <IconButton
+                      icon={() => (
+                        <AntDesign name="filter" size={24} color={"#424141"} />
+                      )}
+                      size={14}
+                      onPress={showDialog}
+                    />
+                    {(selectedCategories.length > 0 ||
+                      selectedRating !== null ||
+                      priceRange[0] > 0 ||
+                      priceRange[1] < 1000 ||
+                      search) && (
+                      <IconButton
+                        icon={() => (
+                          <Octicons name="trash" size={24} color={"#424141"} />
+                        )}
+                        size={14}
+                        onPress={clearFilters}
+                      />
+                    )}
+                  </View>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  //  margin: 10,
+                  //  maxWidth: widthScreen * 0.,
+                }}
+              >
+                {selectedCategories.map((id) => (
+                  <Button
+                    key={id}
+                    onPress={() => removeCategoryFilter(id)}
+                    style={stylesP.chip}
+                    rippleColor={"#f0ecec"}
+                  >
+                    <Text style={stylesP.chipText}>
+                      {
+                        categoriesData?.find((category) => category.id === id)
+                          ?.name
+                      }{" "}
+                      <AntDesign name="close" size={14} />
+                    </Text>
+                  </Button>
+                ))}
+                {selectedRating !== null && (
+                  <Button
+                    onPress={removeRatingFilter}
+                    style={stylesP.chip}
+                    rippleColor={"#f0ecec"}
+                  >
+                    <Text style={stylesP.chipText}>
+                      Rating: {selectedRating}
+                      <AntDesign name="star" size={12} />{" "}
+                      <AntDesign name="close" size={14} />
+                    </Text>
+                  </Button>
+                )}
+                {(priceRange[0] > 0 || priceRange[1] < 1000) && (
+                  <Button
+                    onPress={removePriceFilter}
+                    style={stylesP.chip}
+                    rippleColor={"#f0ecec"}
+                  >
+                    <Text style={stylesP.chipText}>
+                      Price: {priceRange[0]} - {priceRange[1]}{" "}
+                      <AntDesign name="close" size={14} />
+                    </Text>
+                  </Button>
+                )}
+                {/*    {search && (
+            <Chip onClose={removeSearchFilter} style={{ margin: 4 }}>
+              Buscar: {search}
+            </Chip>
+          )}*/}
+              </View>
+            </View>
+          }
         />
       </View>
     </View>
@@ -671,6 +769,18 @@ const stylesP = StyleSheet.create({
   },
   titleCategory: {
     fontFamily: "Avanta-Medium",
-    fontSize: 18,
+    fontSize: 20,
+  },
+  inputPrice: {
+    width: widthScreen * 0.4,
+    marginBottom: 10,
+  },
+  textPrice: {
+    fontFamily: "Avanta-Medium",
+    fontSize: 26,
+    marginHorizontal: 10,
+    marginBottom: 10,
+    textAlignVertical: "center",
+    width: widthScreen * 0.22,
   },
 });
