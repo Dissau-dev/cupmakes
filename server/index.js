@@ -78,9 +78,10 @@ try {
 */
 
 const express = require('express');
-const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+const Stripe = require('stripe');
 const app = express();
 app.use(express.json());
+const secret_key = "sk_test_51P4caFDrtegwEnl3dVHanrC9VxeG45YVOFHkVorMg5DAfWHlTnE7GQhWdnDDmK3ugIFXKlO9BnS9iG991zvJfXcr00Twa8Jcbf"
 
 app.get('/',(req,res)=>{
     res.json({
@@ -89,18 +90,31 @@ app.get('/',(req,res)=>{
     })
 })
 
-app.post('/payment-sheet', async (req, res) => {
+app.post('/payment-sheet', async (_, res) => {
   //const { amount } = req.body;
+const stripe = new Stripe(secret_key,{
+  apiVersion:'2024-06-20',
+  typescript: false
+});
+  const customers = await stripe.customers.list();
+  const customer = customers.data[0];
+   
+  if(!customer){
+     return res.send({error: 'You have no customer created'});
+  }
+  console.log('customer :'+customer);
 
-  const customer = await stripe.customers.create();
+
   const ephemeralKey = await stripe.ephemeralKeys.create(
     { customer: customer.id },
     { apiVersion: '2024-06-20' }
   );
+
   const paymentIntent = await stripe.paymentIntents.create({
     amount: '5099',
     currency: 'usd',
     customer: customer.id,
+      payment_method_types: ['card']
   });
 
   res.json({

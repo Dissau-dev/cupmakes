@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert, Platform } from "react-native";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { cleanCart, selectProducts } from "../../store/slices/cartSlice";
 import { selectUser } from "../../store/slices/userSlice";
@@ -14,6 +14,7 @@ import { Fontisto } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import {
   CardField,
+  StripeProvider,
   Token,
   initPaymentSheet,
   usePaymentSheet,
@@ -21,6 +22,7 @@ import {
 } from "@stripe/stripe-react-native";
 import axios from "axios";
 import AccounDetail from "../../screens/Profile/AccounDetail";
+import { STRIPE_PUBLISHABLE_KEY } from "../../screens/carStore/StripeConfig";
 
 export const TakePickUp = () => {
   const [cardDetails, setCardDetails] = useState<any>();
@@ -60,22 +62,15 @@ export const TakePickUp = () => {
     //console.log(line_Items);
     initialisePaymenSheet();
   }, []);
-  const Api_Url = "http://localhost:8000/payment-sheet";
+  const Api_Url = "https://cupmakes.onrender.com/payment-sheet";
   const [ready, setReady] = useState(false);
   const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
 
   const { createToken } = useStripe();
 
   const initialisePaymenSheet = async () => {
-    {
-      /*  const { paymentIntent, ephemeralKey, customer } =
-      await fetchPaymentSheetParams(); */
-    }
-    const paymentIntent =
-      "pi_3PW5lG2eZvKYlo2C0XRTgCTd_secret_WFjYPmZ7jQNw2HuSDDiYEtmXU";
-    const customer = "cus_QMpQuknRTMDiRM";
-    const ephemeralKey =
-      "ek_test_YWNjdF8xMDMyRDgyZVp2S1lsbzJDLHh0U2FMWThRY0VZS21NQnFrcWx0MGdRdXVFVnVaeTc_00ZDEvlgjG";
+    const { paymentIntent, ephemeralKey, customer } =
+      await fetchPaymentSheetParams();
 
     const { error } = await initPaymentSheet({
       customerId: customer,
@@ -90,15 +85,6 @@ export const TakePickUp = () => {
       setReady(true);
 
       console.log("No hay error en InitPaymentSheet");
-    }
-  };
-
-  const fetchParams = async () => {
-    try {
-      const response = await axios.get("http://localhost:8000");
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -129,6 +115,33 @@ export const TakePickUp = () => {
       ephemeralKey,
       customer,
     };
+  };
+
+  const customAppearance = {
+    font: {
+      family:
+        Platform.OS === "android" ? "avenirnextregular" : "AvenirNext-Regular",
+    },
+    shapes: {
+      borderRadius: 12,
+      borderWidth: 0.5,
+    },
+    primaryButton: {
+      shapes: {
+        borderRadius: 20,
+      },
+    },
+    colors: {
+      primary: "#fcfdff",
+      background: "#ffffff",
+      componentBackground: "#f3f8fa",
+      componentBorder: "#f3f8fa",
+      componentDivider: "#000000",
+      primaryText: "#000000",
+      secondaryText: "#000000",
+      componentText: "#000000",
+      placeholderText: "#73757b",
+    },
   };
 
   async function onBuy() {
@@ -245,83 +258,88 @@ export const TakePickUp = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={{ marginHorizontal: "auto" }}>
-        <TextInputController
-          controller={{
-            name: "name",
-            rules: {
-              required: {
-                value: true,
-                message: "name required",
+    <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
+      <View style={styles.container}>
+        <View style={{ marginHorizontal: "auto" }}>
+          <TextInputController
+            controller={{
+              name: "name",
+              rules: {
+                required: {
+                  value: true,
+                  message: "name required",
+                },
               },
-            },
-            control: control as any,
-          }}
-          style={styles.input}
-          placeholder="name"
-          dense
-          //  textColor={palette.se}
-          autoCapitalize={"none"}
-          returnKeyType="next"
-          left={
-            <TextInput.Icon
-              icon={() => <Fontisto name="person" size={18} color="#c1c1c1" />}
-              color={(isTextInputFocused) => "#c1c1c1"}
-            />
-          }
-        />
-        <TextInputController
-          controller={{
-            name: "lastName",
-            rules: {
-              required: {
-                value: true,
-                message: "last name required",
+              control: control as any,
+            }}
+            style={styles.input}
+            placeholder="name"
+            dense
+            //  textColor={palette.se}
+            autoCapitalize={"none"}
+            returnKeyType="next"
+            left={
+              <TextInput.Icon
+                icon={() => (
+                  <Fontisto name="person" size={18} color="#c1c1c1" />
+                )}
+                color={(isTextInputFocused) => "#c1c1c1"}
+              />
+            }
+          />
+          <TextInputController
+            controller={{
+              name: "lastName",
+              rules: {
+                required: {
+                  value: true,
+                  message: "last name required",
+                },
               },
-            },
-            control: control as any,
-          }}
-          style={styles.input}
-          placeholder="last name"
-          dense
-          //  textColor={palette.se}
-          autoCapitalize={"none"}
-          returnKeyType="next"
-          left={
-            <TextInput.Icon
-              icon={() => <Fontisto name="person" size={18} color="#c1c1c1" />}
-              color={(isTextInputFocused) => "#c1c1c1"}
-            />
-          }
-        />
+              control: control as any,
+            }}
+            style={styles.input}
+            placeholder="last name"
+            dense
+            //  textColor={palette.se}
+            autoCapitalize={"none"}
+            returnKeyType="next"
+            left={
+              <TextInput.Icon
+                icon={() => (
+                  <Fontisto name="person" size={18} color="#c1c1c1" />
+                )}
+                color={(isTextInputFocused) => "#c1c1c1"}
+              />
+            }
+          />
 
-        <TextInputController
-          controller={{
-            name: "phone",
-            rules: {
-              required: {
-                value: true,
-                message: "phone required",
+          <TextInputController
+            controller={{
+              name: "phone",
+              rules: {
+                required: {
+                  value: true,
+                  message: "phone required",
+                },
               },
-            },
-            control: control as any,
-          }}
-          style={styles.input}
-          placeholder="phone number"
-          dense
-          //  textColor={palette.se}
-          autoCapitalize={"none"}
-          returnKeyType="next"
-          left={
-            <TextInput.Icon
-              icon={() => <Fontisto name="phone" size={18} color="#c1c1c1" />}
-              color={(isTextInputFocused) => "#c1c1c1"}
-            />
-          }
-        />
-      </View>
-      {/*   <CardField
+              control: control as any,
+            }}
+            style={styles.input}
+            placeholder="phone number"
+            dense
+            //  textColor={palette.se}
+            autoCapitalize={"none"}
+            returnKeyType="next"
+            left={
+              <TextInput.Icon
+                icon={() => <Fontisto name="phone" size={18} color="#c1c1c1" />}
+                color={(isTextInputFocused) => "#c1c1c1"}
+              />
+            }
+          />
+        </View>
+        {/*   <CardField
         postalCodeEnabled={false}
         placeholders={{
           number: "4242 4242 4242 4242",
@@ -331,19 +349,19 @@ export const TakePickUp = () => {
         onCardChange={(cardDetails) => setCardDetails(cardDetails)}
       /> */}
 
-      <Button
-        rippleColor={"#c1c1c1"}
-        mode="contained"
-        //  onPress={fetchParams}
-        // loading={loadingBtn}
-        // disabled={loadingBtn}
-        onPress={fetchParams}
-        //  loading={isLoading || loading}
-        disabled={isLoading || loading || !ready}
-      >
-        Pagar
-      </Button>
-    </View>
+        <Button
+          rippleColor={"#c1c1c1"}
+          mode="contained"
+          // loading={loadingBtn}
+          // disabled={loadingBtn}
+          onPress={onBuy}
+          //  loading={isLoading || loading}
+          disabled={isLoading || loading || !ready}
+        >
+          Pagar
+        </Button>
+      </View>
+    </StripeProvider>
   );
 };
 

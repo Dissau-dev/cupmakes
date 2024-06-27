@@ -47,19 +47,17 @@ export default function App() {
   const persistor = persistStore(store);
 
   return (
-    <StripeConfig>
-      <Provider store={store}>
-        <PersistGate persistor={persistor} loading={<LoadingPage title="" />}>
-          <SafeAreaProvider>
-            <ThemeProvider>
-              <PaperProvider theme={CombinedLightTheme}>
-                <AppEntry />
-              </PaperProvider>
-            </ThemeProvider>
-          </SafeAreaProvider>
-        </PersistGate>
-      </Provider>
-    </StripeConfig>
+    <Provider store={store}>
+      <PersistGate persistor={persistor} loading={<LoadingPage title="" />}>
+        <SafeAreaProvider>
+          <ThemeProvider>
+            <PaperProvider theme={CombinedLightTheme}>
+              <AppEntry />
+            </PaperProvider>
+          </ThemeProvider>
+        </SafeAreaProvider>
+      </PersistGate>
+    </Provider>
   );
 }
 
