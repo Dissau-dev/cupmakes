@@ -24,6 +24,8 @@ export const TakeOrderScreen = () => {
   } | null>(null);
 
   useEffect(() => {
+ 
+    // Inicializar Stripe con la clave publicable
     const initializeStripe = async () => {
       await initStripe({
         publishableKey: PUBLISHABLE_KEY,
@@ -50,7 +52,6 @@ export const TakeOrderScreen = () => {
     };
   };
 
-  console.log(paymentMethod);
   const initialisePaymentSheet = async () => {
     setLoading(true);
 
@@ -62,9 +63,12 @@ export const TakeOrderScreen = () => {
         customerId: customer,
         customerEphemeralKeySecret: ephemeralKey,
         paymentIntentClientSecret: paymentIntent,
-        merchantDisplayName: "Cupmakes",
-
+        merchantDisplayName: "Example Inc.",
+        applePay: true,
+        merchantCountryCode: "US",
         style: "alwaysDark",
+        googlePay: true,
+        testEnv: true,
       });
 
       if (error) {
@@ -93,9 +97,10 @@ export const TakeOrderScreen = () => {
     }
 
     try {
-      const { error, paymentOption } = await presentPaymentSheet(z);
+      const { error, paymentOption } = await presentPaymentSheet({
+        confirmPayment: false,
+      });
 
-      console.log(paymentOption);
       if (error) {
         console.error("Error presenting payment sheet:", error);
         Alert.alert(
@@ -136,10 +141,77 @@ export const TakeOrderScreen = () => {
     }
   };
 
- 
+  return (
+    <PaymentScreen>
+      <View>
+        <Button
+          variant="primary"
+          loading={loading}
+          title={
+            paymentMethod ? (
+              <View style={styles.row}>
+                <Image
+                  source={{
+                    uri: `data:image/png;base64,${paymentMethod.image}`,
+                  }}
+                  style={styles.image}
+                />
+                <Text style={styles.text}>{paymentMethod.label}</Text>
+              </View>
+            ) : (
+              "Choose payment method"
+            )
+          }
+          disabled={!paymentSheetEnabled}
+          onPress={choosePaymentOption}
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Button
+          variant="primary"
+          loading={loading}
+          disabled={!paymentMethod || !paymentSheetEnabled}
+          title="Buy"
+          onPress={onPressBuy}
+        />
+      </View>
+    </PaymentScreen>
+  );
 };
 
-*/
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  section: {
+    marginTop: 40,
+  },
+  title: {
+    fontSize: 18,
+    marginBottom: 20,
+    fontWeight: "bold",
+  },
+  paymentMethodTitle: {
+    color: palette.secondary,
+    fontWeight: "bold",
+  },
+  image: {
+    width: 26,
+    height: 20,
+  },
+  text: {
+    color: palette.white,
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 12,
+  },
+});
+                         */
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import FocusAwareStatusBar from "../../components/atoms/FocusAwareStatusBar";

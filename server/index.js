@@ -113,7 +113,7 @@ const stripe = new Stripe(secret_key,{
   );
 
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: amountParsed,
+    amount: '5099',
     currency: 'usd',
     customer: customer.id,
       payment_method_types: ['card']

@@ -16,9 +16,10 @@ import TextInputController from "../atoms/formControls/TextInputController";
 import Toast from "react-native-toast-message";
 import { Fontisto } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { usePaymentSheet } from "@stripe/stripe-react-native";
+import { initStripe, usePaymentSheet } from "@stripe/stripe-react-native";
 import axios from "axios";
 import PaymentScreen from "../PaymentScreen";
+import { STRIPE_PUBLISHABLE_KEY } from "../../screens/carStore/StripeConfig";
 
 export const TakePickUp = () => {
   const [cardDetails, setCardDetails] = useState<any>();
@@ -56,13 +57,72 @@ export const TakePickUp = () => {
   useEffect(() => {
     formatLineItems();
     //console.log(line_Items);
-    initialisePaymenSheet();
-  }, []);
-  const Api_Url = "https://cupmakes.onrender.com/payment-sheet";
-  const [ready, setReady] = useState(false);
-  const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
+    // Inicializar Stripe con la clave publicable
+    const initializeStripe = async () => {
+      await initStripe({
+        publishableKey: STRIPE_PUBLISHABLE_KEY,
+      });
+      await initialisePaymentSheet();
+    };
 
-  const initialisePaymenSheet = async () => {
+    initializeStripe();
+  }, []);
+  const API_URL = "https://cupmakes.onrender.com/payment-sheet";
+  // const Api_Url = "https://expo-stripe-server-example.glitch.me/payment-sheet";
+  const [ready, setReady] = useState(false);
+
+  const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
+  const fetchPaymentSheetParams = async () => {
+    const data = {
+      amount: fullPrice,
+    };
+
+    setloadingBtn(true);
+
+    const response = await axios.post(API_URL, data);
+    setloadingBtn(false);
+    const { paymentIntent, ephemeralKey, customer } = response.data;
+    console.log(response.data);
+
+    return {
+      paymentIntent,
+      ephemeralKey,
+      customer,
+    };
+  };
+
+  const initialisePaymentSheet = async () => {
+    try {
+      const { paymentIntent, ephemeralKey, customer } =
+        await fetchPaymentSheetParams();
+      console.log(paymentIntent, ephemeralKey, customer);
+      const { error, paymentOption } = await initPaymentSheet({
+        customerId: customer,
+        customerEphemeralKeySecret: ephemeralKey,
+        paymentIntentClientSecret: paymentIntent,
+        merchantDisplayName: "Example Inc.",
+        applePay: true,
+        merchantCountryCode: "US",
+        style: "alwaysDark",
+        googlePay: true,
+        testEnv: true,
+      });
+
+      if (error) {
+        console.error("Error initializing payment sheet:", error);
+        Alert.alert("Error", error.message);
+
+        return;
+      }
+
+      setReady(true);
+    } catch (error) {
+      console.error("Error initializing payment sheet:", error);
+      Alert.alert("Error", "Unable to initialize payment sheet.");
+    }
+  };
+  /*
+  const initialisePaymentSheet = async () => {
     const { paymentIntent, ephemeralKey, customer } =
       await fetchPaymentSheetParams();
     console.log(
@@ -78,7 +138,7 @@ export const TakePickUp = () => {
       customerEphemeralKeySecret: ephemeralKey,
       paymentIntentClientSecret: paymentIntent,
       merchantDisplayName: "Example Inc",
-      allowsDelayedPaymentMethods: true,
+    
     });
     if (error) {
       Alert.alert(`Error code : ${error.code}`);
@@ -94,7 +154,7 @@ export const TakePickUp = () => {
 
     setloadingBtn(true);
     try {
-      const response = await axios.post(Api_Url);
+      const response = await axios.post(Api_Url, data);
       setloadingBtn(false);
       const { paymentIntent, ephemeralKey, customer } = response.data;
       console.log(response.data);
@@ -119,7 +179,7 @@ export const TakePickUp = () => {
       customer,
     };
   };
-
+*/
   async function onBuy(data: any) {
     try {
       const { error } = await presentPaymentSheet();
@@ -191,7 +251,7 @@ export const TakePickUp = () => {
   };
 
   return (
-    <PaymentScreen>
+    <>
       <View style={{ marginHorizontal: "auto" }}>
         <TextInputController
           controller={{
@@ -276,7 +336,7 @@ export const TakePickUp = () => {
       >
         Pagar
       </Button>
-    </PaymentScreen>
+    </>
   );
 };
 

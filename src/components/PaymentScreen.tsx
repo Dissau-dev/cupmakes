@@ -4,7 +4,6 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text } from "react-native";
 
 import { palette } from "../theme/colors";
 import { fetchPublishableKey } from "../helpers/helper";
-import { STRIPE_PUBLISHABLE_KEY } from "../screens/carStore/StripeConfig";
 
 interface Props {
   paymentMethod?: string;
@@ -16,7 +15,7 @@ const PaymentScreen: React.FC<Props> = ({ paymentMethod, children }) => {
 
   useEffect(() => {
     async function initialize() {
-      const publishableKey = STRIPE_PUBLISHABLE_KEY;
+      const publishableKey = await fetchPublishableKey(paymentMethod);
 
       console.log("public" + publishableKey);
       if (publishableKey) {
