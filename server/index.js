@@ -91,7 +91,9 @@ app.get('/',(req,res)=>{
 })
 
 app.post('/payment-sheet', async (_, res) => {
-  //const { amount } = req.body;
+  const { amount } = req.body;
+let amountParsed = parseInt(amount).toFixed(2) * 100
+console.log('amountParsed : '+amountParsed)
 const stripe = new Stripe(secret_key,{
   apiVersion:'2024-06-20',
   typescript: false
@@ -111,7 +113,7 @@ const stripe = new Stripe(secret_key,{
   );
 
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: '5099',
+    amount: amountParsed,
     currency: 'usd',
     customer: customer.id,
       payment_method_types: ['card']
@@ -122,6 +124,28 @@ const stripe = new Stripe(secret_key,{
     ephemeralKey: ephemeralKey.secret,
     customer: customer.id,
   });
+});
+
+app.post('/create-token', async (req, res) => {
+  const stripe = new Stripe(secret_key,{
+    apiVersion:'2024-06-20',
+    typescript: false
+  });
+  const { cardNumber, expMonth, expYear, cvc } = req.body;
+
+  try {
+      const token = await stripe.tokens.create({
+          card: {
+              number: cardNumber,
+              exp_month: expMonth,
+              exp_year: expYear,
+              cvc: cvc,
+          },
+      });
+      res.json({ token });
+  } catch (error) {
+      res.status(500).send({ error: error.message });
+  }
 });
 
 app.listen(8000, () => console.log('Server running on port 8000'));

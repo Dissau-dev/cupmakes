@@ -19,7 +19,10 @@ import { injectStore } from "./src/services/APIServer";
 import { PaperProvider } from "react-native-paper";
 import { ThemeProvider } from "./src/Context/theme/ThemeContext";
 import { CombinedLightTheme } from "./src/theme/colors";
-import StripeConfig from "./src/screens/carStore/StripeConfig";
+import StripeConfig, {
+  STRIPE_PUBLISHABLE_KEY,
+} from "./src/screens/carStore/StripeConfig";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 /*
 import { Navigator } from './src/Navigator/Navigator';
@@ -52,7 +55,9 @@ export default function App() {
         <SafeAreaProvider>
           <ThemeProvider>
             <PaperProvider theme={CombinedLightTheme}>
-              <AppEntry />
+              <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
+                <AppEntry />
+              </StripeProvider>
             </PaperProvider>
           </ThemeProvider>
         </SafeAreaProvider>

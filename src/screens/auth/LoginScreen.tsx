@@ -55,11 +55,11 @@ export const LoginScreen = ({ navigation }: Props) => {
     formState: { isSubmitting, isValid, isDirty },
   } = useForm({
     defaultValues: {
-      email: "",
+      email: "mauriciogaraco@gmail.com",
     },
   });
   const onSubmit = (data: any) => {
-    const email = data.email;
+    const email = "mauriciogaraco@gmail.com";
     console.log(email);
     try {
       setloading(true);
@@ -147,7 +147,7 @@ export const LoginScreen = ({ navigation }: Props) => {
               onPress={handleSubmit(onSubmit)}
               textColor={palette.white}
               loading={isSubmitting}
-              disabled={(isDirty && !isValid) || isSubmitting || loading}
+              disabled={isSubmitting || loading}
               labelStyle={stylesRegister.textLogIn}
             >
               {isSubmitting ? "Loading" : "Log in"}

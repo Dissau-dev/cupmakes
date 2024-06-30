@@ -25,7 +25,17 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    
+    "permissions": [
+      "INTERNET"
+    ],
+    "plugins": [
+      [
+        "@stripe/stripe-react-native",
+        {
+          "enableGooglePay": true
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "a801122b-a85c-4a5f-a3c1-77c3b765bf76"
