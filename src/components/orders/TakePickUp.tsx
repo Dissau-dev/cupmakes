@@ -46,6 +46,7 @@ export const TakePickUp = () => {
 
   const line_Items: { product_id: number; quantity: number }[] = [];
   const fullPrice = useAppSelector(selectFullPrice);
+
   const formatLineItems = () => {
     products.forEach((i) => {
       line_Items.push({ product_id: i.id, quantity: 1 });

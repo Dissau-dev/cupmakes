@@ -1,13 +1,17 @@
 
-const env = require("dotenv");
-env.config({ path: "./.env" });
+
 const bodyParser = require("body-parser");
 const express = require("express");
 const Stripe = require("stripe");
 
+
+const env = require("dotenv");
+env.config({ path: "./server/.env" });
 const stripePublishableKey = process.env.STRIPE_PUBLIC_KEY|| "";
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "";
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
+
+
 
 const app = express();
 
@@ -20,7 +24,9 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.send({ "Welome to": "Expo's Stripe example server!" });
+  res.send({ "Welome to": "Expo's Stripe example server!"+stripePublishableKey+"_"+stripeSecretKey });
+  console.log(stripeSecretKey)
+  console.log(stripePublishableKey)
 });
 
 const calculateOrderAmount = _order => {
@@ -419,9 +425,11 @@ app.post("/charge-card-off-session", async (req, res) => {
 
 app.post("/payment-sheet", async (req, res) => {
   try {
-    const {amount} = req.body;
-    const parsedAmount = Math.round(parseFloat(amount) * 100); 
     const { secret_key } = getKeys();
+
+    const {amount} = req.body;
+    const parsedAmount = amount * 100; 
+    
   console.log('secretKey :'+secret_key)
     const stripe = new Stripe(secret_key, {
       apiVersion: "2020-08-27",
