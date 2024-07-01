@@ -482,7 +482,7 @@ const generateResponse = intent => {
     error: "Failed"
   };
 };
-
+// git
 /*
 const express = require('express');
 const Stripe = require('stripe');
