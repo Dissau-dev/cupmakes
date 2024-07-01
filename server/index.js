@@ -418,40 +418,46 @@ app.post("/charge-card-off-session", async (req, res) => {
 // Watch this video to get started: https://youtu.be/rPR2aJ6XnAc.
 
 app.post("/payment-sheet", async (req, res) => {
-  const {amount} = req.body;
-  const parsedAmount = parseInt(amount).toFixed(2) * 100
-  const { secret_key } = getKeys();
-
-  const stripe = new Stripe(secret_key, {
-    apiVersion: "2020-08-27",
-    typescript: true
-  });
-
-  const customers = await stripe.customers.list();
-
-  // Here, we're getting latest customer only for example purposes.
-  const customer = customers.data[0];
-
-  if (!customer) {
-    res.send({
-      error: "You have no customer created"
+  try {
+    const {amount} = req.body;
+    const parsedAmount = Math.round(parseFloat(amount) * 100); 
+    const { secret_key } = getKeys();
+  console.log('secretKey :'+secret_key)
+    const stripe = new Stripe(secret_key, {
+      apiVersion: "2020-08-27",
+      typescript: true
     });
+  
+    const customers = await stripe.customers.list();
+  
+    // Here, we're getting latest customer only for example purposes.
+    const customer = customers.data[0];
+  
+    if (!customer) {
+      res.send({
+        error: "You have no customer created"
+      });
+    }
+  
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customer.id },
+      { apiVersion: "2020-08-27" }
+    );
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: parseInt(parsedAmount),
+      currency: "usd",
+      customer: customer.id
+    });
+    console.log(paymentIntent);
+    res.json({
+      paymentIntent: paymentIntent.client_secret,
+      ephemeralKey: ephemeralKey.secret,
+      customer: customer.id
+    });
+  } catch (error) {
+    console.log('error on payment-sheet :'+error)
   }
 
-  const ephemeralKey = await stripe.ephemeralKeys.create(
-    { customer: customer.id },
-    { apiVersion: "2020-08-27" }
-  );
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: parseInt(parsedAmount),
-    currency: "usd",
-    customer: customer.id
-  });
-  res.json({
-    paymentIntent: paymentIntent.client_secret,
-    ephemeralKey: ephemeralKey.secret,
-    customer: customer.id
-  });
 });
 
 app.listen(8080, () => console.log(`Node server listening on port ${8080}!`));

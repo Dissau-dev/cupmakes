@@ -67,8 +67,8 @@ export const TakePickUp = () => {
 
     initializeStripe();
   }, []);
-  // const API_URL = "https://cupmakes.onrender.com/payment-sheet";
-  const API_URL = "https://expo-stripe-server-example.glitch.me";
+  const API_URL = "https://cupmakes.onrender.com/payment-sheet";
+  // const API_URL = "https://expo-stripe-server-example.glitch.me";
   const [ready, setReady] = useState(false);
 
   const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
@@ -86,13 +86,30 @@ export const TakePickUp = () => {
   }, []);
 
   const fetchPaymentSheetParams = async () => {
-    const response = await fetch(`${API_URL}/payment-sheet`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const { paymentIntent, ephemeralKey, customer } = await response.json();
+    const data = {
+      amount: fullPrice,
+    };
+
+    setloadingBtn(true);
+    try {
+      const response = await axios.post(API_URL, data);
+      setloadingBtn(false);
+      const { paymentIntent, ephemeralKey, customer } = response.data;
+      console.log(response.data);
+
+      return {
+        paymentIntent,
+        ephemeralKey,
+        customer,
+      };
+    } catch (error) {
+      console.log(error);
+      setloadingBtn(false);
+    }
+    const response = await axios.post(API_URL, data);
+    setloadingBtn(false);
+    const { paymentIntent, ephemeralKey, customer } = response.data;
+    console.log(response.data);
 
     return {
       paymentIntent,
