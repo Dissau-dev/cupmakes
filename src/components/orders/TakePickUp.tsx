@@ -67,22 +67,32 @@ export const TakePickUp = () => {
 
     initializeStripe();
   }, []);
-  const API_URL = "https://cupmakes.onrender.com/payment-sheet";
-  // const Api_Url = "https://expo-stripe-server-example.glitch.me/payment-sheet";
+  // const API_URL = "https://cupmakes.onrender.com/payment-sheet";
+  const API_URL = "https://expo-stripe-server-example.glitch.me";
   const [ready, setReady] = useState(false);
 
   const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
-  const fetchPaymentSheetParams = async () => {
-    const data = {
-      amount: fullPrice,
+
+  useEffect(() => {
+    // Inicializar Stripe con la clave publicable
+    const initializeStripe = async () => {
+      await initStripe({
+        publishableKey: STRIPE_PUBLISHABLE_KEY,
+      });
+      await initialisePaymentSheet();
     };
 
-    setloadingBtn(true);
+    initializeStripe();
+  }, []);
 
-    const response = await axios.post(API_URL, data);
-    setloadingBtn(false);
-    const { paymentIntent, ephemeralKey, customer } = response.data;
-    console.log(response.data);
+  const fetchPaymentSheetParams = async () => {
+    const response = await fetch(`${API_URL}/payment-sheet`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const { paymentIntent, ephemeralKey, customer } = await response.json();
 
     return {
       paymentIntent,
@@ -95,7 +105,7 @@ export const TakePickUp = () => {
     try {
       const { paymentIntent, ephemeralKey, customer } =
         await fetchPaymentSheetParams();
-      console.log(paymentIntent, ephemeralKey, customer);
+
       const { error, paymentOption } = await initPaymentSheet({
         customerId: customer,
         customerEphemeralKeySecret: ephemeralKey,
@@ -121,6 +131,7 @@ export const TakePickUp = () => {
       Alert.alert("Error", "Unable to initialize payment sheet.");
     }
   };
+
   /*
   const initialisePaymentSheet = async () => {
     const { paymentIntent, ephemeralKey, customer } =
@@ -252,90 +263,96 @@ export const TakePickUp = () => {
 
   return (
     <>
-      <View style={{ marginHorizontal: "auto" }}>
-        <TextInputController
-          controller={{
-            name: "name",
-            rules: {
-              required: {
-                value: true,
-                message: "name required",
+      <PaymentScreen>
+        <View style={{ marginHorizontal: "auto" }}>
+          <TextInputController
+            controller={{
+              name: "name",
+              rules: {
+                required: {
+                  value: true,
+                  message: "name required",
+                },
               },
-            },
-            control: control as any,
-          }}
-          style={styles.input}
-          placeholder="name"
-          dense
-          //  textColor={palette.se}
-          autoCapitalize={"none"}
-          returnKeyType="next"
-          left={
-            <TextInput.Icon
-              icon={() => <Fontisto name="person" size={18} color="#c1c1c1" />}
-              color={(isTextInputFocused) => "#c1c1c1"}
-            />
-          }
-        />
-        <TextInputController
-          controller={{
-            name: "lastName",
-            rules: {
-              required: {
-                value: true,
-                message: "last name required",
+              control: control as any,
+            }}
+            style={styles.input}
+            placeholder="name"
+            dense
+            //  textColor={palette.se}
+            autoCapitalize={"none"}
+            returnKeyType="next"
+            left={
+              <TextInput.Icon
+                icon={() => (
+                  <Fontisto name="person" size={18} color="#c1c1c1" />
+                )}
+                color={(isTextInputFocused) => "#c1c1c1"}
+              />
+            }
+          />
+          <TextInputController
+            controller={{
+              name: "lastName",
+              rules: {
+                required: {
+                  value: true,
+                  message: "last name required",
+                },
               },
-            },
-            control: control as any,
-          }}
-          style={styles.input}
-          placeholder="last name"
-          dense
-          //  textColor={palette.se}
-          autoCapitalize={"none"}
-          returnKeyType="next"
-          left={
-            <TextInput.Icon
-              icon={() => <Fontisto name="person" size={18} color="#c1c1c1" />}
-              color={(isTextInputFocused) => "#c1c1c1"}
-            />
-          }
-        />
+              control: control as any,
+            }}
+            style={styles.input}
+            placeholder="last name"
+            dense
+            //  textColor={palette.se}
+            autoCapitalize={"none"}
+            returnKeyType="next"
+            left={
+              <TextInput.Icon
+                icon={() => (
+                  <Fontisto name="person" size={18} color="#c1c1c1" />
+                )}
+                color={(isTextInputFocused) => "#c1c1c1"}
+              />
+            }
+          />
 
-        <TextInputController
-          controller={{
-            name: "phone",
-            rules: {
-              required: {
-                value: true,
-                message: "phone required",
+          <TextInputController
+            controller={{
+              name: "phone",
+              rules: {
+                required: {
+                  value: true,
+                  message: "phone required",
+                },
               },
-            },
-            control: control as any,
-          }}
-          style={styles.input}
-          placeholder="phone number"
-          dense
-          //  textColor={palette.se}
-          autoCapitalize={"none"}
-          returnKeyType="next"
-          left={
-            <TextInput.Icon
-              icon={() => <Fontisto name="phone" size={18} color="#c1c1c1" />}
-              color={(isTextInputFocused) => "#c1c1c1"}
-            />
-          }
-        />
-      </View>
+              control: control as any,
+            }}
+            style={styles.input}
+            placeholder="phone number"
+            dense
+            //  textColor={palette.se}
+            autoCapitalize={"none"}
+            returnKeyType="next"
+            left={
+              <TextInput.Icon
+                icon={() => <Fontisto name="phone" size={18} color="#c1c1c1" />}
+                color={(isTextInputFocused) => "#c1c1c1"}
+              />
+            }
+          />
+        </View>
 
-      <Button
-        mode="contained"
-        onPress={handleSubmit(onBuy)}
-        loading={isLoading}
-        disabled={isLoading || !ready}
-      >
-        Pagar
-      </Button>
+        <Button
+          mode="contained"
+          onPress={handleSubmit(onBuy)}
+          loading={isLoading}
+          disabled={isLoading || !ready}
+        >
+          Pagar
+        </Button>
+      </PaymentScreen>
     </>
   );
 };
