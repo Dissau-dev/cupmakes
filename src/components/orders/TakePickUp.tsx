@@ -1,36 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Alert, Platform } from "react-native";
+import { View, StyleSheet, Alert, Platform, Text } from "react-native";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   cleanCart,
   selectFullPrice,
+  selectLineItems,
   selectProducts,
 } from "../../store/slices/cartSlice";
 import { selectUser } from "../../store/slices/userSlice";
 import { Controller, useForm } from "react-hook-form";
-import { useCreateOrderMutation } from "../../store/api/productsApi";
-import { Button, TextInput } from "react-native-paper";
+import {
+  useCreateOrderMutation,
+  useUpdateOrderStatusMutation,
+} from "../../store/api/productsApi";
+import { Button, Dialog, Divider, Portal, TextInput } from "react-native-paper";
 import { palette } from "../../theme/colors";
 import { heightScrenn, widthScreen } from "../../theme/styles/global";
 import TextInputController from "../atoms/formControls/TextInputController";
 import Toast from "react-native-toast-message";
 import { Fontisto } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { initStripe, usePaymentSheet } from "@stripe/stripe-react-native";
+import {
+  PaymentSheetError,
+  StripeError,
+  initStripe,
+  usePaymentSheet,
+} from "@stripe/stripe-react-native";
 import axios from "axios";
 import PaymentScreen from "../PaymentScreen";
 import { STRIPE_PUBLISHABLE_KEY } from "../../screens/carStore/StripeConfig";
 
 export const TakePickUp = () => {
-  const [cardDetails, setCardDetails] = useState<any>();
+  const lineales = useAppSelector(selectLineItems);
+  const navigation = useNavigation();
   const [loadingBtn, setloadingBtn] = useState(false);
+  const [paymentToken, setpaymentToken] = useState("");
 
-  const products = useAppSelector(selectProducts);
   const currentUser = useAppSelector(selectUser);
   const [isConfirm, setisConfirm] = useState(false);
-  const [delivery, { isLoading }] = useCreateOrderMutation();
-  const navigation = useNavigation();
+  const [delivery, { isLoading, data: createdOrder }] =
+    useCreateOrderMutation();
+  const [updateOrderStatus, { isLoading: isUpdatading }] =
+    useUpdateOrderStatusMutation();
+  const [createdorderData, setcreatedorderData] = useState("");
+
   const dispatch = useAppDispatch();
+
+  const theItems = useAppSelector(selectLineItems);
   const {
     handleSubmit,
     control,
@@ -44,21 +60,28 @@ export const TakePickUp = () => {
     },
   });
 
-  const line_Items: { product_id: number; quantity: number }[] = [];
+  const products = useAppSelector(selectProducts);
+  const [visible, setVisible] = React.useState(false);
+  const [modalError, setmodalError] = useState({
+    code: "Failed",
+    message: "Unkown error",
+  });
+  const showDialog = () => setVisible(true);
+
+  const hideDialog = () => setVisible(false);
   const fullPrice = useAppSelector(selectFullPrice);
+  const line_items: { product_id: number; quantity: number }[] = [];
 
   const formatLineItems = () => {
     products.forEach((i) => {
-      line_Items.push({ product_id: i.id, quantity: 1 });
+      line_items.push({ product_id: i.id, quantity: i.quantity });
     });
-
-    return line_Items;
+    console.log("linealItems :" + line_items[0].product_id);
+    return line_items;
   };
-
   useEffect(() => {
-    formatLineItems();
-    //console.log(line_Items);
     // Inicializar Stripe con la clave publicable
+    formatLineItems();
     const initializeStripe = async () => {
       await initStripe({
         publishableKey: STRIPE_PUBLISHABLE_KEY,
@@ -74,18 +97,6 @@ export const TakePickUp = () => {
 
   const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
 
-  useEffect(() => {
-    // Inicializar Stripe con la clave publicable
-    const initializeStripe = async () => {
-      await initStripe({
-        publishableKey: STRIPE_PUBLISHABLE_KEY,
-      });
-      await initialisePaymentSheet();
-    };
-
-    initializeStripe();
-  }, []);
-
   const fetchPaymentSheetParams = async () => {
     const data = {
       amount: fullPrice,
@@ -97,7 +108,7 @@ export const TakePickUp = () => {
       setloadingBtn(false);
       const { paymentIntent, ephemeralKey, customer } = response.data;
       console.log(response.data);
-
+      setpaymentToken(paymentIntent);
       return {
         paymentIntent,
         ephemeralKey,
@@ -150,81 +161,30 @@ export const TakePickUp = () => {
     }
   };
 
-  /*
-  const initialisePaymentSheet = async () => {
-    const { paymentIntent, ephemeralKey, customer } =
-      await fetchPaymentSheetParams();
-    console.log(
-      "payment -" +
-        paymentIntent +
-        "- ephemeral:" +
-        ephemeralKey +
-        "- customer" +
-        customer
-    );
-    const { error } = await initPaymentSheet({
-      customerId: customer,
-      customerEphemeralKeySecret: ephemeralKey,
-      paymentIntentClientSecret: paymentIntent,
-      merchantDisplayName: "Example Inc",
-    
-    });
-    if (error) {
-      Alert.alert(`Error code : ${error.code}`);
-    } else {
-      setReady(true);
-    }
-  };
-
-  const fetchPaymentSheetParams = async () => {
-    const data = {
-      amount: fullPrice,
-    };
-
-    setloadingBtn(true);
-    try {
-      const response = await axios.post(Api_Url, data);
-      setloadingBtn(false);
-      const { paymentIntent, ephemeralKey, customer } = response.data;
-      console.log(response.data);
-
-      return {
-        paymentIntent,
-        ephemeralKey,
-        customer,
-      };
-    } catch (error) {
-      console.log(error);
-      setloadingBtn(false);
-    }
-    const response = await axios.post(Api_Url);
-    setloadingBtn(false);
-    const { paymentIntent, ephemeralKey, customer } = response.data;
-    console.log(response.data);
-
-    return {
-      paymentIntent,
-      ephemeralKey,
-      customer,
-    };
-  };
-*/
-  async function onBuy(data: any) {
+  async function onBuy(responseId: any) {
     try {
       const { error } = await presentPaymentSheet();
 
       if (error) {
-        console.error("Payment Sheet Error:", error);
-        Alert.alert(
-          `Error code: ${error.code}, message: ${
-            error.message || "Unknown error"
-          }, stripeErrorCode: ${error.stripeErrorCode || "N/A"}, declineCode: ${
-            error.declineCode || "N/A"
-          }`
-        );
+        showDialog();
+
+        return;
       } else {
+        const updateData = {
+          status: "completed",
+        };
+        //@ts-ignore
+        await updateOrderStatus({ id: responseId, data: updateData }).unwrap();
+
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Your order has been received",
+        });
+
+        //@ts-ignore
+        navigation.navigate("SuccessOrder");
         setReady(false);
-        onSubmitDelivery(data);
       }
     } catch (error) {
       console.error("Error presenting PaymentSheet:", error);
@@ -234,49 +194,47 @@ export const TakePickUp = () => {
 
   const onSubmitDelivery = async (data: any) => {
     const orderData = {
+      total: fullPrice.toString(),
       payment_method: "stripe",
       payment_method_title: "Credit Card (Stripe)",
       set_paid: true,
       billing: {
-        first_name: data.name,
-        last_name: data.lastName,
-        address_1: data.address,
+        first_name: data.firstName,
+        last_name: "last name",
+        address_1: "address of test",
         city: "AnyTown",
         postcode: "12345",
         country: "US",
         email: "correo@ejemplo.com",
-        phone: data.phone,
+        phone: "",
       },
-      payment_details: {
-        token: "",
-      },
-      line_items: [
+      customer_id: currentUser?.id, // Reemplazar con el ID del cliente real
+      // Agregar saldo total como metadatos
+      meta_data: [
         {
-          product_id: 435, // Reemplaza con el ID del producto real
-          quantity: 1,
+          key: "total_balance",
+          value: fullPrice, // Reemplazar con el saldo total real
         },
       ],
+
+      line_items: theItems,
     };
-    //@ts-ignore
-    await delivery(orderData)
-      .unwrap()
-      .then(() => {
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: "Your order has been received",
-        });
-        console.log("esta es la loginData:" + orderData);
-        //@ts-ignore
-        navigation.navigate("SuccessOrder");
-      })
-      .catch((res: any) => {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: `${res.data}`,
-        });
+
+    try {
+      //@ts-ignore
+      const response = await delivery(orderData).unwrap();
+      //@ts-ignore
+
+      const responseId = response.id;
+      await onBuy(responseId);
+    } catch (res: any) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: `${res.data}`,
       });
+      return;
+    }
   };
 
   return (
@@ -363,13 +321,48 @@ export const TakePickUp = () => {
         </View>
 
         <Button
+          style={[styles.btnLogIn]}
           mode="contained"
-          onPress={handleSubmit(onBuy)}
+          buttonColor={palette.primary}
+          rippleColor={palette.datesFilter}
+          onPress={handleSubmit(onSubmitDelivery)}
+          textColor={palette.white}
           loading={isLoading}
           disabled={isLoading || !ready}
+          labelStyle={styles.textLogIn}
         >
-          Pagar
+          {isSubmitting ? "Loading" : "Order"}
         </Button>
+        <Portal>
+          <Dialog visible={visible} onDismiss={hideDialog}>
+            <Dialog.Title>Alert</Dialog.Title>
+            <Divider />
+            <Dialog.Content>
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontFamily: "Avanta-Medium",
+                  marginTop: 20,
+                }}
+              >{`${modalError.code},   ${
+                modalError.message || "Unknown error"
+              }`}</Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button
+                onPress={hideDialog}
+                rippleColor={"#c1c1c1"}
+                labelStyle={{
+                  color: palette.secondary,
+                  fontFamily: "Avanta-Medium",
+                  fontSize: 22,
+                }}
+              >
+                OK
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
       </PaymentScreen>
     </>
   );
@@ -443,8 +436,26 @@ const styles = StyleSheet.create({
     height: 50,
     marginVertical: 30,
   },
+  btnLogIn: {
+    marginTop: 20,
+
+    height: heightScrenn * 0.06,
+    borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  textLogIn: {
+    marginBottom: 2,
+    fontSize: 24,
+    alignSelf: "center",
+    justifyContent: "center",
+    fontFamily: "Avanta-Medium",
+    height: heightScrenn * 0.054,
+    textAlignVertical: "center",
+    width: widthScreen * 0.8,
+  },
 });
-export const stylesRegister = StyleSheet.create({
+const stylesRegister = StyleSheet.create({
   scrollViewContainer: {
     backgroundColor: "#fff",
   },
@@ -470,24 +481,5 @@ export const stylesRegister = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     // backgroundColor: "#3425ad",
-  },
-
-  btnLogIn: {
-    marginTop: 20,
-
-    height: heightScrenn * 0.06,
-    borderRadius: 100,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  textLogIn: {
-    marginBottom: 2,
-    fontSize: 18,
-    alignSelf: "center",
-    justifyContent: "center",
-
-    height: heightScrenn * 0.054,
-    textAlignVertical: "center",
-    width: widthScreen * 0.62,
   },
 });

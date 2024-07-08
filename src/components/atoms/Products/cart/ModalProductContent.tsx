@@ -15,52 +15,59 @@ import { heightScrenn, widthScreen } from "../../../../theme/styles/global";
 import CheckBoxController from "../../formControls/CheckBoxController";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Toast from "react-native-toast-message";
-import {
-  removeItem,
-  selectProducts,
-  setQuantity,
-} from "../../../../store/slices/cartSlice";
+
 import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { selectProducts } from "../../../../store/slices/cartSlice";
 
 interface Props {
   item: any;
+  count: any;
+  setQuantity: any;
+  increment: any;
+  decrement: any;
 }
 interface InputValues {
   [key: string]: string;
 }
 
-export const ModalCartContent = ({ item }: Props) => {
+export const ModalProductContent = ({
+  item,
+  count,
+  decrement,
+  increment,
+  setQuantity,
+}: Props) => {
   const products = useAppSelector(selectProducts);
   const initialInputValues: InputValues = products.reduce((acc, product) => {
     acc[product.id] = product.quantity.toString();
     return acc;
   }, {} as InputValues);
 
-  const [selectedItemKey, setSelectedItemKey] = useState(null);
+  const [selectedValue, setSelectedValue] = useState(null);
   const [inputValues, setInputValues] =
     useState<InputValues>(initialInputValues);
-  const [inputText, setInputText] = useState("");
   const dispatch = useAppDispatch();
 
-  const onHandleInput = (value: string, item: { id: any }) => {
-    setInputValues((prevValues) => ({
+  const onHandleInput = (text: any) => {
+    setSelectedValue(text);
+    setTimeout(() => {
+      setQuantity(parseInt(text));
+    }, 200);
+    /* setInputValues((prevValues) => ({
       ...prevValues,
       [item.id]: value.replace(/[^0-9]/g, "").toString(),
     }));
     const quantity = parseInt(value);
-    setSelectedItemKey(null);
-    if (quantity === 0) {
-      dispatch(removeItem(item.id));
-    } else if (!isNaN(quantity)) {
+    setSelectedValue(null);
+    if (!isNaN(quantity)) {
       console.log("se despachò");
       // Despachar la acción setQuantity cuando se ingresan cambios válidos en el input
       dispatch(setQuantity({ id: item.id, quantity }));
-    }
+    }*/
   };
 
   const data = Array.from({ length: 100 }, (_, index) => ({
-    key: index.toString(),
-    number: index === 0 ? "0 (Delete)" : index.toString(),
+    key: (index + 1).toString(),
   }));
   const {
     handleSubmit,
@@ -76,22 +83,21 @@ export const ModalCartContent = ({ item }: Props) => {
   const handlePress = (itemKey: React.SetStateAction<null> | any) => {
     const quantity = itemKey;
     console.log(itemKey);
-    if (parseInt(itemKey) === 0) {
-      dispatch(removeItem(item.id));
-    }
-    if (selectedItemKey === itemKey) {
-      setSelectedItemKey(null);
+
+    if (selectedValue === itemKey) {
       console.log("se dispara la 2");
     } else {
-      dispatch(setQuantity({ id: item.id, quantity }));
-      setSelectedItemKey(itemKey);
-      setInputValues((prevValues) => ({
+      // dispatch(setQuantity({ id: item.id, quantity }));
+      setQuantity(itemKey);
+      setSelectedValue(itemKey);
+      /* setInputValues((prevValues) => ({
         ...prevValues,
         [item.id]: quantity,
-      }));
+      }));*/
       console.log("se dispara la 3");
     }
   };
+  console.log(selectedValue);
 
   const renderItem = ({ item }: any) => (
     <>
@@ -100,11 +106,11 @@ export const ModalCartContent = ({ item }: Props) => {
         style={[styles.touchableOpacity]}
       >
         <Text
-          style={[styles.text, selectedItemKey === item.key && styles.selected]}
+          style={[styles.text, parseInt(item.key) === count && styles.selected]}
         >
-          {item.number}
+          {item.key}
         </Text>
-        {selectedItemKey === item.key && (
+        {parseInt(item.key) === count && (
           <MaterialIcons name="done" size={24} color={palette.secondary} />
         )}
       </TouchableOpacity>
@@ -128,10 +134,13 @@ export const ModalCartContent = ({ item }: Props) => {
                 },
                 control: control as any,
               }}
-              //@ts-ignore
-              value={inputValues[item.id]}
-              onChangeText={(inputValues) => onHandleInput(inputValues, item)}
-              defaultValue={item.quantity.toString()}
+              value={
+                selectedValue !== null
+                  ? //@ts-ignore
+                    selectedValue.toString()
+                  : count.toString()
+              } //@ts-ignore
+              onChangeText={(text) => onHandleInput(text)}
               activeOutlineColor={palette.secondary}
               style={{
                 width: widthScreen * 0.8,

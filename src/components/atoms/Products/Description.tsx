@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { TouchableOpacity, View, Text, Image, StyleSheet } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { palette } from "../../../theme/colors";
@@ -7,6 +7,7 @@ import { heightScrenn, widthScreen } from "../../../theme/styles/global";
 import StarRating from "../StarRating";
 import { addLineItems, addProduct } from "../../../store/slices/cartSlice";
 import { useAppDispatch } from "../../../store/hooks";
+import { useNavigation } from "@react-navigation/native";
 import Animated, {
   Easing,
   runOnJS,
@@ -15,17 +16,33 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
+import { ModalComponent } from "../ModalComponent";
 
 interface Props {
   item: Products;
 }
 export const Description = ({ item }: Props) => {
+  const [count, setcount] = useState<number>(1);
+  const [disabled, setDisabled] = useState<boolean>(true);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const hideModal = () => {
+    setModalVisible(false);
+  };
+  const showModal = () => {
+    setModalVisible(true);
+  };
+  const navigation = useNavigation();
+
   const dispatch = useAppDispatch();
   const increment = () => {
     setcount(count + 1);
     if (count === 1) {
       setDisabled(false);
     }
+  };
+  const setQuantityCounter = (quantity: any) => {
+    setcount(quantity);
   };
   const decrement = () => {
     if (count === 2) {
@@ -40,13 +57,14 @@ export const Description = ({ item }: Props) => {
   const bubbleY = useSharedValue(0);
   const bubbleOpacity = useSharedValue(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const buttonLayout = useRef({ x: 0, y: 0, width: 0, height: 0 });
 
   const startAnimation = () => {
     setIsAnimating(true);
 
     // Reset values to start the animation again
-    bubbleX.value = 0;
-    bubbleY.value = 0;
+    bubbleX.value = buttonLayout.current.x + buttonLayout.current.width / 2;
+    bubbleY.value = buttonLayout.current.y + buttonLayout.current.height / 2;
     bubbleOpacity.value = 1;
 
     bubbleX.value = withTiming(300, {
@@ -73,6 +91,7 @@ export const Description = ({ item }: Props) => {
       )
     );
   };
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: bubbleX.value }, { translateY: bubbleY.value }],
@@ -80,20 +99,25 @@ export const Description = ({ item }: Props) => {
     };
   });
 
+  const onButtonLayout = (event: { nativeEvent: { layout: any } }) => {
+    buttonLayout.current = event.nativeEvent.layout;
+  };
+
   const handleAddToCart = (item: any) => {
     const { id, name, price, images } = item;
     const quantity = count;
     const totalItemPrice = quantity * price;
+    console.log(totalItemPrice);
+    const product_id = id;
     startAnimation();
     setTimeout(() => {
       dispatch(
         addProduct({ id, name, price, quantity, images, totalItemPrice })
       );
-      dispatch(addLineItems({ id, quantity }));
+      dispatch(addLineItems({ product_id, quantity }));
     }, 200);
   };
-  const [disabled, setDisabled] = useState<boolean>(true);
-  const [count, setcount] = useState(1);
+
   return (
     <View style={{ paddingBottom: heightScrenn * 0.16 }}>
       <View
@@ -102,8 +126,6 @@ export const Description = ({ item }: Props) => {
           borderRadius: 10,
           alignSelf: "center",
           width: widthScreen * 0.9,
-
-          //   justifyContent: "center",
           padding: 16,
           shadowColor: "#000",
           marginTop: heightScrenn * 0.06,
@@ -116,6 +138,14 @@ export const Description = ({ item }: Props) => {
           elevation: 5,
         }}
       >
+        <TouchableOpacity
+          style={{ position: "absolute", top: 10, left: 10 }}
+          //@ts-ignore
+          onPress={() => navigation.navigate("ProductsScreen")}
+        >
+          <Ionicons name="arrow-back" size={24} color={"#c1c1c1"} />
+        </TouchableOpacity>
+
         <Image
           src={item.images[0].src}
           style={{
@@ -178,8 +208,9 @@ export const Description = ({ item }: Props) => {
                 {
                   flexDirection: "row",
                   height: 40,
-                  borderWidth: 0.5,
-                  borderRadius: 100,
+                  borderWidth: 0.7,
+                  borderColor: "#c1c1c1",
+                  borderRadius: 10,
                 },
               ]}
             >
@@ -192,16 +223,17 @@ export const Description = ({ item }: Props) => {
                   borderBottomLeftRadius: 100,
                   backgroundColor: palette.white,
                 }}
-                disabled={disabled}
+                disabled={count === 1}
                 onPress={decrement}
               >
                 <AntDesign
                   name="minus"
                   size={25}
-                  color={disabled ? "#ccc" : palette.secondary}
+                  color={count === 1 ? "#ccc" : palette.secondary}
                 />
               </TouchableOpacity>
-              <View
+              <TouchableOpacity
+                onPress={showModal}
                 style={{
                   width: 40,
                   alignContent: "center",
@@ -221,7 +253,7 @@ export const Description = ({ item }: Props) => {
                 >
                   {count}
                 </Text>
-              </View>
+              </TouchableOpacity>
               <TouchableOpacity
                 style={{
                   justifyContent: "center",
@@ -236,8 +268,12 @@ export const Description = ({ item }: Props) => {
                 <AntDesign name="plus" size={25} color={palette.secondary} />
               </TouchableOpacity>
             </View>
+            {isAnimating && (
+              <Animated.View style={[styles.bubble, animatedStyle]} />
+            )}
 
             <TouchableOpacity
+              onLayout={onButtonLayout}
               disabled={isAnimating}
               onPress={() => handleAddToCart(item)}
               style={{
@@ -262,12 +298,20 @@ export const Description = ({ item }: Props) => {
                 Add To cart
               </Text>
             </TouchableOpacity>
-            {isAnimating && (
-              <Animated.View style={[styles.bubble, animatedStyle]} />
-            )}
           </View>
         </View>
       </View>
+      <ModalComponent
+        isCart={false}
+        item={item}
+        titleModal="Select Quantity"
+        onClose={hideModal}
+        visible={modalVisible}
+        count={count}
+        setQuantity={setQuantityCounter}
+        increment={increment}
+        decrement={decrement}
+      />
     </View>
   );
 };
@@ -275,9 +319,10 @@ export const Description = ({ item }: Props) => {
 const styles = StyleSheet.create({
   bubble: {
     position: "absolute",
-    left: widthScreen * 0.36,
-    width: 20,
-    height: 20,
+    left: widthScreen * 0.17,
+    top: 18,
+    width: 14,
+    height: 14,
     borderRadius: 15,
     backgroundColor: palette.primary,
   },

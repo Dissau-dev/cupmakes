@@ -1,4 +1,4 @@
-/*import React, { useEffect, useState } from "react";
+/* import React, { useEffect, useState } from "react";
 import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import {
   StripeProvider,
@@ -11,6 +11,7 @@ import { palette } from "../../theme/colors";
 import { STRIPE_PUBLISHABLE_KEY } from "./StripeConfig";
 
 const API_URL = "https://expo-stripe-server-example.glitch.me";
+//const API_URL = "https://cupmakes.onrender.com";
 const PUBLISHABLE_KEY = STRIPE_PUBLISHABLE_KEY;
 
 export const TakeOrderScreen = () => {
@@ -24,7 +25,6 @@ export const TakeOrderScreen = () => {
   } | null>(null);
 
   useEffect(() => {
- 
     // Inicializar Stripe con la clave publicable
     const initializeStripe = async () => {
       await initStripe({
@@ -125,7 +125,7 @@ export const TakeOrderScreen = () => {
   const onPressBuy = async () => {
     setLoading(true);
     try {
-      const { error } = await confirmPaymentSheetPayment();
+      const { error } = await confirmPaymentSheetPayment();s
 
       if (error) {
         Alert.alert(`Error code: ${error.code}`, error.message);
@@ -210,8 +210,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: 12,
   },
-});
-                         */
+}); */
+
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import FocusAwareStatusBar from "../../components/atoms/FocusAwareStatusBar";
@@ -249,16 +249,16 @@ export const TakeOrderScreen = () => {
   const currentUser = useAppSelector(selectUser);
   const line_Items: { product_id: number; quantity: number }[] = [];
 
-  const formatLineItems = () => {
+  /* const formatLineItems = () => {
     products.forEach((i) => {
       line_Items.push({ product_id: i.id, quantity: 1 });
     });
 
     return line_Items;
-  };
+  };*/
 
   useEffect(() => {
-    formatLineItems();
+    // formatLineItems();
     console.log(line_Items);
   }, []);
 

@@ -27,6 +27,7 @@ export const WishListScreen = () => {
           <ProductList
             images={item.images[0].src}
             name={item.name}
+            item={item}
             //@ts-ignore
             price={item.price}
             date={item.date}

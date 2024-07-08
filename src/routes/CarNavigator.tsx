@@ -29,11 +29,11 @@ export const CarNavigator = () => {
         },
       }}
     >
-      <Stack.Screen
+      {/*  <Stack.Screen
         name="CarScreen"
         component={CarScreen}
         options={{ title: "Car" }}
-      />
+      /> */}
 
       {/*<Stack.Screen
         name="ViewTicket"
@@ -43,22 +43,15 @@ export const CarNavigator = () => {
           title: route.params.titleScreen,
         })}
       />*/}
-      <Stack.Screen
-        name="MyCartScreen"
-        component={MyCartScreen}
-        options={({ route, navigation }) => ({
-          headerShown: true,
-          title: "My Cart ",
-        })}
-      />
-      <Stack.Screen
+      <Stack.Screen name="MyCartScreen" component={MyCartScreen} />
+      {/*   <Stack.Screen
         name="MyOrderScreen"
         component={MyOrderScreen}
         options={({ route, navigation }) => ({
           headerShown: true,
           title: "My Orders ",
         })}
-      />
+      /> */}
       <Stack.Screen
         name="TakeOrderScreen"
         component={TakeOrderScreen}

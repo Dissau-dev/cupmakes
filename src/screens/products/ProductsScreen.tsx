@@ -5,52 +5,38 @@ import {
   Text,
   FlatList,
   ActivityIndicator,
-  Pressable,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import { ProductsParamList } from "../../routes/types";
 import FocusAwareStatusBar from "../../components/atoms/FocusAwareStatusBar";
 import { palette } from "../../theme/colors";
 import { heightScrenn, widthScreen } from "../../theme/styles/global";
 import { Baner } from "../../components/atoms/Baner";
-import Lottie from "lottie-react-native";
-import Animation from "../../../assets/looties/Loading2.json";
 import { ProductsItem } from "../../components/atoms/Products/ProductsItem";
 import {
-  Checkbox,
   Dialog,
   Divider,
   IconButton,
   Portal,
-  TextInput,
   Button,
-  Chip,
-  Searchbar,
-  List,
 } from "react-native-paper";
 import {
   fetchProducts,
   selectCurrentData,
   setFilters,
 } from "../../store/slices/productSlice";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-  AntDesign,
-  MaterialCommunityIcons,
-  Octicons,
-} from "@expo/vector-icons";
+
 import { useGetAllCategoriesQuery } from "../../store/api/productsApi";
-import StarRating from "../../components/atoms/StarRating";
-import { styles } from "../../../App";
+
 import { Ionicons, Fontisto } from "@expo/vector-icons";
-import TextInputController from "../../components/atoms/formControls/TextInputController";
 import { useForm } from "react-hook-form";
-import TextInputControllerHolderName from "../../components/atoms/formControls/TextInputControllerHolderName";
+
+import { ProductsEmpty } from "../../components/atoms/Products/ProductsEmpty";
+import { DialogContent } from "../../components/atoms/Products/filter/DialogContent";
+import { ProductsHeader } from "../../components/atoms/Products/filter/ProductsHeader";
 
 interface ProtectedScreenProps
   extends StackScreenProps<ProductsParamList, "ProductsScreen"> {}
@@ -101,16 +87,8 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
     dispatch(fetchProducts(1)); // Cargar la primera página al montar el componente
   }, [dispatch]);
 
-  const {
-    handleSubmit,
-    control,
-    setFocus,
-    formState: { isSubmitting, isValid, isDirty },
-  } = useForm({
+  const { control } = useForm({
     defaultValues: {
-      minPrice: "0",
-      maxPrice: "1000",
-      searchCategory: "",
       goblalSearch: "",
     },
   });
@@ -202,11 +180,6 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
     setTempPriceRange([0, 1000]);
   };
 
-  const removeSearchFilter = () => {
-    setSearch("");
-    setTempSearch("");
-  };
-
   const renderFooter = () => {
     if (isLoading || status === "loading") {
       return (
@@ -217,236 +190,11 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
     }
   };
 
-  const filterCategories = () => {
-    return categoriesData?.filter((category) =>
-      category.name.toLowerCase().includes(searchCategoryQuery.toLowerCase())
-    );
-  };
-
   const onChangeSearch = (text: string) => {
     setTempSearch(text);
     setTimeout(() => {
       setSearch(text);
     }, 1000);
-  };
-
-  const renderHeader = () => {
-    return <View></View>;
-  };
-
-  const renderDialogContent = () => {
-    switch (filterSection) {
-      case "categories":
-        return (
-          <View style={{ marginVertical: heightScrenn * 0.04 }}>
-            <TextInputControllerHolderName
-              controller={{
-                name: "searchCategory",
-                control: control as any,
-              }}
-              placeholder="Search Categories"
-              keyboardType="web-search"
-              value={searchCategoryQuery}
-              onChangeText={(text) => setSearchCategoryQuery(text)}
-              dense
-              activeOutlineColor={palette.secondary}
-              autoCapitalize={"none"}
-              returnKeyType="next"
-              style={{ width: widthScreen * 0.9 }}
-              left={
-                <TextInput.Icon
-                  icon={() => (
-                    <Fontisto name="search" size={22} color="#c1c1c1" />
-                  )}
-                  color={(isTextInputFocused) => "#c1c1c1"}
-                />
-              }
-            />
-
-            {categoriesData && (
-              <FlatList
-                data={filterCategories()} // Mostrar solo los elementos correspondientes a las páginas cargadas
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                  <View
-                    key={item.id}
-                    style={{ flexDirection: "row", alignItems: "center" }}
-                  >
-                    <Checkbox
-                      color={palette.secondary}
-                      uncheckedColor="#c1c1c1"
-                      status={
-                        tempSelectedCategories.includes(item.id)
-                          ? "checked"
-                          : "unchecked"
-                      }
-                      onPress={() => {
-                        const newCategories = tempSelectedCategories.includes(
-                          item.id
-                        )
-                          ? tempSelectedCategories.filter(
-                              (id) => id !== item.id
-                            )
-                          : [...tempSelectedCategories, item.id];
-                        setTempSelectedCategories(newCategories);
-                      }}
-                    />
-                    <Text style={stylesP.titleCategory}>{item.name}</Text>
-                  </View>
-                )}
-              />
-            )}
-          </View>
-        );
-      case "rating":
-        return (
-          <View style={{ marginVertical: heightScrenn * 0.04 }}>
-            {[1, 2, 3, 4, 5].map((rating) => (
-              <View
-                key={rating}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginVertical: 3,
-                }}
-              >
-                <Checkbox
-                  uncheckedColor="#c1c1c1"
-                  color={palette.secondary}
-                  status={
-                    tempSelectedRating === rating ? "checked" : "unchecked"
-                  }
-                  onPress={() =>
-                    setTempSelectedRating(
-                      tempSelectedRating === rating ? null : rating
-                    )
-                  }
-                />
-                <StarRating rating={rating} />
-              </View>
-            ))}
-          </View>
-        );
-      case "price":
-        return (
-          <View
-            style={{
-              marginVertical: heightScrenn * 0.04,
-              flexDirection: "row",
-              flexWrap: "wrap",
-            }}
-          >
-            <Text style={stylesP.textPrice}>Min Price :</Text>
-            <TextInputControllerHolderName
-              controller={{
-                name: "minPrice",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "Min price required",
-                  },
-                },
-                control: control as any,
-              }}
-              value={tempPriceRange[0].toString()}
-              onChangeText={(text) =>
-                setTempPriceRange([parseInt(text) || 0, tempPriceRange[1]])
-              }
-              //  style={styles.input}
-              placeholder="Min price"
-              dense
-              activeOutlineColor={palette.secondary}
-              autoCapitalize={"none"}
-              keyboardType="numeric"
-              returnKeyType="next"
-              style={stylesP.inputPrice}
-            />
-            <Text style={stylesP.textPrice}>Max Price :</Text>
-            <TextInputControllerHolderName
-              controller={{
-                name: "maxPrice",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "Max price required",
-                  },
-                },
-                control: control as any,
-              }}
-              value={tempPriceRange[1].toString()}
-              onChangeText={(text) =>
-                setTempPriceRange([tempPriceRange[0], parseInt(text) || 0])
-              }
-              //  style={styles.input}
-              placeholder="Max price"
-              dense
-              activeOutlineColor={palette.secondary}
-              autoCapitalize={"none"}
-              keyboardType="numeric"
-              returnKeyType="next"
-              style={stylesP.inputPrice}
-            />
-          </View>
-        );
-      case "main":
-      default:
-        return (
-          <View>
-            <Button
-              onPress={() => setFilterSection("categories")}
-              style={stylesP.categoriesBtn}
-              labelStyle={stylesP.textCategory}
-              rippleColor={"#fdfdfd"}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: widthScreen * 0.7,
-                }}
-              >
-                <Text style={stylesP.textCategory}>By Categories</Text>
-
-                <Ionicons name="chevron-forward" size={20} />
-              </View>
-            </Button>
-            <Button
-              onPress={() => setFilterSection("rating")}
-              style={stylesP.categoriesBtn}
-              labelStyle={stylesP.textCategory}
-              rippleColor={"#fdfdfd4c"}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: widthScreen * 0.7,
-                }}
-              >
-                <Text style={stylesP.textCategory}>By Rating</Text>
-                <Ionicons name="chevron-forward" size={20} />
-              </View>
-            </Button>
-            <Button
-              onPress={() => setFilterSection("price")}
-              style={stylesP.categoriesBtn}
-              rippleColor={"#fdfdfd4c"}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: widthScreen * 0.7,
-                }}
-              >
-                <Text style={stylesP.textCategory}> By Precio {"  "} </Text>
-
-                <Ionicons name="chevron-forward" size={20} />
-              </View>
-            </Button>
-          </View>
-        );
-    }
   };
 
   const onDeleteSearch = () => {
@@ -513,7 +261,23 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
           <Divider />
 
           <Dialog.Content>
-            {renderDialogContent()}
+            {
+              <DialogContent
+                stylesP={stylesP}
+                searchCategoryQuery={searchCategoryQuery}
+                setFilterSection={setFilterSection}
+                setTempPriceRange={setTempPriceRange}
+                setSearchCategoryQuery={setSearchCategoryQuery}
+                tempSelectedRating={tempSelectedRating}
+                tempPriceRange={tempPriceRange}
+                setTempSelectedRating={setTempSelectedRating}
+                tempSelectedCategories={tempSelectedCategories}
+                setTempSelectedCategories={setTempSelectedCategories}
+                categoriesData={categoriesData}
+                isLoading={isLoading}
+                filterSection={filterSection}
+              />
+            }
 
             {filterSection !== "main" && (
               <Button
@@ -527,7 +291,7 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
           </Dialog.Content>
         </Dialog>
       </Portal>
-      <View style={{ marginBottom: heightScrenn * 0.07 }}>
+      <View style={{ marginBottom: heightScrenn * 0.07, zIndex: 0 }}>
         <FlatList
           data={filteredItems.slice(0, page * 10)} // Mostrar solo los elementos correspondientes a las páginas cargadas
           keyExtractor={(item) => item.id.toString()}
@@ -547,147 +311,27 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
           onEndReached={loadMoreProducts}
           onEndReachedThreshold={0.5}
           showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <ProductsEmpty isLoading={isLoading} status={status} />
+          }
           ListHeaderComponent={
-            <View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <View />
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginVertical: 10,
-                    marginLeft: 18,
-                  }}
-                >
-                  {showSearch && (
-                    <TextInputControllerHolderName
-                      controller={{
-                        name: "globalSearch",
-                        control: control as any,
-                      }}
-                      placeholder="Search Products"
-                      keyboardType="web-search"
-                      value={tempSearch}
-                      onChangeText={(text) => onChangeSearch(text)}
-                      dense
-                      activeOutlineColor={palette.secondary}
-                      autoCapitalize={"none"}
-                      returnKeyType="next"
-                      style={{
-                        width: widthScreen * 0.6,
-
-                        // marginTop: 14,
-                        // marginLeft: 6,
-                      }}
-                      left={
-                        <TextInput.Icon
-                          icon={() => (
-                            <Fontisto name="search" size={20} color="#c1c1c1" />
-                          )}
-                          color={(isTextInputFocused) => "#c1c1c1"}
-                        />
-                      }
-                    />
-                  )}
-                  <View
-                    style={{ flexDirection: "row", right: widthScreen * 0.04 }}
-                  >
-                    <IconButton
-                      icon={() => (
-                        <MaterialIcons
-                          name={!showSearch ? "search" : "search-off"}
-                          size={28}
-                          color={"#424141"}
-                        />
-                      )}
-                      size={14}
-                      onPress={onDeleteSearch}
-                    />
-
-                    <IconButton
-                      icon={() => (
-                        <AntDesign name="filter" size={24} color={"#424141"} />
-                      )}
-                      size={14}
-                      onPress={showDialog}
-                    />
-                    {(selectedCategories.length > 0 ||
-                      selectedRating !== null ||
-                      priceRange[0] > 0 ||
-                      priceRange[1] < 1000 ||
-                      search) && (
-                      <IconButton
-                        icon={() => (
-                          <Octicons name="trash" size={24} color={"#424141"} />
-                        )}
-                        size={14}
-                        onPress={clearFilters}
-                      />
-                    )}
-                  </View>
-                </View>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  //  margin: 10,
-                  //  maxWidth: widthScreen * 0.,
-                }}
-              >
-                {selectedCategories.map((id) => (
-                  <Button
-                    key={id}
-                    onPress={() => removeCategoryFilter(id)}
-                    style={stylesP.chip}
-                    rippleColor={"#f0ecec"}
-                  >
-                    <Text style={stylesP.chipText}>
-                      {
-                        categoriesData?.find((category) => category.id === id)
-                          ?.name
-                      }{" "}
-                      <AntDesign name="close" size={14} />
-                    </Text>
-                  </Button>
-                ))}
-                {selectedRating !== null && (
-                  <Button
-                    onPress={removeRatingFilter}
-                    style={stylesP.chip}
-                    rippleColor={"#f0ecec"}
-                  >
-                    <Text style={stylesP.chipText}>
-                      Rating: {selectedRating}
-                      <AntDesign name="star" size={12} />{" "}
-                      <AntDesign name="close" size={14} />
-                    </Text>
-                  </Button>
-                )}
-                {(priceRange[0] > 0 || priceRange[1] < 1000) && (
-                  <Button
-                    onPress={removePriceFilter}
-                    style={stylesP.chip}
-                    rippleColor={"#f0ecec"}
-                  >
-                    <Text style={stylesP.chipText}>
-                      Price: {priceRange[0]} - {priceRange[1]}{" "}
-                      <AntDesign name="close" size={14} />
-                    </Text>
-                  </Button>
-                )}
-                {/*    {search && (
-            <Chip onClose={removeSearchFilter} style={{ margin: 4 }}>
-              Buscar: {search}
-            </Chip>
-          )}*/}
-              </View>
-            </View>
+            <ProductsHeader
+              categoriesData={categoriesData}
+              selectedRating={selectedRating}
+              showDialog={showDialog}
+              showSearch={showSearch}
+              stylesP={stylesP}
+              tempSearch={tempSearch}
+              onDeleteSearch={onDeleteSearch}
+              search={search}
+              selectedCategories={selectedCategories}
+              priceRange={priceRange}
+              removeCategoryFilter={removeCategoryFilter}
+              removePriceFilter={removePriceFilter}
+              removeRatingFilter={removeRatingFilter}
+              clearFilters={clearFilters}
+              onChangeSearch={onChangeSearch}
+            />
           }
         />
       </View>

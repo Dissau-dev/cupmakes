@@ -5,6 +5,7 @@ import { palette } from "../../theme/colors";
 import { Fontisto, Ionicons } from "@expo/vector-icons";
 import { Button, Divider } from "react-native-paper";
 import { ModalCartContent } from "./Products/cart/ModalCartContent";
+import { ModalProductContent } from "./Products/cart/ModalProductContent";
 
 interface Props {
   visible: boolean;
@@ -12,6 +13,11 @@ interface Props {
   titleModal: string;
   style?: any;
   item: any;
+  isCart: boolean;
+  count?: any;
+  setQuantity?: any;
+  increment?: any;
+  decrement?: any;
 }
 
 export const ModalComponent = ({
@@ -19,6 +25,11 @@ export const ModalComponent = ({
   onClose,
   titleModal,
   item,
+  isCart,
+  count,
+  setQuantity,
+  increment,
+  decrement,
 }: Props) => {
   return (
     <Modal
@@ -67,7 +78,17 @@ export const ModalComponent = ({
           </View>
 
           <View style={{ marginHorizontal: 6 }}>
-            <ModalCartContent item={item} />
+            {isCart ? (
+              <ModalCartContent item={item} />
+            ) : (
+              <ModalProductContent
+                item={item}
+                count={count}
+                setQuantity={setQuantity}
+                increment={increment}
+                decrement={decrement}
+              />
+            )}
           </View>
         </View>
       </View>

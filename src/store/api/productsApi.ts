@@ -31,7 +31,8 @@ export const productsApi = api.injectEndpoints({
             });
             
             if (response.data) {
-              return { data: true };
+            
+              return { data: response.data };
             }
             return { error: response.error };
           } catch (error) {
@@ -43,6 +44,18 @@ export const productsApi = api.injectEndpoints({
         },
         invalidatesTags: (result) => (result ? ["ORDERS"] : []),
       }),
+      updateOrderStatus: build.mutation<
+      any,
+      { id: string | number; data: any }
+    >({
+      query: ({ id, data }) => ({
+        url: `/orders/${id}`,
+        method: "PUT",
+        data: data,
+      }),
+      invalidatesTags: (result) => (result ? ["ORDERS"] : []),
+    }),
+   
    /*   getAllProducts: build.query<PaginatedResponse<Products>,
         { page: number; search?: string; type?: string }
       >({
@@ -200,7 +213,7 @@ export const {
 useGetAllProductsQuery,
 
 useGetProductByCategoryQuery,
-
+useUpdateOrderStatusMutation,
 useGetAllCategoriesQuery,
 useGetAllProductsTestIdQuery,
 useGetProductByIdQuery,

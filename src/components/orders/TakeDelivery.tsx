@@ -42,16 +42,16 @@ export const TakeDelivery = () => {
 
   const line_Items: { product_id: number; quantity: number }[] = [];
 
-  const formatLineItems = () => {
+  /* const formatLineItems = () => {
     products.forEach((i) => {
       line_Items.push({ product_id: i.id, quantity: 1 });
     });
 
     return line_Items;
-  };
+  };*/
 
   useEffect(() => {
-    formatLineItems();
+    // formatLineItems();
     //console.log(line_Items);
   }, []);
 

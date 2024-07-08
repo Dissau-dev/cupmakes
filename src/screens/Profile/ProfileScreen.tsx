@@ -33,6 +33,7 @@ import { fetchUserByEmail, selectUser } from "../../store/slices/userSlice";
 import { AuthenticationParamList, ProfileParamList } from "../../routes/types";
 import RenderItemNavList from "../../components/atoms/RenderItemNavList";
 import { Baner } from "../../components/atoms/Baner";
+import { selectAddresses } from "../../store/slices/addressesSlice";
 
 //import { AuthContext } from '../../Redux/authContext'
 
@@ -51,6 +52,9 @@ export const ProfileScreen = ({ navigation }: Props) => {
 
   const [showPassword, setShowPassword] = useState(false);
   const currentUser = useAppSelector(selectUser);
+  const address = useAppSelector(selectAddresses);
+
+  console.log(address);
 
   const {
     handleSubmit,

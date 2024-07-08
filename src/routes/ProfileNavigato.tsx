@@ -9,6 +9,7 @@ import { WishListScreen } from "../screens/Profile/WishListScreen";
 import { OrdersScreen } from "../screens/Profile/OrdersScreen";
 import AccounDetail from "../screens/Profile/AccounDetail";
 import AddressScreen from "../screens/Profile/AddressScreen";
+import AddAddress from "../screens/Profile/AddAddress";
 
 const Stack = createStackNavigator<ProfileParamList>();
 
@@ -61,6 +62,14 @@ export const ProfileNavigator = () => {
         options={({ route, navigation }) => ({
           headerShown: true,
           title: "My Addresses",
+        })}
+      />
+      <Stack.Screen
+        name="AddAddress"
+        component={AddAddress}
+        options={({ route, navigation }) => ({
+          headerShown: true,
+          title: route.params.title,
         })}
       />
     </Stack.Navigator>

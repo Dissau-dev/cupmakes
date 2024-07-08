@@ -1,41 +1,69 @@
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Pressable,
+} from "react-native";
 import React, { useState } from "react";
 import FocusAwareStatusBar from "../../components/atoms/FocusAwareStatusBar";
 import { palette } from "../../theme/colors";
-import TextInputControllerHolderName from "../../components/atoms/formControls/TextInputControllerHolderName";
-import { stylesRegister } from "./ProfileScreen";
-import { validateEmail } from "../../utils/validation";
+
 import { heightScrenn, widthScreen } from "../../theme/styles/global";
-import { Button } from "react-native-paper";
-import { useAppSelector } from "../../store/hooks";
+import {
+  Button,
+  Dialog,
+  Divider,
+  IconButton,
+  Paragraph,
+  Portal,
+  SegmentedButtons,
+} from "react-native-paper";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useForm } from "react-hook-form";
 import { selectUser } from "../../store/slices/userSlice";
 import PickerControllerAccAso from "../../components/atoms/formControls/PickerControllerAccAso";
 
 import states from "../../utils/Data";
 import PickerController from "../../components/atoms/formControls/PickerController";
+import {
+  addAddress,
+  removeAddress,
+  selectAddresses,
+  selectPickupAddresses,
+} from "../../store/slices/addressesSlice";
+import { ProfileParamList } from "../../routes/types";
+import { StackScreenProps } from "@react-navigation/stack";
+import Toast from "react-native-toast-message";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  Entypo,
+  AntDesign,
+} from "@expo/vector-icons";
 
-export default function AddressScreen() {
-  const [modalVisible, setmodalVisible] = useState(true);
+interface Props extends StackScreenProps<ProfileParamList, "AddressScreen"> {}
 
-  const {
-    handleSubmit,
-    control,
-    setFocus,
-    formState: { isSubmitting, isValid, isDirty },
-  } = useForm({
-    defaultValues: {
-      first_name: "",
-      last_name: "",
-      username: "",
-      email: "",
-    },
-  });
-  const user = useAppSelector(selectUser);
-  console.log(user);
-  const onSubmit = () => {
-    console.log(user);
+export default function AddressScreen({ navigation }: Props) {
+  const dispatch = useAppDispatch();
+  const data = useAppSelector(selectAddresses);
+  const [value, setValue] = useState("delivery");
+
+  const dataDelivery = data.filter((i) => i.type === "DELIVERY");
+  const dataPickUp = data.filter((i) => i.type === "PICKUP");
+  const [visible, setVisible] = React.useState(false);
+
+  const showDialog = () => setVisible(true);
+
+  const hideDialog = () => setVisible(false);
+
+  const handleYes = (index: any) => {
+    dispatch(removeAddress(index));
+    hideDialog();
   };
+
   return (
     <View>
       <FocusAwareStatusBar
@@ -43,194 +71,264 @@ export default function AddressScreen() {
         backgroundColor={palette.primary}
         translucent={false}
       />
-      <ScrollView
-        style={{ backgroundColor: "#fff" }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={stylesRegister.formContainer}>
-          <View style={{ marginHorizontal: "auto" }}>
-            <Text style={styles.textInput}>First name</Text>
-            <TextInputControllerHolderName
-              controller={{
-                name: "first_name",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "first name required",
-                  },
-                  validate: { validateEmail },
-                },
-                control: control as any,
-              }}
-              style={styles.input}
-              dense
-              outlineStyle={{ borderWidth: 1, borderRadius: 10 }}
-              textColor={palette.secondary}
-              autoCapitalize={"none"}
-              keyboardType="email-address"
-              returnKeyType="next"
-            />
-          </View>
-          <View style={{ marginHorizontal: "auto" }}>
-            <Text style={styles.textInput}>Last name</Text>
-            <TextInputControllerHolderName
-              controller={{
-                name: "last_name",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "last name required",
-                  },
-                  validate: { validateEmail },
-                },
-                control: control as any,
-              }}
-              style={styles.input}
-              dense
-              outlineStyle={{ borderWidth: 1, borderRadius: 10 }}
-              textColor={palette.secondary}
-              autoCapitalize={"none"}
-              keyboardType="email-address"
-              returnKeyType="next"
-            />
-          </View>
+      <SegmentedButtons
+        value={value}
+        style={{
+          marginTop: heightScrenn * 0.05,
+          width: widthScreen * 0.9,
+          alignSelf: "center",
+        }}
+        onValueChange={setValue}
+        buttons={[
+          {
+            value: "delivery",
+            label: "Delivery",
+            checkedColor: palette.white,
+            style: {
+              backgroundColor:
+                value === "delivery" ? palette.primary : palette.white,
+            },
+            showSelectedCheck: true,
+          },
+          {
+            value: "pickUp",
+            label: "Pick up",
+            checkedColor: palette.white,
+            style: {
+              backgroundColor:
+                value === "pickUp" ? palette.primary : palette.white,
+            },
+            showSelectedCheck: true,
+          },
+        ]}
+      />
+      {value === "pickUp" ? (
+        <FlatList
+          ListHeaderComponent={
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("AddAddress", {
+                  type: "PICKUP",
+                  title: "Add Pick up Address",
+                })
+              }
+              style={styles.addButton}
+            >
+              <Text style={styles.textAddBtn}>
+                <Ionicons name="add" size={20} />
+                {"  "} Add Address
+              </Text>
+            </TouchableOpacity>
+          }
+          data={dataPickUp}
+          renderItem={({ item, index }) => (
+            <View>
+              <Pressable>
+                <View style={styles.card}>
+                  <View
+                    style={{
+                      justifyContent: "space-between",
+                      flexDirection: "row",
+                    }}
+                  >
+                    <Entypo
+                      name="shop"
+                      size={24}
+                      style={{ marginTop: 10 }}
+                      color={palette.secondary}
+                    />
+                    <View style={{ flexDirection: "row" }}>
+                      <IconButton
+                        icon="delete"
+                        iconColor={palette.secondary}
+                        size={20}
+                        onPress={showDialog}
+                      />
+                      <IconButton
+                        icon="pencil"
+                        iconColor={palette.secondary}
+                        size={20}
+                        onPress={() =>
+                          navigation.navigate("AddAddress", {
+                            type: "PICKUP",
+                            title: "Edit Pick Up Address",
+                            index,
+                            isEditing: true,
+                            apartmentSuiteUnitEtc: item.apartmentSuiteUnitEtc,
+                            companyName: item.companyName,
+                            firstName: item.firstName,
+                            lastName: item.lastName,
+                            state: item.state,
+                            streetAddress: item.streetAddress,
+                            townCity: item.townCity,
+                            zipCode: item.zipCode,
+                          })
+                        }
+                      />
+                    </View>
+                  </View>
 
-          <View style={{ marginHorizontal: "auto" }}>
-            <Text style={styles.textInput}>Company name (optional)</Text>
-            <TextInputControllerHolderName
-              controller={{
-                name: "company",
+                  <Text style={styles.titleCard}>{item.streetAddress}</Text>
+                  <Text style={styles.titleCard}>
+                    {`${item.townCity} -- ${item.state}`}
+                  </Text>
+                </View>
+              </Pressable>
+              <Portal>
+                <Dialog visible={visible} onDismiss={hideDialog}>
+                  <Dialog.Title
+                    style={{ fontFamily: "Avanta-Medium", fontSize: 30 }}
+                  >
+                    Alert
+                  </Dialog.Title>
+                  <Divider />
+                  <Dialog.Content>
+                    <Paragraph
+                      style={{
+                        fontFamily: "Avanta-Medium",
+                        fontSize: 20,
+                        marginTop: 6,
+                      }}
+                    >
+                      Do you want to delete the address?
+                    </Paragraph>
+                  </Dialog.Content>
+                  <Dialog.Actions style={{ justifyContent: "space-evenly" }}>
+                    <Button
+                      onPress={() => handleYes(index)}
+                      labelStyle={{ color: palette.secondary }}
+                      rippleColor={palette.secondary}
+                    >
+                      OK
+                    </Button>
+                    <Button
+                      onPress={hideDialog}
+                      labelStyle={{ color: palette.secondary }}
+                      rippleColor={palette.secondary}
+                    >
+                      Cancel
+                    </Button>
+                  </Dialog.Actions>
+                </Dialog>
+              </Portal>
+            </View>
+          )}
+          showsHorizontalScrollIndicator={false}
+        />
+      ) : (
+        <FlatList
+          ListHeaderComponent={
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("AddAddress", {
+                  type: "DELIVERY",
+                  title: "Add Delivery Address",
+                })
+              }
+              style={styles.addButton}
+            >
+              <Text style={styles.textAddBtn}>
+                <Ionicons name="add" size={20} />
+                {"  "} Add Address
+              </Text>
+            </TouchableOpacity>
+          }
+          data={dataDelivery}
+          renderItem={({ item, index }) => (
+            <View>
+              <Pressable>
+                <View style={styles.card}>
+                  <View
+                    style={{
+                      justifyContent: "space-between",
+                      flexDirection: "row",
+                    }}
+                  >
+                    <AntDesign
+                      name="home"
+                      size={24}
+                      style={{ marginTop: 10 }}
+                      color={palette.secondary}
+                    />
+                    <View style={{ flexDirection: "row" }}>
+                      <IconButton
+                        icon="delete"
+                        iconColor={palette.secondary}
+                        size={20}
+                        onPress={showDialog}
+                      />
+                      <IconButton
+                        icon="pencil"
+                        iconColor={palette.secondary}
+                        size={20}
+                        onPress={() =>
+                          navigation.navigate("AddAddress", {
+                            type: "DELIVERY",
+                            title: "Edit Delivery Address",
+                            index,
+                            isEditing: true,
+                            apartmentSuiteUnitEtc: item.apartmentSuiteUnitEtc,
+                            companyName: item.companyName,
+                            firstName: item.firstName,
+                            lastName: item.lastName,
+                            state: item.state,
+                            streetAddress: item.streetAddress,
+                            townCity: item.townCity,
+                            zipCode: item.zipCode,
+                          })
+                        }
+                      />
+                    </View>
+                  </View>
 
-                control: control as any,
-              }}
-              style={styles.input}
-              dense
-              textColor={palette.secondary}
-              autoCapitalize={"none"}
-              keyboardType="email-address"
-              returnKeyType="next"
-            />
-          </View>
-          <View style={{ marginHorizontal: "auto" }}>
-            <Text style={styles.textInput}>Street Address</Text>
-            <TextInputControllerHolderName
-              controller={{
-                name: "state",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "State required",
-                  },
-                  validate: { validateEmail },
-                },
-                control: control as any,
-              }}
-              style={styles.input}
-              placeholder="House number and street address"
-              dense
-              textColor={palette.secondary}
-              autoCapitalize={"none"}
-              keyboardType="email-address"
-              returnKeyType="next"
-            />
-            <TextInputControllerHolderName
-              controller={{
-                name: "email",
-
-                control: control as any,
-              }}
-              style={styles.input}
-              placeholder="Apartament, suite, unit, ect. (optional)"
-              dense
-              textColor={palette.secondary}
-              autoCapitalize={"none"}
-              keyboardType="email-address"
-              returnKeyType="next"
-            />
-          </View>
-          <View style={{ marginHorizontal: "auto" }}>
-            <Text style={styles.textInput}>Town/city</Text>
-            <TextInputControllerHolderName
-              controller={{
-                name: "email",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "email required",
-                  },
-                  validate: { validateEmail },
-                },
-                control: control as any,
-              }}
-              style={styles.input}
-              dense
-              textColor={palette.secondary}
-              autoCapitalize={"none"}
-              keyboardType="email-address"
-              returnKeyType="next"
-            />
-          </View>
-          <View
-            style={{
-              marginHorizontal: "auto",
-              width: widthScreen * 0.78,
-            }}
-          >
-            <Text style={[styles.textInput, { marginBottom: 10 }]}>State</Text>
-
-            <PickerController
-              controller={{ control: control as any, name: "issueEntityId" }}
-              label="Select state"
-              data={states.map((item) => {
-                return {
-                  label: item.name,
-                  value: item.id,
-                };
-              })}
-            />
-          </View>
-          <View style={{ marginHorizontal: "auto" }}>
-            <Text style={[styles.textInput, { marginTop: 10 }]}>Zip code</Text>
-            <TextInputControllerHolderName
-              controller={{
-                name: "email",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "email required",
-                  },
-                  validate: { validateEmail },
-                },
-                control: control as any,
-              }}
-              style={styles.input}
-              dense
-              textColor={palette.secondary}
-              autoCapitalize={"none"}
-              keyboardType="email-address"
-              returnKeyType="next"
-            />
-          </View>
-          <View style={{ marginBottom: heightScrenn * 0.2 }} />
-        </View>
-      </ScrollView>
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Button
-            style={[stylesRegister.btnLogIn]}
-            mode="contained"
-            buttonColor={palette.secondary}
-            rippleColor={palette.datesFilter}
-            onPress={handleSubmit(onSubmit)}
-            textColor={palette.white}
-            loading={isSubmitting}
-            disabled={(isDirty && !isValid) || isSubmitting}
-            labelStyle={[stylesRegister.textLogIn, { fontSize: 22 }]}
-          >
-            {isSubmitting ? "Loading" : "Save address"}
-          </Button>
-        </View>
-      </View>
+                  <Text style={styles.titleCard}>{item.streetAddress}</Text>
+                  <Text style={styles.titleCard}>
+                    {`${item.townCity} -- ${item.state}`}
+                  </Text>
+                </View>
+              </Pressable>
+              <Portal>
+                <Dialog visible={visible} onDismiss={hideDialog}>
+                  <Dialog.Title
+                    style={{ fontFamily: "Avanta-Medium", fontSize: 30 }}
+                  >
+                    Alert
+                  </Dialog.Title>
+                  <Divider />
+                  <Dialog.Content>
+                    <Paragraph
+                      style={{
+                        fontFamily: "Avanta-Medium",
+                        fontSize: 20,
+                        marginTop: 6,
+                      }}
+                    >
+                      Do you want to delete the address?
+                    </Paragraph>
+                  </Dialog.Content>
+                  <Dialog.Actions style={{ justifyContent: "space-evenly" }}>
+                    <Button
+                      onPress={() => handleYes(index)}
+                      labelStyle={{ color: palette.secondary }}
+                      rippleColor={palette.secondary}
+                    >
+                      OK
+                    </Button>
+                    <Button
+                      onPress={hideDialog}
+                      labelStyle={{ color: palette.secondary }}
+                      rippleColor={palette.secondary}
+                    >
+                      Cancel
+                    </Button>
+                  </Dialog.Actions>
+                </Dialog>
+              </Portal>
+            </View>
+          )}
+          showsHorizontalScrollIndicator={false}
+        />
+      )}
     </View>
   );
 }
@@ -318,5 +416,54 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
+  },
+  addButton: {
+    backgroundColor: palette.secondary,
+
+    justifyContent: "center",
+    alignSelf: "flex-end",
+    padding: 6,
+    borderWidth: 0.5,
+    borderRadius: 10,
+    marginTop: 30,
+    marginVertical: 20,
+    marginHorizontal: 10,
+    //width: widthScreen * 0.26,
+  },
+  textAddBtn: {
+    fontSize: 20,
+    fontFamily: "Avanta-Medium",
+    color: "#fff",
+    //color: palette.secondary,
+    textAlign: "center",
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingHorizontal: 4,
+    width: widthScreen * 0.935,
+    marginHorizontal: 10,
+    height: heightScrenn * 0.2,
+
+    marginBottom: 10,
+
+    shadowColor: "#000",
+    marginTop: 10,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  titleCard: {
+    fontFamily: "Avanta-Medium",
+    fontSize: 26,
+    color: palette.secondary,
+    textAlign: "left",
+    width: widthScreen * 0.8,
+    marginHorizontal: widthScreen * 0.04,
+    // marginRight: widthScreen * 0.01,
   },
 });

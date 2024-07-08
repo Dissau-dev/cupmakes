@@ -18,7 +18,7 @@ interface products {
   ],
 }
 interface lineItems {
-  id: number | string
+  product_id: number | string
   quantity: number;
 }
 
@@ -41,29 +41,33 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-   
-   /*} addProduct(state, action) {
-      const { id, name, price ,quantity} = action.payload;
-      state.products.push({ id, name, price ,quantity});
-    },*/
+  
     addProduct: (state, action) => {
       const item = action.payload;
       const existingItem = state.products.find((i) => i.id === item.id);
-
+    
       if (existingItem) {
         existingItem.quantity += item.quantity;
+        //@ts-ignore
+        existingItem.totalItemPrice = Number((existingItem.price * existingItem.quantity).toFixed(2));
       } else {
         state.products.push(item);
       }
+    
       state.lastUpdated = Date.now();
+      
+      // Recalculate fullPrice
       const calculatedFullPrice = state.products.reduce((total, item) => total + item.totalItemPrice, 0);
-      state.fullPrice = Number(calculatedFullPrice.toFixed(2));
+      state.fullPrice = Number(calculatedFullPrice.toFixed(2))
     },
  
     increaseQuantity: (state, action: PayloadAction<number>) => {
       const item = state.products.find(item => item.id === action.payload);
-      if (item) {
+      const linealItem = state.lineItems.find(item => item.product_id === action.payload);
+
+      if (item && linealItem) {
         item.quantity += 1;
+        linealItem.quantity +=1;
         //@ts-ignore
         const itemPrice  = item.price *item.quantity
         item.totalItemPrice = Number(itemPrice.toFixed(2))
@@ -73,8 +77,10 @@ const cartSlice = createSlice({
     },
     decreaseQuantity: (state, action: PayloadAction<number>) => {
       const item = state.products.find(item => item.id === action.payload);
-      if (item && item.quantity > 1) {
+      const linealItem = state.lineItems.find(item => item.product_id === action.payload);
+      if ((item && item.quantity > 1) && (linealItem && linealItem.quantity > 1) ) {
         item.quantity -= 1;
+        linealItem.quantity -= 1;
         //@ts-ignore
         const itemPrice = item.price *item.quantity;
         item.totalItemPrice =  Number(itemPrice.toFixed(2));
@@ -85,36 +91,42 @@ const cartSlice = createSlice({
     setInputQuantity: (state, action) => {
       const { productId, quantity } = action.payload;
       const productToUpdate = state.products.find((product) => product.id === productId);
-      if (productToUpdate) {
+      const linealItemToUpdate = state.lineItems.find((product) => product.product_id === productId);
+      if (productToUpdate && linealItemToUpdate) {
         productToUpdate.quantity = quantity;
+        linealItemToUpdate.quantity = quantity;
       }
     },
     setQuantity: (state, action: PayloadAction<{ id: number; quantity: number }>) => {
       const { id, quantity } = action.payload;
       const item = state.products.find((p) => p.id === id);
-      if (item) {
+      const linealItem = state.lineItems.find((p) => p.product_id === id)
+      if (item && linealItem ) {
         item.quantity = quantity;
+        linealItem.quantity = quantity
          //@ts-ignore
          const itemPrice = item.price *item.quantity;
          item.totalItemPrice =  Number(itemPrice.toFixed(2));
          const calculatedFullPrice = state.products.reduce((total, item) => total + item.totalItemPrice, 0);
          state.fullPrice = Number(calculatedFullPrice.toFixed(2));
-
+         
       }
     },
     addLineItems(state, action) {
       const item = action.payload;
-      const {id, quantity} =item
-      const existingItem = state.lineItems.find((i) => i.id === item.id);
+      const {product_id, quantity} =item
+      
+      const existingItem = state.lineItems.find((i) => i.product_id === item.product_id);
 
       if (existingItem) {
         existingItem.quantity += item.quantity;
       } else {
-        state.lineItems.push({id,quantity});
+        state.lineItems.push({product_id,quantity});
       }
     },
     removeItem(state, action: PayloadAction<number>) {
       state.products = state.products.filter(item => item.id !== action.payload);
+      state.lineItems = state.lineItems.filter(item => item.product_id !== action.payload)
       const calculatedFullPrice = state.products.reduce((total, item) => total + item.totalItemPrice, 0);
       state.fullPrice = Number(calculatedFullPrice.toFixed(2));
     },

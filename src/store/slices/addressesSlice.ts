@@ -1,11 +1,12 @@
 
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit';
 import { RootState } from "../root";
 
 
 
 // Definimos la interfaz para la dirección
-interface Address {
+export interface Address {
+   type:'PICKUP' | "DELIVERY"
     firstName: string;
     lastName: string;
     companyName?: string;
@@ -22,12 +23,25 @@ interface Address {
     addresses: Address[];
   }
   
-  const initialState: AddressState = {
-    addresses: [],
+   const initialState: AddressState = {
+    addresses: [
+      {
+        type:'PICKUP',
+        firstName: "", lastName: "", 
+        companyName: "",
+        country: "United States",
+        streetAddress: "Bon Avenue #9001",
+        apartmentSuiteUnitEtc: "",
+        townCity: "San Jose",
+        state: "california",
+        zipCode: "",
+      }
+    ],
   };
 
 const addressesSlice = createSlice({
   name: 'addresses',
+
   initialState,
   reducers: {
     addAddress: (state, action: PayloadAction<Address>) => {
@@ -44,7 +58,14 @@ const addressesSlice = createSlice({
   
 });
 
-
+export const selectPickupAddresses = createSelector(
+  (state: any) => state.address.addresses, // Obtén el estado de 'address'
+  (addresses) => addresses.filter((address:Address) => address.type === 'PICKUP') // Filtra las direcciones de tipo 'PICKUP'
+);
+export const selectDeliveryAddresses = createSelector(
+  (state: any) => state.address.addresses, // Obtén el estado de 'address'
+  (addresses) => addresses.filter((address:Address) => address.type === 'DELIVERY') // Filtra las direcciones de tipo 'DELIVERY'
+);
 
 // Exportamos las acciones generadas y el reducer
 export const { addAddress, removeAddress, updateAddress } = addressesSlice.actions;

@@ -22,6 +22,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { heightScrenn, widthScreen } from "../theme/styles/global";
 //import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const viewBox = Platform.OS === "ios" ? "20 -550 100 1500" : "100 100 50 50";
@@ -122,7 +123,22 @@ const AndroidBottomTabs = () => {
           headerShown: false,
         })}
       />
+      <AndroidBottomTab.Screen
+        name="ProfileNavigator"
+        component={ProfileNavigator}
+        options={({ route }) => ({
+          title: "Profile",
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
 
+            return (
+              <Ionicons name={"person-outline"} size={size} color={color} />
+            );
+          },
+
+          headerShown: false,
+        })}
+      />
       {isAuth ? (
         <AndroidBottomTab.Screen
           name="CarNavigator"
@@ -134,7 +150,11 @@ const AndroidBottomTabs = () => {
               return (
                 <View style={{}}>
                   <View
-                    style={{ marginLeft: 22, bottom: 12, position: "absolute" }}
+                    style={{
+                      marginLeft: widthScreen * 0.05,
+                      top: heightScrenn * 0.016,
+                      //position: "absolute",
+                    }}
                   >
                     {products.length === 0 ? null : (
                       <Animated.View style={animatedStyle}>
@@ -190,22 +210,6 @@ const AndroidBottomTabs = () => {
           })}
         />
       )}
-      <AndroidBottomTab.Screen
-        name="ProfileNavigator"
-        component={ProfileNavigator}
-        options={({ route }) => ({
-          title: "Profile",
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            return (
-              <Ionicons name={"person-outline"} size={size} color={color} />
-            );
-          },
-
-          headerShown: false,
-        })}
-      />
     </AndroidBottomTab.Navigator>
   );
 };

@@ -1,6 +1,7 @@
 import { Alert } from 'react-native';
 
-const API_URL = "https://expo-stripe-server-example.glitch.me"
+ // const API_URL = "https://expo-stripe-server-example.glitch.me"
+    const API_URL = "https://cupmakes.onrender.com"
 
 export async function fetchPublishableKey(
   paymentMethod?: string

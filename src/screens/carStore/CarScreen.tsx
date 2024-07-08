@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { CarParamList } from "../../routes/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectProducts } from "../../store/slices/cartSlice";
+import { selectLineItems, selectProducts } from "../../store/slices/cartSlice";
 
 import Lottie from "lottie-react-native";
 import FocusAwareStatusBar from "../../components/atoms/FocusAwareStatusBar";
@@ -30,7 +30,8 @@ export const CarScreen = ({ navigation }: ProtectedScreenProps) => {
   const isAuth = useAppSelector(selectAuth);
 
   const products = useAppSelector(selectProducts);
-
+  const lineal_items = useAppSelector(selectLineItems);
+  console.log(lineal_items);
   return (
     <View>
       <FocusAwareStatusBar

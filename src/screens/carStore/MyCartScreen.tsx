@@ -14,10 +14,12 @@ import {
 import { CarParamList } from "../../routes/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
+  cleanCart,
   decreaseQuantity,
   increaseQuantity,
   removeItem,
   selectFullPrice,
+  selectLineItems,
   selectProducts,
   setInputQuantity,
   setQuantity,
@@ -44,49 +46,20 @@ import { EmptyCart } from "../../components/atoms/Products/cart/EmptyCart";
 interface ProtectedScreenProps
   extends StackScreenProps<CarParamList, "MyCartScreen"> {}
 
-const consumerKey = "ck_fd5c542c02aa26ba0073ab69b91b78585e72ca05";
-const consumerSecret = "cs_48662918ad66d95f32f6e2ae55417a63c44fdbd6";
-
-const base64 = require("base-64");
-
 export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
-  const [inputActive, setInputActive] = useState(false);
-  const [disabled, setdisabled] = useState(false);
-  const {
-    handleSubmit,
-    control,
-    setFocus,
-    formState: { isSubmitting, isValid, isDirty },
-  } = useForm({
-    defaultValues: {
-      email: "",
-    },
-  });
-
-  const line_Items: { product_id: number; quantity: number }[] = [];
+  const dispatch = useAppDispatch();
+  /*  const line_Items: { product_id: number; quantity: number }[] = [];
 
   const formatLineItems = () => {
     products.forEach((i) => {
-      line_Items.push({ product_id: i.id, quantity: 1 });
+      line_Items.push({ product_id: i.id, quantity: i.quantity });
     });
 
     return line_Items;
-  };
-  const [inputValues, setInputValues] = useState({});
+  };*/
 
   useEffect(() => {
-    const initialInputValues = {};
-    products.forEach((product) => {
-      //@ts-ignore
-      initialInputValues[product.id] = product.quantity;
-    });
-    /*products.forEach((element) => {
-      setinputValue(element.quantity.toString());
-      console.log("se ejecuta el useEffect");
-    });*/
-    formatLineItems();
-    setInputValues(initialInputValues);
-
+    // formatLineItems();
     //console.log(line_Items);
   }, []);
 
@@ -94,8 +67,9 @@ export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
 
   const products = useAppSelector(selectProducts);
   const fullPrice = useAppSelector(selectFullPrice);
-  // const lineItems = useAppSelector(selectLineItems);
-  const dispatch = useAppDispatch();
+  const linealItems = useAppSelector(selectLineItems);
+
+  console.log(linealItems);
 
   const isIOS = Platform.OS === "ios";
   //@ts-ignore
@@ -113,20 +87,54 @@ export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
         backgroundColor={palette.primary}
         translucent={false}
       />
+      <Baner />
+      <View style={{ marginBottom: heightScrenn * 0.09 }}>
+        <FlatList
+          ListHeaderComponent={
+            products.length > 0 ? (
+              <TouchableOpacity
+                onPress={() => dispatch(cleanCart())}
+                style={{
+                  backgroundColor: palette.secondary,
 
-      <FlatList
-        data={products}
-        renderItem={({ item }) => <CartItem item={item} />}
-        ListEmptyComponent={<EmptyCart />}
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id.toString()}
-        onScroll={onScroll}
-      />
-
+                  justifyContent: "center",
+                  alignSelf: "flex-end",
+                  padding: 6,
+                  borderWidth: 0.5,
+                  borderRadius: 10,
+                  marginTop: 20,
+                  marginHorizontal: 10,
+                  //width: widthScreen * 0.26,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontFamily: "Avanta-Medium",
+                    color: "#fff",
+                    //color: palette.secondary,
+                    textAlign: "center",
+                  }}
+                >
+                  <Ionicons name="trash-bin" size={14} />
+                  {"  "}
+                  Clean cart
+                </Text>
+              </TouchableOpacity>
+            ) : null
+          }
+          data={products}
+          renderItem={({ item }) => <CartItem item={item} />}
+          ListEmptyComponent={<EmptyCart />}
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id.toString()}
+          onScroll={onScroll}
+        />
+      </View>
       {products.length > 0 ? (
         <AnimatedFAB
           icon={"credit-card-check-outline"}
-          label={`Pagar : $ ${fullPrice === 0 ? null : fullPrice}`}
+          label={`Check out : $ ${fullPrice === 0 ? null : fullPrice}`}
           extended={isExtended}
           onPress={() => navigation.navigate("TakeOrderScreen")}
           animateFrom={"right"}
@@ -135,27 +143,6 @@ export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
           style={[styles.fabStyle]}
         />
       ) : null}
-      {/*<View
-        style={{
-          bottom: "8%",
-          position: "absolute",
-          justifyContent: "center",
-          backgroundColor: "#fff",
-          width: widthScreen * 1,
-          height: heightScrenn * 0.18,
-        }}
-      >
-        <Pressable
-          style={{
-            backgroundColor: "green",
-          }}
-          onPress={createOrder}
-        >
-          <Text style={{ margin: 10, textAlign: "center" }}>
-            Pagar {fullPrice === 0 ? null : fullPrice}
-          </Text>
-        </Pressable>
-      </View> */}
     </>
   );
 };

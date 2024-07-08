@@ -14,6 +14,7 @@ import { Button, Dialog, Modal, Portal, TextInput } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
 
 import {
+  cleanCart,
   decreaseQuantity,
   increaseQuantity,
   removeItem,
@@ -21,9 +22,6 @@ import {
   setQuantity,
 } from "../../../../store/slices/cartSlice";
 import { useForm } from "react-hook-form";
-import TextInputController from "../../formControls/TextInputController";
-
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { ModalComponent } from "../../ModalComponent";
 import { ModalCartContent } from "./ModalCartContent";
 
@@ -71,15 +69,14 @@ export const CartItem = ({ item }: Props) => {
     setdisabled(false);
   };
   const decrease = (item: any) => {
-    if (item.quantity === 2) {
-      dispatch(decreaseQuantity(item.id));
+    if (item.quantity === 1) {
+      dispatch(removeItem(item.id));
 
       setInputValues((prevValues) => ({
         ...prevValues,
         //@ts-ignore
         [item.id]: (parseInt(inputValues[item.id]) - 1).toString(),
       }));
-      setdisabled(true);
     } else {
       setInputValues((prevValues) => ({
         ...prevValues,
@@ -89,20 +86,7 @@ export const CartItem = ({ item }: Props) => {
       dispatch(decreaseQuantity(item.id));
     }
   };
-  //@ts-ignore
-  const onHandleInput = (value, item) => {
-    setInputValues((prevValues) => ({
-      ...prevValues,
-      [item.id]: value.toString(),
-    }));
-    const quantity = parseInt(value);
-    if (!isNaN(quantity)) {
-      console.log("se despachò");
-      // Despachar la acción setQuantity cuando se ingresan cambios válidos en el input
-      dispatch(setQuantity({ id: item.id, quantity }));
-      console.log("console:" + products[0].quantity);
-    }
-  };
+
   const [modalVisible, setModalVisible] = useState(false);
 
   const hideModal = () => {
@@ -118,8 +102,8 @@ export const CartItem = ({ item }: Props) => {
         width: widthScreen * 1,
         justifyContent: "space-between",
         flexDirection: "row",
-        backgroundColor: "#f4f7f78d",
-        borderBottomWidth: 1,
+        //  backgroundColor: "#f4f7f78d",
+        borderBottomWidth: 0.5,
         flex: 1,
       }}
     >
@@ -143,17 +127,16 @@ export const CartItem = ({ item }: Props) => {
               color: palette.secondary,
               marginVertical: 6,
               fontFamily: "Avanta-Medium",
-              fontSize: 26,
+              fontSize: 28,
             }}
           >
             {item.name}
           </Text>
-          {/* <Text>{item.short_description}</Text> */}
           <Text
             style={{
               color: palette.primary,
               fontFamily: "Avanta-Medium",
-              fontSize: 20,
+              fontSize: 24,
             }}
           >
             $ {item.price}
@@ -164,8 +147,9 @@ export const CartItem = ({ item }: Props) => {
                 {
                   flexDirection: "row",
                   height: 40,
-                  borderWidth: 0.5,
-                  borderRadius: 100,
+                  borderWidth: 0.7,
+                  borderColor: "#c1c1c1",
+                  borderRadius: 10,
                   marginTop: 10,
                   marginBottom: 4,
                 },
@@ -180,14 +164,9 @@ export const CartItem = ({ item }: Props) => {
                   borderBottomLeftRadius: 100,
                   backgroundColor: palette.white,
                 }}
-                disabled={item.quantity === 1}
                 onPress={() => decrease(item)}
               >
-                <AntDesign
-                  name="minus"
-                  size={25}
-                  color={item.quantity === 1 ? "#ccc" : palette.secondary}
-                />
+                <AntDesign name="minus" size={25} color={palette.secondary} />
               </TouchableOpacity>
               <View
                 style={{
@@ -219,36 +198,6 @@ export const CartItem = ({ item }: Props) => {
                     {item.quantity}
                   </Text>
                 </TouchableOpacity>
-
-                {/*   <TextInputController
-                  controller={{
-                    name: "quantity",
-                    rules: {
-                      required: {
-                        value: true,
-                        message: "email required",
-                      },
-                      // validate: { validateEmail },
-                    },
-                    control: control as any,
-                  }}
-                  style={styles.input}
-                  dense
-                  outlineStyle={{
-                    borderRadius: 10,
-                    backgroundColor: palette.white,
-                  }}
-                  activeOutlineColor={palette.secondary}
-                  //@ts-ignore
-                  value={inputValues[item.id]}
-                  onChangeText={(inputValues) =>
-                    onHandleInput(inputValues, item)
-                  }
-                  defaultValue={item.quantity.toString()}
-                  autoCapitalize={"none"}
-                  keyboardType="numeric"
-                  returnKeyType="next"
-                /> */}
               </View>
               <TouchableOpacity
                 style={{
@@ -264,33 +213,7 @@ export const CartItem = ({ item }: Props) => {
                 <AntDesign name="plus" size={25} color={palette.secondary} />
               </TouchableOpacity>
             </View>
-
-            <TouchableOpacity
-              onPress={() => dispatch(removeItem(item.id))}
-              style={{
-                // backgroundColor: "#c11717",
-                justifyContent: "center",
-                padding: 6,
-                borderWidth: 0.5,
-                borderRadius: 10,
-                marginVertical: 10,
-                width: widthScreen * 0.26,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontFamily: "Avanta-Medium",
-                  //color: "#fff",
-                  color: palette.secondary,
-                  textAlign: "center",
-                }}
-              >
-                <Ionicons name="trash-bin" size={14} />
-                {"  "}
-                remove
-              </Text>
-            </TouchableOpacity>
+            <View style={{ marginBottom: 20 }} />
           </View>
         </View>
       </View>
@@ -308,13 +231,14 @@ export const CartItem = ({ item }: Props) => {
             // color: "#fff",
             color: palette.secondary,
             fontFamily: "Avanta-Bold",
-            fontSize: 24,
+            fontSize: 26,
           }}
         >
           $ {item.totalItemPrice}
         </Text>
       </View>
       <ModalComponent
+        isCart={true}
         item={item}
         titleModal="Select Quantity"
         onClose={hideModal}
@@ -323,28 +247,3 @@ export const CartItem = ({ item }: Props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    //  flex: 1,
-    backgroundColor: "#fff",
-  },
-  fabStyle: {
-    bottom: heightScrenn * 0.03,
-    //right: 16,
-    left: 16,
-    backgroundColor: palette.primary,
-    color: "green",
-    position: "absolute",
-  },
-  input: {
-    //  width: 300,
-    //  height: 45,
-    backgroundColor: palette.white,
-    //borderWidth: 2,
-    borderRadius: 10,
-    height: 40,
-    width: 50,
-    //  marginVertical: 10,
-  },
-});
