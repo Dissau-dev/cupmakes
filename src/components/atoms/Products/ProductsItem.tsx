@@ -22,14 +22,6 @@ import {
   addProduct,
   selectProducts,
 } from "../../../store/slices/cartSlice";
-import Animated, {
-  Easing,
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withTiming,
-} from "react-native-reanimated";
 
 interface Props {
   onpress: () => void;
@@ -39,6 +31,19 @@ export const ProductsItem = ({ onpress, item }: Props) => {
   const dispatch = useAppDispatch();
   const currentWitches = useAppSelector(selectWitches);
   const [heart, setHeart] = useState(false);
+  /*useEffect(() => {
+    if (!heart)
+      currentWitches.forEach((element: { id: number }) => {
+        if (element.id === item.id) {
+          setHeart(true);
+        }
+      });
+  }, [heart]);*/
+
+  useEffect(() => {
+    setHeart(currentWitches.some((product) => product.id === item.id));
+  }, [currentWitches, item.id]);
+
   const ImagenPorDefecto = () => (
     <Image
       source={require("../../../../assets/genericImage.jpg")}
@@ -54,11 +59,9 @@ export const ProductsItem = ({ onpress, item }: Props) => {
   const onLikedProduct = (item: productsInterface) => {
     const { id, name, price, images } = item;
     if (heart) {
-      const likeStatus = "unliked";
       dispatch(removeLikedItem(item.id));
       setHeart(false);
     } else {
-      const likeStatus = "liked";
       setHeart(true);
       const date = new Date();
       const serializableDate = date.toISOString();
@@ -68,21 +71,11 @@ export const ProductsItem = ({ onpress, item }: Props) => {
           name,
           price,
           images,
-          likeStatus,
           date: serializableDate,
         })
       );
     }
   };
-
-  useEffect(() => {
-    if (!heart)
-      currentWitches.forEach((element: { id: number }) => {
-        if (element.id === item.id) {
-          setHeart(true);
-        }
-      });
-  }, [heart]);
 
   const handleAddToCart = (item: any) => {
     const { id, name, price, images } = item;
@@ -143,7 +136,7 @@ export const ProductsItem = ({ onpress, item }: Props) => {
         <View>
           <Ionicons
             name="information-circle"
-            size={24}
+            size={26}
             color="#73729A"
             onPress={onpress}
           />

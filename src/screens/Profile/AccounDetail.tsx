@@ -15,13 +15,17 @@ import { useForm } from "react-hook-form";
 import { stylesRegister } from "./ProfileScreen";
 import { validateEmail } from "../../utils/validation";
 import TextInputControllerHolderName from "../../components/atoms/formControls/TextInputControllerHolderName";
-import { useAppSelector } from "../../store/hooks";
-import { selectUser } from "../../store/slices/userSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectUser, updateUser } from "../../store/slices/userSlice";
 import { heightScrenn, widthScreen } from "../../theme/styles/global";
+import { useUpdateCustomerMutation } from "../../store/api/productsApi";
+import Toast from "react-native-toast-message";
+import { StackScreenProps } from "@react-navigation/stack";
+import { ProfileParamList } from "../../routes/types";
 
-export default function AccounDetail() {
-  const [modalVisible, setmodalVisible] = useState(true);
+interface Props extends StackScreenProps<ProfileParamList, "AccountDetails"> {}
 
+export default function AccounDetail({ navigation }: Props) {
   const {
     handleSubmit,
     control,
@@ -31,15 +35,112 @@ export default function AccounDetail() {
     defaultValues: {
       first_name: "",
       last_name: "",
-      username: "",
       email: "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
     },
   });
   const user = useAppSelector(selectUser);
+  console.log(user?.first_name);
+  const dispatch = useAppDispatch();
+  const [updateCustomer, { isLoading }] = useUpdateCustomerMutation();
 
-  const onSubmit = () => {
-    console.log("bcb");
+  const handleUpdateCustomer = async (data: any) => {
+    const currentPassword = data.currentPassword;
+    const newPassword = data.newPassword;
+    const confirmPassword = data.confirmPassword;
+    let datosActualizados = {
+      first_name: data.first_name || user?.first_name,
+      last_name: data.last_name || user?.last_name,
+      email: data.email || user?.email,
+    };
+
+    if (newPassword && newPassword !== confirmPassword) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "The passwords do not match",
+      });
+      return;
+    }
+
+    if (newPassword && newPassword == !"") {
+      data = { ...data, password: newPassword };
+    }
+    const editData = {
+      customerId: 4,
+      data: datosActualizados,
+    };
+
+    const resultado = await updateCustomer(editData)
+      .unwrap()
+      .then(() => {
+        const newUser = datosActualizados;
+        dispatch(updateUser(newUser));
+        console.log("resultado" + resultado);
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Change updates succesfully",
+        });
+        navigation.goBack();
+      })
+      .catch((res: any) => {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: `${res.data}`,
+        });
+      });
   };
+  /*const handleUpdateCustomer = async (data) => {
+    const customerId = user?.id;
+    const currentPassword = data.currentPassword;
+    const newPassword = data.newPassword;
+    const confirmPassword = data.confirmPassword;
+
+    let datosActualizados = {
+      first_name: data.first_name || user?.first_name,
+      last_name: data.last_name || user?.last_name,
+      email: data.email || user?.email,
+    };
+
+    if (newPassword && newPassword !== confirmPassword) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "The passwords do not match",
+      });
+      return;
+    }
+
+    if (newPassword) {
+      datosActualizados = { ...datosActualizados, password: newPassword };
+    }
+
+    try {
+      const resultado = await updateCustomer({
+        customerId,
+        datosActualizados,
+      }).unwrap();
+      console.log("Cliente actualizado con éxito:", resultado);
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Changes saved successfully",
+      });
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error al actualizar el cliente:", error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.data || "Something went wrong",
+      });
+    }
+  };*/
+
   return (
     <View>
       <FocusAwareStatusBar
@@ -57,13 +158,7 @@ export default function AccounDetail() {
             <TextInputControllerHolderName
               controller={{
                 name: "first_name",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "first name required",
-                  },
-                  validate: { validateEmail },
-                },
+
                 control: control as any,
               }}
               style={styles.input}
@@ -80,13 +175,7 @@ export default function AccounDetail() {
             <TextInputControllerHolderName
               controller={{
                 name: "last_name",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "last name required",
-                  },
-                  validate: { validateEmail },
-                },
+
                 control: control as any,
               }}
               style={styles.input}
@@ -98,41 +187,13 @@ export default function AccounDetail() {
               returnKeyType="next"
             />
           </View>
-          <View style={{ marginHorizontal: "auto" }}>
-            <Text style={styles.textInput}>Display name</Text>
-            <TextInputControllerHolderName
-              controller={{
-                name: "username",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "display name required",
-                  },
-                  validate: { validateEmail },
-                },
-                control: control as any,
-              }}
-              style={styles.input}
-              placeholder="Display name"
-              dense
-              textColor={palette.secondary}
-              autoCapitalize={"none"}
-              keyboardType="email-address"
-              returnKeyType="next"
-            />
-          </View>
+
           <View style={{ marginHorizontal: "auto" }}>
             <Text style={styles.textInput}>Email address</Text>
             <TextInputControllerHolderName
               controller={{
                 name: "email",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "email required",
-                  },
-                  validate: { validateEmail },
-                },
+
                 control: control as any,
               }}
               style={styles.input}
@@ -174,18 +235,12 @@ export default function AccounDetail() {
             </Text>
             <TextInputControllerHolderName
               controller={{
-                name: "email",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "email required",
-                  },
-                  validate: { validateEmail },
-                },
+                name: "currentPassword",
+
                 control: control as any,
               }}
               style={styles.input}
-              placeholder="email@example.com"
+              placeholder="your password"
               dense
               textColor={palette.secondary}
               autoCapitalize={"none"}
@@ -197,18 +252,12 @@ export default function AccounDetail() {
             </Text>
             <TextInputControllerHolderName
               controller={{
-                name: "email",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "email required",
-                  },
-                  validate: { validateEmail },
-                },
+                name: "newPassword",
+
                 control: control as any,
               }}
               style={styles.input}
-              placeholder="email@example.com"
+              placeholder="new password"
               dense
               textColor={palette.secondary}
               autoCapitalize={"none"}
@@ -218,18 +267,12 @@ export default function AccounDetail() {
             <Text style={styles.textInput}>Confirm new password</Text>
             <TextInputControllerHolderName
               controller={{
-                name: "email",
-                rules: {
-                  required: {
-                    value: true,
-                    message: "email required",
-                  },
-                  validate: { validateEmail },
-                },
+                name: "confirmPassword",
+
                 control: control as any,
               }}
               style={styles.input}
-              placeholder="email@example.com"
+              placeholder="confirm password"
               dense
               textColor={palette.secondary}
               autoCapitalize={"none"}
@@ -248,10 +291,10 @@ export default function AccounDetail() {
             mode="contained"
             buttonColor={palette.secondary}
             rippleColor={palette.datesFilter}
-            onPress={handleSubmit(onSubmit)}
+            onPress={handleSubmit(handleUpdateCustomer)}
             textColor={palette.white}
             loading={isSubmitting}
-            disabled={(isDirty && !isValid) || isSubmitting}
+            disabled={!isDirty || isSubmitting}
             labelStyle={[stylesRegister.textLogIn, { fontSize: 22 }]}
           >
             {isSubmitting ? "Loading" : "Save changes"}

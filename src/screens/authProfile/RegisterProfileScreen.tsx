@@ -18,12 +18,16 @@ import { Fontisto, Ionicons } from "@expo/vector-icons";
 import { useRegisterCustomerMutation } from "../../store/api/authApi";
 import { PostRegister } from "../../store/intefaces";
 import Toast from "react-native-toast-message";
-import { stylesRegister } from "./LoginScreen";
+import { stylesRegister } from "../authProfile/LoginProfileScreen";
 import TextInputController from "../../components/atoms/formControls/TextInputController";
 import { Button, TextInput } from "react-native-paper";
 import { palette } from "../../theme/colors";
 import FocusAwareStatusBar from "../../components/atoms/FocusAwareStatusBar";
-import { AuthenticationParamList } from "../../routes/types";
+import {
+  AuthProfileParamsList,
+  AuthenticationParamList,
+  ProfileParamList,
+} from "../../routes/types";
 import { StackScreenProps } from "@react-navigation/stack";
 import TextInputControllerHolderName from "../../components/atoms/formControls/TextInputControllerHolderName";
 
@@ -31,9 +35,9 @@ const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
 interface Props
-  extends StackScreenProps<AuthenticationParamList, "RegisterScreen"> {}
+  extends StackScreenProps<AuthProfileParamsList, "RegisterProfileScreen"> {}
 
-export const RegisterScreen = ({ navigation }: Props) => {
+export const RegisterProfileScreen = ({ navigation }: Props) => {
   const [showPassword, setshowPassword] = useState(false);
   const {
     handleSubmit,
@@ -258,7 +262,7 @@ export const RegisterScreen = ({ navigation }: Props) => {
               </Text>
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => navigation.replace("LoginScreen")}
+                onPress={() => navigation.replace("LoginProfileScreen")}
               >
                 <Text style={loginStyles.btnRegisterText}>
                   {""} Sign in here
@@ -274,14 +278,6 @@ export const RegisterScreen = ({ navigation }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  viewContainer: {
-    marginRight: 40,
-    marginLeft: 40,
-    marginTop: 20,
-    // flex: 1,
-    // backgroundColor: "#20a17c",
-  },
-
   formContainer: {
     // flex: 1,
     paddingVertical: 20,

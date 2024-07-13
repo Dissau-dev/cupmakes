@@ -14,6 +14,7 @@ import { TabsNavigator } from "./TabsNavigator";
 import { AuthNavigator } from "./AuthNavigator";
 import { LoadingPage } from "../components/containers/LoadingPage";
 import { useLazyLoadInitialDataQuery } from "../store/api/authApi";
+import { AuthProfileNavigator } from "./AuthProfileNavigator";
 
 const AppStack = createStackNavigator<AppParamList>();
 
@@ -35,26 +36,7 @@ export const AppNavigator = () => {
   if (isLoading || isFetching) {
     return <LoadingPage title="" />;
   }
-  // const [loadData, { isLoading, isFetching }] = useLazyLoadInitialDataQuery();
 
-  {
-    /* const init = async () => {
-    await loadData()
-      .unwrap()
-      .catch((error: any) => {
-        // crashlytics().log("Something failed while loading initial data");
-        // crashlytics().recordError(error);
-      });
-  };
-
-  useEffect(() => {
-    init();
-  }, []);
-
-  if (isLoading || isFetching) {
-    return <LoadingPage title="" />;
-  } */
-  }
   return (
     <>
       <AppStack.Navigator
@@ -70,6 +52,10 @@ export const AppNavigator = () => {
         <AppStack.Screen name="CarNavigator" component={CarNavigator} />
         <AppStack.Screen name="ProfileNavigator" component={CarNavigator} />
         <AppStack.Screen name="AuthNavigator" component={AuthNavigator} />
+        <AppStack.Screen
+          name="AuthProfileNavigator"
+          component={AuthProfileNavigator}
+        />
       </AppStack.Navigator>
     </>
   );

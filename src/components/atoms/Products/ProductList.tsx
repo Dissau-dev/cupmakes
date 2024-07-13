@@ -1,11 +1,13 @@
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Octicons, Fontisto } from "@expo/vector-icons";
 import { palette } from "../../../theme/colors";
 import { widthScreen } from "../../../theme/styles/global";
 import moment from "moment";
 import { useAppDispatch } from "../../../store/hooks";
 import { addLineItems, addProduct } from "../../../store/slices/cartSlice";
+import { IconButton } from "react-native-paper";
+import { removeLikedItem } from "../../../store/slices/witchesSlice";
 
 interface Prop {
   onPress?: () => void;
@@ -92,13 +94,22 @@ export const ProductList = ({
         </View>
       </View>
 
-      <View style={{ justifyContent: "center", marginRight: 26 }}>
+      <View style={{ justifyContent: "center", marginBottom: 10 }}>
+        <IconButton
+          icon={() => <Octicons name="trash" size={20} color={"#424141"} />}
+          iconColor={palette.darkGray}
+          size={20}
+          style={{ alignSelf: "flex-end" }}
+          onPress={() => dispatch(removeLikedItem(item.id))}
+        />
         <TouchableOpacity
           onPress={() => handleAddToCart(item)}
           style={{
             backgroundColor: palette.secondary,
             borderRadius: 10,
             padding: 6,
+            marginRight: widthScreen * 0.14,
+            marginTop: 10,
           }}
         >
           <Text
@@ -109,7 +120,7 @@ export const ProductList = ({
             }}
           >
             {" "}
-            <Ionicons name="cart" size={16} />
+            <Fontisto name="shopping-bag" size={16} />
             {"  "}Add to cart
           </Text>
         </TouchableOpacity>

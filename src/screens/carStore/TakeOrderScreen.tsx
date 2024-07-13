@@ -229,78 +229,18 @@ import { selectUser } from "../../store/slices/userSlice";
 import { selectLineItems, selectProducts } from "../../store/slices/cartSlice";
 import { TakeDelivery } from "../../components/orders/TakeDelivery";
 import { TakePickUp } from "../../components/orders/TakePickUp";
+import { BarLoading } from "../../components/atoms/Products/cart/BarLoading";
+import { StackScreenProps } from "@react-navigation/stack";
+import { CarParamList } from "../../routes/types";
+import AddAddress from "../Profile/AddAddress";
 
-export const TakeOrderScreen = () => {
-  const [value, setValue] = useState("delivery");
-  const [delivery, { isLoading }] = useCreateOrderMutation();
+interface Props extends StackScreenProps<CarParamList, "TakeOrderScreen"> {}
 
-  const {
-    handleSubmit,
-    control,
-    setFocus,
-    formState: { isSubmitting, isValid, isDirty },
-  } = useForm({
-    defaultValues: {
-      address_1: "",
-      phone: "d",
-    },
-  });
-  const products = useAppSelector(selectProducts);
-  const currentUser = useAppSelector(selectUser);
-  const line_Items: { product_id: number; quantity: number }[] = [];
-
-  /* const formatLineItems = () => {
-    products.forEach((i) => {
-      line_Items.push({ product_id: i.id, quantity: 1 });
-    });
-
-    return line_Items;
-  };*/
-
-  useEffect(() => {
-    // formatLineItems();
-    console.log(line_Items);
-  }, []);
-
-  const onSubmitDelivery = async (data: any) => {
-    const loginData = {
-      customer_id: currentUser?.id, // Reemplaza esto con el ID del cliente
-      billing: {
-        // first_name: data.customer_name,
-        first_name: "Test ",
-        last_name: "mauricio",
-        address_1: data.address_1,
-        city: "Tampa",
-        state: "Florida",
-        postcode: "20212",
-        country: "USA",
-        email: "mauriciogaraco@gmail.com",
-        phone: data.phone,
-      },
-      shipping: {
-        first_name: "test", //data.customer_name,
-        last_name: "mauricio",
-        address_1: data.address_1, // data.customer_address,
-        city: "tampa",
-        state: "Florida",
-        postcode: "20212",
-        country: "USA",
-      },
-      payment_method: "bacs", // Reemplaza esto con el método de pago deseado
-      payment_method_title: "Transferencia bancaria directa",
-      line_items: line_Items,
-    };
-    //@ts-ignore
-    await delivery(loginData)
-      .unwrap()
-      .catch((res: any) => {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: `${res.data}`,
-        });
-      });
-  };
+export const TakeOrderScreen = ({ route }: Props) => {
+  const { isSelected, Address } = route.params;
+  const [value, setValue] = useState<"DELIVERY" | "PICKUP">(
+    Address ? Address.type : "DELIVERY"
+  );
 
   return (
     <View>
@@ -313,38 +253,47 @@ export const TakeOrderScreen = () => {
         style={styles.scrollViewContainer}
         showsVerticalScrollIndicator={false}
       >
-        <SegmentedButtons
-          value={value}
-          style={{
-            marginTop: heightScrenn * 0.05,
-            width: widthScreen * 0.9,
-            alignSelf: "center",
-          }}
-          onValueChange={setValue}
-          buttons={[
-            {
-              value: "delivery",
-              label: "Delivery",
-              checkedColor: palette.white,
-              style: {
-                backgroundColor:
-                  value === "delivery" ? palette.primary : palette.white,
+        <BarLoading level={2} />
+        {!isSelected && (
+          <SegmentedButtons
+            value={value}
+            style={{
+              marginTop: heightScrenn * 0.03,
+              width: widthScreen * 0.9,
+              alignSelf: "center",
+            }}
+            //@ts-ignore
+            onValueChange={setValue}
+            buttons={[
+              {
+                value: "DELIVERY",
+                label: "Delivery",
+                checkedColor: palette.white,
+                style: {
+                  backgroundColor:
+                    value === "DELIVERY" ? palette.primary : palette.white,
+                },
+                showSelectedCheck: true,
               },
-              showSelectedCheck: true,
-            },
-            {
-              value: "pickUp",
-              label: "Pick up",
-              checkedColor: palette.white,
-              style: {
-                backgroundColor:
-                  value === "pickUp" ? palette.primary : palette.white,
+              {
+                value: "PICKUP",
+                label: "Pick up",
+                checkedColor: palette.white,
+                style: {
+                  backgroundColor:
+                    value === "PICKUP" ? palette.primary : palette.white,
+                },
+                showSelectedCheck: true,
               },
-              showSelectedCheck: true,
-            },
-          ]}
-        />
-        {value === "delivery" ? <TakeDelivery /> : <TakePickUp />}
+            ]}
+          />
+        )}
+
+        {value === "DELIVERY" ? (
+          <TakeDelivery Address={Address} isSelected={isSelected} />
+        ) : (
+          <TakePickUp Address={Address} isSelected={isSelected} />
+        )}
       </ScrollView>
     </View>
   );

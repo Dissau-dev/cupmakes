@@ -6,8 +6,10 @@ import { Text, View } from "react-native";
 import LottieView from "lottie-react-native";
 
 import cartAnimation from "../../../../../assets/looties/cartEmpty.json";
+import { useNavigation } from "@react-navigation/native";
 
 export const EmptyCart = () => {
+  const navigation = useNavigation();
   return (
     <View>
       <Text
@@ -32,7 +34,12 @@ export const EmptyCart = () => {
         }}
       />
       <Button
-        onPress={() => console.log("p")}
+        onPress={() =>
+          //@ts-ignore
+          navigation.navigate("ProductsNavigator", {
+            screen: "ProductsScreen",
+          })
+        }
         rippleColor={palette.datesFilter}
         // rippleColor={"#FF5C35"}
         textColor="#fff"
@@ -49,7 +56,8 @@ export const EmptyCart = () => {
             justifyContent: "center",
             textAlign: "center",
             alignContent: "center",
-            fontSize: 18,
+            fontSize: 20,
+            fontFamily: "Avanta-Medium",
           }}
         >
           Order Now

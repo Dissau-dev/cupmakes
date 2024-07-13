@@ -42,6 +42,7 @@ import TextInputController from "../../components/atoms/formControls/TextInputCo
 import TextInputControllerHolderName from "../../components/atoms/formControls/TextInputControllerHolderName";
 import { CartItem } from "../../components/atoms/Products/cart/CartItem";
 import { EmptyCart } from "../../components/atoms/Products/cart/EmptyCart";
+import { BarLoading } from "../../components/atoms/Products/cart/BarLoading";
 
 interface ProtectedScreenProps
   extends StackScreenProps<CarParamList, "MyCartScreen"> {}
@@ -88,7 +89,8 @@ export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
         translucent={false}
       />
       <Baner />
-      <View style={{ marginBottom: heightScrenn * 0.09 }}>
+      <BarLoading level={0} />
+      <View style={{ marginBottom: heightScrenn * 0.18 }}>
         <FlatList
           ListHeaderComponent={
             products.length > 0 ? (
@@ -136,7 +138,7 @@ export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
           icon={"credit-card-check-outline"}
           label={`Check out : $ ${fullPrice === 0 ? null : fullPrice}`}
           extended={isExtended}
-          onPress={() => navigation.navigate("TakeOrderScreen")}
+          onPress={() => navigation.navigate("SelectAddress")}
           animateFrom={"right"}
           iconMode={"dynamic"}
           color="#fff"

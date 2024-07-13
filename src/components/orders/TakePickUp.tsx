@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Alert, Platform, Text } from "react-native";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-  cleanCart,
-  selectFullPrice,
-  selectLineItems,
-  selectProducts,
-} from "../../store/slices/cartSlice";
+import { useAppSelector } from "../../store/hooks";
+import { selectFullPrice, selectLineItems } from "../../store/slices/cartSlice";
 import { selectUser } from "../../store/slices/userSlice";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   useCreateOrderMutation,
   useUpdateOrderStatusMutation,
@@ -20,31 +15,29 @@ import TextInputController from "../atoms/formControls/TextInputController";
 import Toast from "react-native-toast-message";
 import { Fontisto } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import {
-  PaymentSheetError,
-  StripeError,
-  initStripe,
-  usePaymentSheet,
-} from "@stripe/stripe-react-native";
+import { initStripe, usePaymentSheet } from "@stripe/stripe-react-native";
 import axios from "axios";
 import PaymentScreen from "../PaymentScreen";
 import { STRIPE_PUBLISHABLE_KEY } from "../../screens/carStore/StripeConfig";
+import { Address } from "../../store/slices/addressesSlice";
+import PickerController from "../atoms/formControls/PickerController";
+import states from "../../utils/Data";
+import TextInputControllerHolderName from "../atoms/formControls/TextInputControllerHolderName";
 
-export const TakePickUp = () => {
-  const lineales = useAppSelector(selectLineItems);
+interface Props {
+  Address: Address;
+  isSelected: boolean;
+}
+
+export const TakePickUp = ({ Address, isSelected }: Props) => {
   const navigation = useNavigation();
-  const [loadingBtn, setloadingBtn] = useState(false);
-  const [paymentToken, setpaymentToken] = useState("");
 
   const currentUser = useAppSelector(selectUser);
-  const [isConfirm, setisConfirm] = useState(false);
+
   const [delivery, { isLoading, data: createdOrder }] =
     useCreateOrderMutation();
   const [updateOrderStatus, { isLoading: isUpdatading }] =
     useUpdateOrderStatusMutation();
-  const [createdorderData, setcreatedorderData] = useState("");
-
-  const dispatch = useAppDispatch();
 
   const theItems = useAppSelector(selectLineItems);
   const {
@@ -54,13 +47,16 @@ export const TakePickUp = () => {
     formState: { isSubmitting, isValid, isDirty },
   } = useForm({
     defaultValues: {
-      name: currentUser?.first_name || "",
-      lastName: currentUser?.last_name || "",
-      phone: "+1 ",
+      firstName: Address?.firstName || "",
+      lastName: Address?.lastName || "",
+      address: Address ? Address.streetAddress : "",
+      townCity: Address ? Address.townCity : "",
+      zipCode: Address ? Address.zipCode : "",
+      state: "",
+      phone: "",
     },
   });
 
-  const products = useAppSelector(selectProducts);
   const [visible, setVisible] = React.useState(false);
   const [modalError, setmodalError] = useState({
     code: "Failed",
@@ -70,18 +66,8 @@ export const TakePickUp = () => {
 
   const hideDialog = () => setVisible(false);
   const fullPrice = useAppSelector(selectFullPrice);
-  const line_items: { product_id: number; quantity: number }[] = [];
 
-  const formatLineItems = () => {
-    products.forEach((i) => {
-      line_items.push({ product_id: i.id, quantity: i.quantity });
-    });
-    console.log("linealItems :" + line_items[0].product_id);
-    return line_items;
-  };
   useEffect(() => {
-    // Inicializar Stripe con la clave publicable
-    formatLineItems();
     const initializeStripe = async () => {
       await initStripe({
         publishableKey: STRIPE_PUBLISHABLE_KEY,
@@ -102,13 +88,12 @@ export const TakePickUp = () => {
       amount: fullPrice,
     };
 
-    setloadingBtn(true);
     try {
       const response = await axios.post(API_URL, data);
-      setloadingBtn(false);
+
       const { paymentIntent, ephemeralKey, customer } = response.data;
       console.log(response.data);
-      setpaymentToken(paymentIntent);
+
       return {
         paymentIntent,
         ephemeralKey,
@@ -116,10 +101,9 @@ export const TakePickUp = () => {
       };
     } catch (error) {
       console.log(error);
-      setloadingBtn(false);
     }
     const response = await axios.post(API_URL, data);
-    setloadingBtn(false);
+
     const { paymentIntent, ephemeralKey, customer } = response.data;
     console.log(response.data);
 
@@ -200,13 +184,14 @@ export const TakePickUp = () => {
       set_paid: true,
       billing: {
         first_name: data.firstName,
-        last_name: "last name",
-        address_1: "address of test",
-        city: "AnyTown",
-        postcode: "12345",
+        last_name: data.lastName,
+        state: Address && isSelected ? Address.state : data.state,
+        address_1: Address ? Address.streetAddress : data.address,
+        city: Address ? Address.townCity : data.townCity,
+        postcode: Address ? Address.zipCode : "",
         country: "US",
-        email: "correo@ejemplo.com",
-        phone: "",
+        email: currentUser?.email,
+        phone: data.phone,
       },
       customer_id: currentUser?.id, // Reemplazar con el ID del cliente real
       // Agregar saldo total como metadatos
@@ -241,9 +226,9 @@ export const TakePickUp = () => {
     <>
       <PaymentScreen>
         <View style={{ marginHorizontal: "auto" }}>
-          <TextInputController
+          <TextInputControllerHolderName
             controller={{
-              name: "name",
+              name: "firstName",
               rules: {
                 required: {
                   value: true,
@@ -258,16 +243,8 @@ export const TakePickUp = () => {
             //  textColor={palette.se}
             autoCapitalize={"none"}
             returnKeyType="next"
-            left={
-              <TextInput.Icon
-                icon={() => (
-                  <Fontisto name="person" size={18} color="#c1c1c1" />
-                )}
-                color={(isTextInputFocused) => "#c1c1c1"}
-              />
-            }
           />
-          <TextInputController
+          <TextInputControllerHolderName
             controller={{
               name: "lastName",
               rules: {
@@ -284,39 +261,69 @@ export const TakePickUp = () => {
             //  textColor={palette.se}
             autoCapitalize={"none"}
             returnKeyType="next"
-            left={
-              <TextInput.Icon
-                icon={() => (
-                  <Fontisto name="person" size={18} color="#c1c1c1" />
-                )}
-                color={(isTextInputFocused) => "#c1c1c1"}
-              />
-            }
           />
 
-          <TextInputController
+          <TextInputControllerHolderName
             controller={{
-              name: "phone",
+              name: "address",
               rules: {
                 required: {
                   value: true,
-                  message: "phone required",
+                  message: "Address required",
                 },
               },
               control: control as any,
             }}
             style={styles.input}
-            placeholder="phone number"
+            placeholder="Address"
             dense
             //  textColor={palette.se}
             autoCapitalize={"none"}
             returnKeyType="next"
-            left={
-              <TextInput.Icon
-                icon={() => <Fontisto name="phone" size={18} color="#c1c1c1" />}
-                color={(isTextInputFocused) => "#c1c1c1"}
-              />
-            }
+          />
+          <TextInputControllerHolderName
+            controller={{
+              name: "townCity",
+              rules: {
+                required: {
+                  value: true,
+                  message: "City required",
+                },
+              },
+              control: control as any,
+            }}
+            style={styles.input}
+            placeholder="town/City"
+            dense
+            //  textColor={palette.se}
+            autoCapitalize={"none"}
+            returnKeyType="next"
+          />
+          {!isSelected && (
+            <PickerController
+              controller={{ control: control as any, name: "state" }}
+              label="Select state"
+              data={states.map((item) => {
+                return {
+                  label: item.name,
+                  value: item.name,
+                };
+              })}
+            />
+          )}
+
+          <TextInputControllerHolderName
+            controller={{
+              name: "phone",
+
+              control: control as any,
+            }}
+            style={styles.input}
+            placeholder="phone number (optional)"
+            dense
+            //  textColor={palette.se}
+            autoCapitalize={"none"}
+            returnKeyType="next"
           />
         </View>
 
@@ -331,11 +338,15 @@ export const TakePickUp = () => {
           disabled={isLoading || !ready}
           labelStyle={styles.textLogIn}
         >
-          {isSubmitting ? "Loading" : "Order"}
+          {isSubmitting ? "Loading" : "Confirm"}
         </Button>
         <Portal>
-          <Dialog visible={visible} onDismiss={hideDialog}>
-            <Dialog.Title>Alert</Dialog.Title>
+          <Dialog
+            style={{ backgroundColor: "#fff" }}
+            visible={visible}
+            onDismiss={hideDialog}
+          >
+            <Dialog.Title>Payment Error</Dialog.Title>
             <Divider />
             <Dialog.Content>
               <Text
@@ -419,7 +430,8 @@ const styles = StyleSheet.create({
     height: 46,
     backgroundColor: palette.white,
     fontSize: 16,
-    marginVertical: 10,
+    marginVertical: 6,
+    alignSelf: "center",
   },
   inputPassword: {
     width: 300,
@@ -443,6 +455,8 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
+    width: widthScreen * 0.8,
+    alignSelf: "center",
   },
   textLogIn: {
     marginBottom: 2,
@@ -452,34 +466,6 @@ const styles = StyleSheet.create({
     fontFamily: "Avanta-Medium",
     height: heightScrenn * 0.054,
     textAlignVertical: "center",
-    width: widthScreen * 0.8,
-  },
-});
-const stylesRegister = StyleSheet.create({
-  scrollViewContainer: {
-    backgroundColor: "#fff",
-  },
-
-  containerStyle: {
-    alignSelf: "center",
-    width: widthScreen,
-    overflow: "hidden",
-    height: widthScreen * 0.6,
-    marginBottom: 30,
-  },
-  viewContainer: {
-    marginRight: 40,
-    marginLeft: 40,
-
-    // flex: 1,
-    // backgroundColor: "#20a17c",
-  },
-
-  formContainer: {
-    // flex: 1,
-    marginVertical: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    // backgroundColor: "#3425ad",
+    width: widthScreen * 0.68,
   },
 });

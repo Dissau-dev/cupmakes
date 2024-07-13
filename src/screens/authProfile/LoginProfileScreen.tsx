@@ -30,7 +30,11 @@ import { useGetUserByEmailQuery } from "../../store/api/authApi";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchUserByEmail } from "../../store/slices/userSlice";
 
-import { AuthenticationParamList } from "../../routes/types";
+import {
+  AuthProfileParamsList,
+  AuthenticationParamList,
+  ProfileParamList,
+} from "../../routes/types";
 import TextInputControllerHolderName from "../../components/atoms/formControls/TextInputControllerHolderName";
 
 //import { AuthContext } from '../../Redux/authContext'
@@ -39,9 +43,9 @@ const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
 interface Props
-  extends StackScreenProps<AuthenticationParamList, "LoginScreen"> {}
+  extends StackScreenProps<AuthProfileParamsList, "LoginProfileScreen"> {}
 
-export const LoginScreen = ({ navigation }: Props) => {
+export const LoginProfileScreen = ({ navigation }: Props) => {
   const [loading, setloading] = useState(false);
   const [showRegister, setshowRegister] = useState(false);
   const [showLogin, setshowLogin] = useState(true);
@@ -160,7 +164,7 @@ export const LoginScreen = ({ navigation }: Props) => {
               </Text>
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => navigation.navigate("RegisterScreen")}
+                onPress={() => navigation.navigate("RegisterProfileScreen")}
               >
                 <Text style={loginStyles.btnRegisterText}>
                   {""} Sign up here

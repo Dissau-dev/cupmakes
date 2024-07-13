@@ -9,6 +9,7 @@ import { MyOrderScreen } from "../screens/carStore/MyOrderScreen";
 import { TakeOrderScreen } from "../screens/carStore/TakeOrderScreen";
 import { OrdersDetail } from "../screens/carStore/OrdersDetail";
 import { SuccessOrder } from "../screens/carStore/SuccessOrder";
+import { SelectAddress } from "../screens/carStore/SelectAddress";
 
 const Stack = createStackNavigator<CarParamList>();
 
@@ -66,6 +67,14 @@ export const CarNavigator = () => {
         options={({ route, navigation }) => ({
           headerShown: true,
           title: "Details",
+        })}
+      />
+      <Stack.Screen
+        name="SelectAddress"
+        component={SelectAddress}
+        options={({ route, navigation }) => ({
+          headerShown: true,
+          title: "Select Address",
         })}
       />
       <Stack.Screen

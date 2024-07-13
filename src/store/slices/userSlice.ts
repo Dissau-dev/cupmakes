@@ -59,6 +59,20 @@ export const userSlice = createSlice({
       state.isAuth = true;
       state.user = action.payload
     },
+    updateUser: (state, action) => {
+      const newUser = action.payload;
+      const {  first_name,
+        last_name,
+        email} = newUser;
+      state.user.first_name = first_name;
+      state.user.last_name = last_name;
+      state.user.email = email;
+      state.isAuth = true;
+    },
+    logOut: (state) => {
+      state.isAuth = false;
+      state.user = null
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUserByEmail.fulfilled, (state, action) => {
@@ -80,8 +94,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setSessionTokens ,regisyterUser} = userSlice.actions;
+export const { setSessionTokens ,updateUser, regisyterUser, logOut} = userSlice.actions;
 export const selectUser= (state: RootState) => state.user.user;
 export const selectAuth= (state: RootState) => state.user.isAuth;
-
 export default userSlice.reducer;

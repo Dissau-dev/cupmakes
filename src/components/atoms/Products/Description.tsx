@@ -1,12 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TouchableOpacity, View, Text, Image, StyleSheet } from "react-native";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
+import { Ionicons, AntDesign, Fontisto } from "@expo/vector-icons";
 import { palette } from "../../../theme/colors";
 import { Products } from "../../../services/Interfaces";
 import { heightScrenn, widthScreen } from "../../../theme/styles/global";
 import StarRating from "../StarRating";
 import { addLineItems, addProduct } from "../../../store/slices/cartSlice";
-import { useAppDispatch } from "../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { useNavigation } from "@react-navigation/native";
 import Animated, {
   Easing,
@@ -17,6 +17,12 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { ModalComponent } from "../ModalComponent";
+import {
+  addLikedProduct,
+  productsInterface,
+  removeLikedItem,
+  selectWitches,
+} from "../../../store/slices/witchesSlice";
 
 interface Props {
   item: Products;
@@ -25,6 +31,34 @@ export const Description = ({ item }: Props) => {
   const [count, setcount] = useState<number>(1);
   const [disabled, setDisabled] = useState<boolean>(true);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const currentWitches = useAppSelector(selectWitches);
+  const [heart, setHeart] = useState(false);
+
+  const onLikedProduct = (item: productsInterface) => {
+    const { id, name, price, images } = item;
+    if (heart) {
+      dispatch(removeLikedItem(item.id));
+      setHeart(false);
+    } else {
+      setHeart(true);
+      const date = new Date();
+      const serializableDate = date.toISOString();
+      dispatch(
+        addLikedProduct({
+          id,
+          name,
+          price,
+          images,
+          date: serializableDate,
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    setHeart(currentWitches.some((product) => product.id === item.id));
+  }, [currentWitches, item.id]);
 
   const hideModal = () => {
     setModalVisible(false);
@@ -143,7 +177,7 @@ export const Description = ({ item }: Props) => {
           //@ts-ignore
           onPress={() => navigation.navigate("ProductsScreen")}
         >
-          <Ionicons name="arrow-back" size={24} color={"#c1c1c1"} />
+          <Ionicons name="arrow-back" size={26} color={"#c1c1c1"} />
         </TouchableOpacity>
 
         <Image
@@ -154,6 +188,21 @@ export const Description = ({ item }: Props) => {
             alignSelf: "center",
           }}
         />
+        <TouchableOpacity
+          onPress={() => onLikedProduct(item)}
+          style={{ position: "absolute", alignSelf: "flex-end" }}
+        >
+          {heart ? (
+            <Ionicons
+              name="heart-sharp"
+              size={48}
+              style={{ margin: 20 }}
+              color={palette.lightRed}
+            />
+          ) : (
+            <Ionicons name="heart-outline" size={48} style={{ margin: 20 }} />
+          )}
+        </TouchableOpacity>
         <View style={{ flexDirection: "row" }}>
           <View
             style={{
@@ -293,7 +342,7 @@ export const Description = ({ item }: Props) => {
                   textAlign: "center",
                 }}
               >
-                <Ionicons name="cart" size={20} />
+                <Fontisto name="shopping-bag" size={20} />
                 {"  "}
                 Add To cart
               </Text>

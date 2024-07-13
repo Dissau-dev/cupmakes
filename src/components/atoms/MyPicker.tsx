@@ -200,10 +200,11 @@ export const MyPicker = ({
             autoCapitalize="none"
             style={{
               borderColor: palette.icons,
-              fontSize: 15,
+              fontSize: 16,
               fontWeight: "300",
               width: 300,
-              marginBottom: 5,
+              marginBottom: 2,
+              height: 45,
             }}
             value={
               (value &&

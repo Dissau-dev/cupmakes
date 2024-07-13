@@ -23,6 +23,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { heightScrenn, widthScreen } from "../theme/styles/global";
+import { AuthProfileNavigator } from "./AuthProfileNavigator";
 //import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const viewBox = Platform.OS === "ios" ? "20 -550 100 1500" : "100 100 50 50";
@@ -123,22 +124,42 @@ const AndroidBottomTabs = () => {
           headerShown: false,
         })}
       />
-      <AndroidBottomTab.Screen
-        name="ProfileNavigator"
-        component={ProfileNavigator}
-        options={({ route }) => ({
-          title: "Profile",
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+      {isAuth ? (
+        <AndroidBottomTab.Screen
+          name="ProfileNavigator"
+          component={ProfileNavigator}
+          options={({ route }) => ({
+            title: "Profile",
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
 
-            return (
-              <Ionicons name={"person-outline"} size={size} color={color} />
-            );
-          },
+              return (
+                <Ionicons name={"person-outline"} size={size} color={color} />
+              );
+            },
 
-          headerShown: false,
-        })}
-      />
+            headerShown: false,
+          })}
+        />
+      ) : (
+        <AndroidBottomTab.Screen
+          name="AuthProfileNavigator"
+          component={AuthProfileNavigator}
+          options={({ route }) => ({
+            title: "Profile",
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
+
+              return (
+                <Ionicons name={"person-outline"} size={size} color={color} />
+              );
+            },
+
+            headerShown: false,
+          })}
+        />
+      )}
+
       {isAuth ? (
         <AndroidBottomTab.Screen
           name="CarNavigator"

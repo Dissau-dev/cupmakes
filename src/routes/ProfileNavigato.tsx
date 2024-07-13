@@ -53,7 +53,7 @@ export const ProfileNavigator = () => {
         component={AccounDetail}
         options={({ route, navigation }) => ({
           headerShown: true,
-          title: "Acount Details",
+          title: "Edit My Account ",
         })}
       />
       <Stack.Screen

@@ -21,6 +21,8 @@ import {
 } from "../../store/slices/addressesSlice";
 import { ProfileParamList } from "../../routes/types";
 import { StackScreenProps } from "@react-navigation/stack";
+import uuid from "react-native-uuid";
+
 import Toast from "react-native-toast-message";
 
 interface Props extends StackScreenProps<ProfileParamList, "AddAddress"> {}
@@ -32,7 +34,7 @@ export default function AddAddress({ navigation, route }: Props) {
   const {
     type,
     isEditing,
-    index,
+    id,
     firstName,
     apartmentSuiteUnitEtc,
     companyName,
@@ -74,6 +76,7 @@ export default function AddAddress({ navigation, route }: Props) {
     const country = "United States";
     dispatch(
       addAddress({
+        id: uuid.v4().toString(),
         firstName,
         lastName,
         companyName,
@@ -106,8 +109,9 @@ export default function AddAddress({ navigation, route }: Props) {
     const country = "United States";
     dispatch(
       updateAddress({
-        index,
+        id: id,
         address: {
+          id: id,
           firstName,
           lastName,
           companyName,
@@ -285,7 +289,7 @@ export default function AddAddress({ navigation, route }: Props) {
                   rules: {
                     required: {
                       value: true,
-                      message: "Zip code required",
+                      message: "post code required",
                     },
                   },
                   control: control as any,
@@ -295,6 +299,7 @@ export default function AddAddress({ navigation, route }: Props) {
                 autoCapitalize={"none"}
                 keyboardType="email-address"
                 returnKeyType="next"
+                placeholder=" post code"
               />
             </View>
           )}

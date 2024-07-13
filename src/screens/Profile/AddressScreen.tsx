@@ -43,6 +43,8 @@ import {
   Entypo,
   AntDesign,
 } from "@expo/vector-icons";
+import LottieView from "lottie-react-native";
+import addressAnimation from "../../../assets/looties/Animation - 2.json";
 
 interface Props extends StackScreenProps<ProfileParamList, "AddressScreen"> {}
 
@@ -59,8 +61,8 @@ export default function AddressScreen({ navigation }: Props) {
 
   const hideDialog = () => setVisible(false);
 
-  const handleYes = (index: any) => {
-    dispatch(removeAddress(index));
+  const handleYes = (id: any) => {
+    dispatch(removeAddress(id));
     hideDialog();
   };
 
@@ -103,231 +105,287 @@ export default function AddressScreen({ navigation }: Props) {
         ]}
       />
       {value === "pickUp" ? (
-        <FlatList
-          ListHeaderComponent={
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("AddAddress", {
-                  type: "PICKUP",
-                  title: "Add Pick up Address",
-                })
-              }
-              style={styles.addButton}
-            >
-              <Text style={styles.textAddBtn}>
-                <Ionicons name="add" size={20} />
-                {"  "} Add Address
-              </Text>
-            </TouchableOpacity>
-          }
-          data={dataPickUp}
-          renderItem={({ item, index }) => (
-            <View>
-              <Pressable>
-                <View style={styles.card}>
-                  <View
-                    style={{
-                      justifyContent: "space-between",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Entypo
-                      name="shop"
-                      size={24}
-                      style={{ marginTop: 10 }}
-                      color={palette.secondary}
-                    />
-                    <View style={{ flexDirection: "row" }}>
-                      <IconButton
-                        icon="delete"
-                        iconColor={palette.secondary}
-                        size={20}
-                        onPress={showDialog}
-                      />
-                      <IconButton
-                        icon="pencil"
-                        iconColor={palette.secondary}
-                        size={20}
-                        onPress={() =>
-                          navigation.navigate("AddAddress", {
-                            type: "PICKUP",
-                            title: "Edit Pick Up Address",
-                            index,
-                            isEditing: true,
-                            apartmentSuiteUnitEtc: item.apartmentSuiteUnitEtc,
-                            companyName: item.companyName,
-                            firstName: item.firstName,
-                            lastName: item.lastName,
-                            state: item.state,
-                            streetAddress: item.streetAddress,
-                            townCity: item.townCity,
-                            zipCode: item.zipCode,
-                          })
-                        }
-                      />
-                    </View>
-                  </View>
-
-                  <Text style={styles.titleCard}>{item.streetAddress}</Text>
-                  <Text style={styles.titleCard}>
-                    {`${item.townCity} -- ${item.state}`}
-                  </Text>
-                </View>
-              </Pressable>
-              <Portal>
-                <Dialog visible={visible} onDismiss={hideDialog}>
-                  <Dialog.Title
-                    style={{ fontFamily: "Avanta-Medium", fontSize: 30 }}
-                  >
-                    Alert
-                  </Dialog.Title>
-                  <Divider />
-                  <Dialog.Content>
-                    <Paragraph
+        <View>
+          <FlatList
+            ListEmptyComponent={
+              <View>
+                <Text
+                  style={{
+                    color: palette.secondary,
+                    fontFamily: "Avanta-Medium",
+                    fontSize: 30,
+                    textAlign: "center",
+                    marginVertical: heightScrenn * 0.05,
+                  }}
+                >
+                  No pick up addresses
+                </Text>
+                <LottieView
+                  source={addressAnimation}
+                  autoPlay
+                  loop
+                  style={{
+                    width: widthScreen * 1,
+                    height: heightScrenn * 0.45,
+                    alignSelf: "center",
+                  }}
+                />
+              </View>
+            }
+            ListHeaderComponent={
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("AddAddress", {
+                    type: "PICKUP",
+                    title: "Add Pick up Address",
+                  })
+                }
+                style={styles.addButton}
+              >
+                <Text style={styles.textAddBtn}>
+                  <Ionicons name="add" size={20} />
+                  {"  "} Add Address
+                </Text>
+              </TouchableOpacity>
+            }
+            data={dataPickUp}
+            renderItem={({ item }) => (
+              <View>
+                <Pressable>
+                  <View style={styles.card}>
+                    <View
                       style={{
-                        fontFamily: "Avanta-Medium",
-                        fontSize: 20,
-                        marginTop: 6,
+                        justifyContent: "space-between",
+                        flexDirection: "row",
                       }}
                     >
-                      Do you want to delete the address?
-                    </Paragraph>
-                  </Dialog.Content>
-                  <Dialog.Actions style={{ justifyContent: "space-evenly" }}>
-                    <Button
-                      onPress={() => handleYes(index)}
-                      labelStyle={{ color: palette.secondary }}
-                      rippleColor={palette.secondary}
+                      <Entypo
+                        name="shop"
+                        size={24}
+                        style={{ marginTop: 10 }}
+                        color={palette.secondary}
+                      />
+                      <View style={{ flexDirection: "row" }}>
+                        <IconButton
+                          icon="delete"
+                          iconColor={palette.secondary}
+                          size={20}
+                          onPress={showDialog}
+                        />
+                        <IconButton
+                          icon="pencil"
+                          iconColor={palette.secondary}
+                          size={20}
+                          onPress={() =>
+                            navigation.navigate("AddAddress", {
+                              type: "PICKUP",
+                              title: "Edit Pick Up Address",
+                              id: item.id,
+                              isEditing: true,
+                              apartmentSuiteUnitEtc: item.apartmentSuiteUnitEtc,
+                              companyName: item.companyName,
+                              firstName: item.firstName,
+                              lastName: item.lastName,
+                              state: item.state,
+                              streetAddress: item.streetAddress,
+                              townCity: item.townCity,
+                              zipCode: item.zipCode,
+                            })
+                          }
+                        />
+                      </View>
+                    </View>
+
+                    <Text style={styles.titleCard}>{item.streetAddress}</Text>
+                    <Text style={styles.titleCard}>
+                      {`${item.townCity} -- ${item.state}`}
+                    </Text>
+                  </View>
+                </Pressable>
+                <Portal>
+                  <Dialog visible={visible} onDismiss={hideDialog}>
+                    <Dialog.Title
+                      style={{ fontFamily: "Avanta-Medium", fontSize: 30 }}
                     >
-                      OK
-                    </Button>
-                    <Button
-                      onPress={hideDialog}
-                      labelStyle={{ color: palette.secondary }}
-                      rippleColor={palette.secondary}
-                    >
-                      Cancel
-                    </Button>
-                  </Dialog.Actions>
-                </Dialog>
-              </Portal>
-            </View>
-          )}
-          showsHorizontalScrollIndicator={false}
-        />
+                      Alert
+                    </Dialog.Title>
+                    <Divider />
+                    <Dialog.Content>
+                      <Paragraph
+                        style={{
+                          fontFamily: "Avanta-Medium",
+                          fontSize: 20,
+                          marginTop: 6,
+                        }}
+                      >
+                        Do you want to delete the address?
+                      </Paragraph>
+                    </Dialog.Content>
+                    <Dialog.Actions style={{ justifyContent: "space-evenly" }}>
+                      <Button
+                        onPress={() => handleYes(item.id)}
+                        labelStyle={{ color: palette.secondary }}
+                        rippleColor={palette.secondary}
+                      >
+                        OK
+                      </Button>
+                      <Button
+                        onPress={hideDialog}
+                        labelStyle={{ color: palette.secondary }}
+                        rippleColor={palette.secondary}
+                      >
+                        Cancel
+                      </Button>
+                    </Dialog.Actions>
+                  </Dialog>
+                </Portal>
+              </View>
+            )}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
       ) : (
-        <FlatList
-          ListHeaderComponent={
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("AddAddress", {
-                  type: "DELIVERY",
-                  title: "Add Delivery Address",
-                })
-              }
-              style={styles.addButton}
-            >
-              <Text style={styles.textAddBtn}>
-                <Ionicons name="add" size={20} />
-                {"  "} Add Address
-              </Text>
-            </TouchableOpacity>
-          }
-          data={dataDelivery}
-          renderItem={({ item, index }) => (
-            <View>
-              <Pressable>
-                <View style={styles.card}>
-                  <View
-                    style={{
-                      justifyContent: "space-between",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <AntDesign
-                      name="home"
-                      size={24}
-                      style={{ marginTop: 10 }}
-                      color={palette.secondary}
-                    />
-                    <View style={{ flexDirection: "row" }}>
-                      <IconButton
-                        icon="delete"
-                        iconColor={palette.secondary}
-                        size={20}
-                        onPress={showDialog}
-                      />
-                      <IconButton
-                        icon="pencil"
-                        iconColor={palette.secondary}
-                        size={20}
-                        onPress={() =>
-                          navigation.navigate("AddAddress", {
-                            type: "DELIVERY",
-                            title: "Edit Delivery Address",
-                            index,
-                            isEditing: true,
-                            apartmentSuiteUnitEtc: item.apartmentSuiteUnitEtc,
-                            companyName: item.companyName,
-                            firstName: item.firstName,
-                            lastName: item.lastName,
-                            state: item.state,
-                            streetAddress: item.streetAddress,
-                            townCity: item.townCity,
-                            zipCode: item.zipCode,
-                          })
-                        }
-                      />
-                    </View>
-                  </View>
-
-                  <Text style={styles.titleCard}>{item.streetAddress}</Text>
-                  <Text style={styles.titleCard}>
-                    {`${item.townCity} -- ${item.state}`}
+        <View style={{ marginBottom: heightScrenn * 0.22 }}>
+          <FlatList
+            ListHeaderComponent={
+              <>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("AddAddress", {
+                      type: "DELIVERY",
+                      title: "Add Delivery Address",
+                    })
+                  }
+                  style={styles.addButton}
+                >
+                  <Text style={styles.textAddBtn}>
+                    <Ionicons name="add" size={20} />
+                    {"  "} Add Address
                   </Text>
-                </View>
-              </Pressable>
-              <Portal>
-                <Dialog visible={visible} onDismiss={hideDialog}>
-                  <Dialog.Title
-                    style={{ fontFamily: "Avanta-Medium", fontSize: 30 }}
-                  >
-                    Alert
-                  </Dialog.Title>
-                  <Divider />
-                  <Dialog.Content>
-                    <Paragraph
+                </TouchableOpacity>
+              </>
+            }
+            ListEmptyComponent={
+              <View>
+                <Text
+                  style={{
+                    color: palette.secondary,
+                    fontFamily: "Avanta-Medium",
+                    fontSize: 30,
+                    textAlign: "center",
+                    marginVertical: heightScrenn * 0.05,
+                  }}
+                >
+                  No delivery addresses
+                </Text>
+                <LottieView
+                  source={addressAnimation}
+                  autoPlay
+                  loop
+                  style={{
+                    width: widthScreen * 1,
+                    height: heightScrenn * 0.45,
+                    alignSelf: "center",
+                  }}
+                />
+              </View>
+            }
+            data={dataDelivery}
+            renderItem={({ item }) => (
+              <View>
+                <Pressable>
+                  <View style={styles.card}>
+                    <View
                       style={{
-                        fontFamily: "Avanta-Medium",
-                        fontSize: 20,
-                        marginTop: 6,
+                        justifyContent: "space-between",
+                        flexDirection: "row",
                       }}
                     >
-                      Do you want to delete the address?
-                    </Paragraph>
-                  </Dialog.Content>
-                  <Dialog.Actions style={{ justifyContent: "space-evenly" }}>
-                    <Button
-                      onPress={() => handleYes(index)}
-                      labelStyle={{ color: palette.secondary }}
-                      rippleColor={palette.secondary}
+                      <AntDesign
+                        name="home"
+                        size={24}
+                        style={{ marginTop: 10 }}
+                        color={palette.secondary}
+                      />
+                      <View style={{ flexDirection: "row" }}>
+                        <IconButton
+                          icon="delete"
+                          iconColor={palette.secondary}
+                          size={20}
+                          onPress={showDialog}
+                        />
+                        <IconButton
+                          icon="pencil"
+                          iconColor={palette.secondary}
+                          size={20}
+                          onPress={() =>
+                            navigation.navigate("AddAddress", {
+                              type: "DELIVERY",
+                              title: "Edit Delivery Address",
+                              id: item.id,
+                              isEditing: true,
+                              apartmentSuiteUnitEtc: item.apartmentSuiteUnitEtc,
+                              companyName: item.companyName,
+                              firstName: item.firstName,
+                              lastName: item.lastName,
+                              state: item.state,
+                              streetAddress: item.streetAddress,
+                              townCity: item.townCity,
+                              zipCode: item.zipCode,
+                            })
+                          }
+                        />
+                      </View>
+                    </View>
+
+                    <Text style={styles.titleCard}>{item.streetAddress}</Text>
+                    <Text style={styles.titleCard}>
+                      {`${item.townCity} -- ${item.state}`}
+                    </Text>
+                  </View>
+                </Pressable>
+                <Portal>
+                  <Dialog visible={visible} onDismiss={hideDialog}>
+                    <Dialog.Title
+                      style={{ fontFamily: "Avanta-Medium", fontSize: 30 }}
                     >
-                      OK
-                    </Button>
-                    <Button
-                      onPress={hideDialog}
-                      labelStyle={{ color: palette.secondary }}
-                      rippleColor={palette.secondary}
-                    >
-                      Cancel
-                    </Button>
-                  </Dialog.Actions>
-                </Dialog>
-              </Portal>
-            </View>
-          )}
-          showsHorizontalScrollIndicator={false}
-        />
+                      Alert
+                    </Dialog.Title>
+                    <Divider />
+                    <Dialog.Content>
+                      <Paragraph
+                        style={{
+                          fontFamily: "Avanta-Medium",
+                          fontSize: 20,
+                          marginTop: 6,
+                        }}
+                      >
+                        Do you want to delete the address?
+                      </Paragraph>
+                    </Dialog.Content>
+                    <Dialog.Actions style={{ justifyContent: "space-evenly" }}>
+                      <Button
+                        onPress={() => handleYes(item.id)}
+                        labelStyle={{ color: palette.secondary }}
+                        rippleColor={palette.secondary}
+                      >
+                        OK
+                      </Button>
+                      <Button
+                        onPress={hideDialog}
+                        labelStyle={{ color: palette.secondary }}
+                        rippleColor={palette.secondary}
+                      >
+                        Cancel
+                      </Button>
+                    </Dialog.Actions>
+                  </Dialog>
+                </Portal>
+              </View>
+            )}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
       )}
     </View>
   );

@@ -202,6 +202,27 @@ export const productsApi = api.injectEndpoints({
         }),
         providesTags: ["ORDERS"],
       }),
+      updateCustomer: build.mutation<
+        any,
+        { customerId: string | number; data: any }
+      >({
+        query: ({ customerId, data }) => ({
+          url: `/customers/${customerId}`,
+          method: "PUT",
+          data: data,
+        }),
+        invalidatesTags: (result) => (result ? ["User"] : []),
+      }),
+      changePassword: build.mutation({
+        query: ({ customerId, currentPassword, newPassword }) => ({
+          url: `/customers/${customerId}/change-password`,
+          method: 'PUT',
+          body: {
+            current_password: currentPassword,
+            new_password: newPassword,
+          },
+        }),
+      }),
     };
   },
   overrideExisting: true,
@@ -211,12 +232,13 @@ export const {
 
   useCreateOrderMutation,
 useGetAllProductsQuery,
-
+useChangePasswordMutation,
 useGetProductByCategoryQuery,
 useUpdateOrderStatusMutation,
 useGetAllCategoriesQuery,
 useGetAllProductsTestIdQuery,
 useGetProductByIdQuery,
 useGetBestSellerQuery,
+useUpdateCustomerMutation,
 useGetOrdersCustomerQuery
 } = productsApi;

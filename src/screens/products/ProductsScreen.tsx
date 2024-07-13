@@ -117,6 +117,7 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
         );
       }
     }
+    //@ts-ignore
     setFilteredItems(filtered);
   };
 
@@ -294,13 +295,16 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
       <View style={{ marginBottom: heightScrenn * 0.07, zIndex: 0 }}>
         <FlatList
           data={filteredItems.slice(0, page * 10)} // Mostrar solo los elementos correspondientes a las páginas cargadas
+          //@ts-ignore
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <ProductsItem
               item={item}
               onpress={() =>
                 navigation.navigate("ProductDescrip", {
+                  //@ts-ignore
                   id: item.id,
+                  //@ts-ignore
                   titleScreen: item.name,
                 })
               }

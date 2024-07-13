@@ -6,6 +6,7 @@ import { RootState } from "../root";
 
 // Definimos la interfaz para la dirección
 export interface Address {
+  id: string | number; // Añadimos el campo id
    type:'PICKUP' | "DELIVERY"
     firstName: string;
     lastName: string;
@@ -26,6 +27,7 @@ export interface Address {
    const initialState: AddressState = {
     addresses: [
       {
+        id: '1', 
         type:'PICKUP',
         firstName: "", lastName: "", 
         companyName: "",
@@ -47,15 +49,26 @@ const addressesSlice = createSlice({
     addAddress: (state, action: PayloadAction<Address>) => {
       state.addresses.push(action.payload);
     },
-    removeAddress: (state, action: PayloadAction<number>) => {
-      state.addresses.splice(action.payload, 1);
+    removeAddress: (state, action: PayloadAction<string>) => {
+      const idToRemove = action.payload;
+      state.addresses = state.addresses.filter((address) => address.id !== idToRemove);
     },
-    updateAddress: (state, action: PayloadAction<{ index: number; address: Address }>) => {
-      const { index, address } = action.payload;
-      state.addresses[index] = address;
-    },
-  },
-  
+    updateAddress: (state, action: PayloadAction<{ id: string; address: Address }>) => {
+      const { id, address } = action.payload;
+      const item = state.addresses.find((a) => a.id === id);
+    
+      if (item) {
+        item.firstName = address.firstName;
+        item.lastName = address.lastName;
+        item.companyName = address.companyName;
+        item.apartmentSuiteUnitEtc = address.apartmentSuiteUnitEtc;
+        item.townCity = address.townCity;
+        item.streetAddress = address.streetAddress;
+        item.state = address.state;
+        item.zipCode = address.zipCode;
+      }
+    }
+  }
 });
 
 export const selectPickupAddresses = createSelector(

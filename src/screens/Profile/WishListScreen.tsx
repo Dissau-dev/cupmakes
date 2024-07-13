@@ -6,6 +6,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useAppSelector } from "../../store/hooks";
 import { selectWitches } from "../../store/slices/witchesSlice";
 import { ProductList } from "../../components/atoms/Products/ProductList";
+import LottieView from "lottie-react-native";
+import { heightScrenn, widthScreen } from "../../theme/styles/global";
+
+import addressAnimation from "../../../assets/looties/Animation - 4.json";
 
 export const WishListScreen = () => {
   const witches = useAppSelector(selectWitches);
@@ -23,6 +27,30 @@ export const WishListScreen = () => {
       ></ScrollView>
       <FlatList
         data={witches}
+        ListEmptyComponent={
+          <View>
+            <Text
+              style={{
+                color: palette.secondary,
+                fontFamily: "Avanta-Medium",
+                fontSize: 40,
+                textAlign: "center",
+                marginTop: heightScrenn * 0.2,
+              }}
+            >
+              Whishlist Empty
+            </Text>
+            <LottieView
+              source={addressAnimation}
+              autoPlay
+              loop
+              style={{
+                width: widthScreen * 1,
+                height: heightScrenn * 0.5,
+              }}
+            />
+          </View>
+        }
         renderItem={({ item }) => (
           <ProductList
             images={item.images[0].src}

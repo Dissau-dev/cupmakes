@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -11,43 +11,27 @@ import {
   //   TextInput,
   ViewStyle,
   StyleProp,
-  ScrollView,
   Pressable,
-  RefreshControl,
 } from "react-native";
-import { Fontisto, Ionicons } from "@expo/vector-icons";
+import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 
 import {
   ActivityIndicator,
-  Button,
+  Dialog,
+  Divider,
   RadioButton,
   Searchbar,
   TextInput,
 } from "react-native-paper";
 
-import { globals } from "../../theme/styles/global";
-import Layout from "../../utils/Layout";
-import {  palette } from "../../theme/colors";
-import { ThemeContext } from "../../Context/theme/ThemeContext";
-import { MyCard } from "./MyCard";
-import { MyAccountRequest } from "./MyAccountRequest";
-import { useGetAccountQuery } from "../../store/api/cardApi";
-import { mask } from "react-native-mask-text";
-import { FlatListAccount } from "./home/FlatListAccount";
-import { PlaceHolderCard } from "./PlaceHolderCard";
+import { globals, heightScrenn, widthScreen } from "../../theme/styles/global";
 
-const width = Layout.window.width
+import { palette } from "../../theme/colors";
 export interface PickerItem {
   label: string;
   value: string;
-  amount: number | string;
-  address: string
-  issueEntity:{id:string | number,name: string , 
-    profileImage: {
-   id: number,
-   url: string,
-   hash: string
-}} 
+  townCity: string;
+  state: string;
 }
 
 export interface MyPickerProps {
@@ -55,7 +39,8 @@ export interface MyPickerProps {
   data: any;
   value: any;
   onChangeValue: Function;
- 
+  state: string;
+  townCity: string;
   icon?: any;
   isLoading?: boolean;
   isSearchable?: boolean;
@@ -63,7 +48,7 @@ export interface MyPickerProps {
   error?: any;
   refChild?: any;
   titleInModal?: string;
-  notFoundText?: string
+  notFoundText?: string;
 
   actionAtSelected?: Function;
   disabled?: boolean;
@@ -75,29 +60,37 @@ export const MyPickerAccAso = ({
   label,
   data,
   value,
+  state,
+  townCity,
   onChangeValue,
   isLoading,
-  isSearchable = true,
+  isSearchable = false,
   error,
   refChild,
   actionAtSelected,
   disabled,
   titleInModal,
   inputStyle,
-  notFoundText
+  notFoundText,
 }: MyPickerProps) => {
-  const { data: account} = useGetAccountQuery();
-  const { theme } = useContext(ThemeContext);
-
   //Modal
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
   //Search bar
+  const [textValue, setTextValue] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
-
-
+  const onTextChange = (text: string) => {
+    setIsSearching(true);
+    setTextValue(text);
+    setDataStore(
+      data.filter((item: any) =>
+        item.label.toLowerCase().includes(text.toLowerCase())
+      )
+    );
+  };
 
   //Content
   const [dataStore, setDataStore] = useState([]);
@@ -105,52 +98,48 @@ export const MyPickerAccAso = ({
     setDataStore(data);
   }, [data]);
 
-  const { data: acountData,refetch,isFetching,isError} = useGetAccountQuery();
-  const [load, setload] = useState<boolean>(false)
-  const onRefresh = useCallback(() => {
-      refetch();
-    }, [refetch]);
-
   const onCheckedValue = (itemValue: string) => {
     onChangeValue(itemValue);
     hideModal();
   };
 
   const renderItem = ({ item }: { item: PickerItem }) => (
-
-
-     <Pressable  onPress={() => {
-      onCheckedValue(item.value);
-      actionAtSelected && actionAtSelected();
-    }}> 
     <View
       style={{
-        flexDirection: "row",
-        marginHorizontal:-10
+        // flexDirection: "row",
+        //alignItems: "center",
+        paddingEnd: 25,
       }}
     >
-    
-            <MyCard 
-            address={mask(item.address,"9999 9999 ****")}
-          logo={item.issueEntity.profileImage ? item.issueEntity.profileImage.url : '../../../assets/images/genericImage.jpg'}
-         // logo={ item.issueEntity.profileImage === null  ? '../../../assets/images/genericImage.jpg': item.issueEntity.profileImage.url}
-          // logo={`https://apidevpay.tecopos.com${item.issueEntity.profileImage.url}`}
-           //  hash={item.issueEntity.profileImage.hash}
-            
-             amount={item.amount}
-            
-           
-             onPress={() => {
-              
-              onCheckedValue(item.value);
-              actionAtSelected && actionAtSelected();
+      <Pressable
+        onPress={() => {
+          onCheckedValue(item.value);
+          actionAtSelected && actionAtSelected();
+        }}
+        style={{ width: widthScreen }}
+      >
+        <View style={styles.card}>
+          <View
+            style={{
+              justifyContent: "space-between",
+              flexDirection: "row",
             }}
+          >
+            <AntDesign
+              name="home"
+              size={20}
+              style={{ marginTop: 4 }}
+              color={palette.secondary}
             />
-          
-        
-        
+          </View>
+
+          <Text style={styles.titleCard}>{item.label}</Text>
+          <Text style={styles.titleCard}>
+            {`${item.townCity} -- ${item.state}`}
+          </Text>
+        </View>
+      </Pressable>
     </View>
-   </Pressable> 
   );
 
   return (
@@ -167,60 +156,24 @@ export const MyPickerAccAso = ({
           onPress={disabled ? () => {} : showModal}
           style={{ width: "100%", alignItems: "center" }}
         >
-          {/* <View
-            style={[
-              visible
-                ? { borderColor: theme.colors.primary }
-                : { borderColor: colors.grey },
-              styles.input,
-              inputStyle,
-            ]}
-          > */}
-          {/* <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginHorizontal: 16,
-              marginVertical: 6.9,
-            }}
-          >
-            {icon && (
-              <Ionicons
-                name={icon}
-                size={23}
-                style={[
-                  {
-                    marginEnd: 5,
-                  },
-                  disabled && { opacity: 0.4 },
-                ]}
-              />
-            )} */}
           <TextInput
             placeholder={label}
             outlineStyle={{
               borderRadius: 10,
               backgroundColor: palette.white,
-              height:50,
             }}
             placeholderTextColor={palette.icons}
             mode="outlined"
             outlineColor={palette.icons}
-            activeOutlineColor={palette.primary}
+            activeOutlineColor={palette.secondary}
             contentStyle={{ fontWeight: "600", fontSize: 15 }}
             autoCapitalize="none"
             style={{
-              
-                width: 280,
-                height: 50,
-                backgroundColor: palette.white,
-                borderColor: palette.icons,
-                // borderRadius: 100,
-                // paddingLeft: 20,
-               marginBottom:10,
-                marginVertical: 5,
-           
+              borderColor: palette.icons,
+              fontSize: 15,
+              fontWeight: "300",
+              width: 300,
+              marginBottom: 5,
             }}
             value={
               (value &&
@@ -232,12 +185,11 @@ export const MyPickerAccAso = ({
             onBlur={hideModal}
             editable={false}
             ref={refChild}
-            
             right={
               <TextInput.Icon
                 onPress={disabled ? () => {} : showModal}
-                color={palette.primary}
-                rippleColor={palette.white}
+                color={palette.darkGray}
+                rippleColor={palette.datesFilter}
                 icon={() =>
                   isLoading ? (
                     <ActivityIndicator color={palette.icons} />
@@ -246,47 +198,13 @@ export const MyPickerAccAso = ({
                       name="chevron-down-outline"
                       size={23}
                       style={[disabled && { opacity: 0.4 }]}
-                      color={'#c1c1c1'}
-                    />
-                  )
-                }
-              />
-            }
-            left={
-              <TextInput.Icon
-                onPress={disabled ? () => {} : showModal}
-                color={palette.primary}
-                rippleColor={palette.white}
-                icon={() =>
-                  isLoading ? (
-                    <ActivityIndicator color={palette.icons} />
-                  ) : (
-                    <Ionicons
-                      name={label==='Selecciona negocio'?   "location-sharp":"card-outline"}
-                      size={23}
-                      style={[disabled && { opacity: 0.4 }]}
-                      color={'#c1c1c1'}
+                      color={palette.secondary}
                     />
                   )
                 }
               />
             }
           />
-          {/* {error && (
-              <Ionicons
-                name="alert-circle-outline"
-                size={23}
-                // color={theme.error}
-              />
-            )}
-            <Ionicons
-              name="chevron-down-outline"
-              size={23}
-              style={[disabled && { opacity: 0.4 }]}
-              color={palette.circularProgressBar}
-            />
-          </View> */}
-          {/* </View> */}
         </TouchableOpacity>
         {!!error && (
           <Text
@@ -301,18 +219,13 @@ export const MyPickerAccAso = ({
             {error}
           </Text>
         )}
-
-        {/* TODO: Pending to do */}
-        {/* {isLoading && <ActivityIndicator />} */}
-
-        {/* Modal component */}
         <Modal
           visible={visible}
           onDismiss={hideModal}
           onRequestClose={hideModal}
           transparent={true}
         >
-       {/*   <View
+          <View
             style={{
               flex: 1,
               justifyContent: "center",
@@ -322,48 +235,61 @@ export const MyPickerAccAso = ({
           >
             <View
               style={{
-               
+                padding: 20,
                 // paddingHorizontal: 20,
                 borderRadius: 10,
                 backgroundColor: "white",
-                height: Layout.window.height * 0.75,
-                width: Layout.window.width * 0.9,
-                
+                height: heightScrenn * 0.58,
+                width: widthScreen * 0.9,
               }}
             >
-            <View style={{
-                width: Layout.window.width * 0.9,
-                height:50,
-                backgroundColor: palette.primary,
-                borderTopLeftRadius: 10,
-                borderTopRightRadius: 10,
-            }
-          }>
-            <View style={{justifyContent:'space-between',flexDirection:'row',  marginTop:6}}>
-              <Text style={{color:'white',
-              justifyContent:'center',
-              textAlign:'center',
-               margin:6,
-               marginLeft:14,
-               fontSize:20,
-                fontFamily:'Poppins-Medium'}}>Cuentas</Text>
-               <Button
-               rippleColor={palette.primary}
-               onPress={hideModal}>
-                <Text><Fontisto name="close" size={20} color={'#fff'}/></Text>
-                </Button> 
-            </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={{ fontSize: 24, fontFamily: "Avanta-Medium" }}>
+                  Select an Address{" "}
+                </Text>
 
-            </View>  
-              <View style={{padding:10}}>
-           
-              <Text style={{fontFamily:'Poppins-Medium',
-               fontSize:14}}>Seleccione la cuenta que desea asociar al la solicitud de la tarjeta :</Text>
+                <TouchableOpacity onPress={hideModal}>
+                  <Ionicons name="close" size={24} />
+                </TouchableOpacity>
+              </View>
+              <Divider />
+              {/* Search bar */}
+              {isSearchable && (
+                <Searchbar
+                  value={textValue}
+                  onChangeText={onTextChange}
+                  style={[globals.search, { width: "100%" }]}
+                  inputStyle={globals.searchInput}
+                  placeholder="Search"
+                  placeholderTextColor={palette.icons}
+                  returnKeyType="search"
+                  autoCapitalize="none"
+                  cursorColor={palette.secondary}
+                  clearButtonMode="while-editing"
+                  // editable={isSearching && data.length === 0}
+                  enablesReturnKeyAutomatically
+                  icon={() => (
+                    <TextInput.Icon
+                      icon={() => (
+                        <Ionicons
+                          name={"search-outline"}
+                          size={18}
+                          color={palette.secondary}
+                          style={{ fontWeight: "bold" }}
+                        />
+                      )}
+                    />
+                  )}
+                  iconColor={palette.secondary}
+                />
+              )}
 
-              
-
-         
-              {!data ? (
+              {data.length === 0 ? (
                 <View
                   style={{
                     alignItems: "center",
@@ -373,52 +299,49 @@ export const MyPickerAccAso = ({
                     style={{
                       justifyContent: "center",
                       alignItems: "center",
-                      marginHorizontal: 10
+                      marginHorizontal: 50,
+                    }}
+                  >
+                    <Text style={styles.title}>{notFoundText || ""}</Text>
+                  </View>
+                </View>
+              ) : isSearching && dataStore.length === 0 ? (
+                <View
+                  style={{
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginHorizontal: 50,
                     }}
                   >
                     <Text style={styles.title}>
-                      {notFoundText || ''}
+                      There are no results to show
                     </Text>
                   </View>
                 </View>
-              ) 
-              : (
-                <View style={{ }}>
-                 
+              ) : (
+                <View style={{ flex: 1 }}>
+                  {/*  <Text
+                    style={[
+                      // globals.h6Medium,
+                      { marginVertical: 10, textAlign: "center" },
+                    ]}
+                  >
+                    {titleInModal ? titleInModal : `Seleccione una opción`}
+                  </Text> */}
                   <FlatList
                     data={dataStore}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.value}
                   />
-                 
-                 
                 </View>
               )}
             </View>
-            </View> 
-          </View>*/}
-           <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={styles.header}>
-              <Text style={styles.title}> Cuentas</Text>
-              <Button
-               rippleColor={palette.primary}
-               onPress={hideModal}>
-                <Text><Fontisto name="close" size={20} color={'#fff'}/></Text>
-                </Button>
-            </View>
-           {/* <Text style={styles.selectAccountText}></Text>*/}
-           <Text style={{fontFamily:'Poppins-Medium',
-               fontSize:14}}>Seleccione la cuenta que desea asociar a la solicitud de la tarjeta :</Text>
-            <FlatList
-              data={data}
-              renderItem={renderItem}
-             // keyExtractor={item => item.id}
-              contentContainerStyle={styles.flatListContent}
-              showsVerticalScrollIndicator={false}
-            />
           </View>
-        </View>
         </Modal>
       </View>
     </View>
@@ -436,57 +359,10 @@ const styles = StyleSheet.create({
     height: 55,
     marginTop: 1,
   },
- /* header: {
+  header: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 8,
-  },*/
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalView: {
-    margin: 16,
-    height: Layout.window.height * 0.72,
-    width: Layout.window.width * 0.9,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    
-    alignItems: 'center',
-    elevation: 5,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-    backgroundColor: palette.primary,
-    height:50,
-    width: Layout.window.width * 0.9,
-    borderTopLeftRadius:16 ,
-    borderTopRightRadius:16 
-  },
-  title: {
-    justifyContent:'center',
-              textAlign:'center',
-               margin:6,
-               marginLeft:14,
-               fontSize:20,
-    fontFamily:'Poppins-Medium',
-    color:'white'
-  },
-  selectAccountText: {
-    marginBottom: 10,
-  },
-  flatListContent: {
-    paddingBottom: 20,
-  },
-  item: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
   },
   address: {
     fontSize: 18,
@@ -507,17 +383,47 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
   },
- /* title: {
+  title: {
     marginVertical: 16,
     fontSize: 16,
     opacity: 0.9,
     fontWeight: "bold",
     textAlign: "center",
-  },*/
+  },
   input: {
-    width: "100%",
+    width: 100,
     marginVertical: 8,
     borderWidth: 1,
     borderRadius: 10,
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingHorizontal: 4,
+    width: widthScreen * 0.76,
+    marginHorizontal: 10,
+    height: heightScrenn * 0.14,
+
+    marginBottom: 10,
+
+    shadowColor: "#000",
+    marginTop: 10,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  titleCard: {
+    fontFamily: "Avanta-Medium",
+    fontSize: 22,
+
+    color: palette.secondary,
+    textAlign: "left",
+    width: widthScreen * 0.6,
+    marginHorizontal: widthScreen * 0.04,
+    // marginRight: widthScreen * 0.01,
   },
 });

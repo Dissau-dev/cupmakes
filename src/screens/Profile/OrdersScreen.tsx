@@ -15,7 +15,7 @@ import { Ionicons, AntDesign, Fontisto } from "@expo/vector-icons";
 import { useAppSelector } from "../../store/hooks";
 import { selectUser } from "../../store/slices/userSlice";
 
-import cartAnimation from "../../../assets/looties/bagEmpty.json";
+import cartAnimation from "../../../assets/looties/Animation - 3.json";
 import Animation from "../../../assets/looties/Loading2.json";
 import Lottie from "lottie-react-native";
 
@@ -29,7 +29,64 @@ export const OrdersScreen = ({ navigation }: Props) => {
   );
 
   const renderItem = ({ item }: any) => (
-    <View style={styles.item}>
+    <View style={styles.card}>
+      <View style={styles.cardContent}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={styles.orderNumber}>Order #{item.id}</Text>
+
+          <View>
+            <Text
+              style={{
+                fontSize: 23,
+                fontFamily: "Avanta-Medium",
+                //color: "#fff",
+                color: palette.secondary,
+                textAlign: "center",
+              }}
+            >
+              {" "}
+              {}
+              <AntDesign
+                size={16}
+                name={
+                  item.status === "completed"
+                    ? "check"
+                    : item.status === "failed" || item.status === "cancelled"
+                    ? "close"
+                    : "loading1"
+                }
+              />
+              {"  "}
+              {item.status}
+            </Text>
+          </View>
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.orderTotal}>Date: </Text>
+          <Text style={[styles.orderDate, { marginTop: heightScrenn * 0.01 }]}>
+            {" "}
+            {moment(item.date_created).format("DD-MM-YYYY,  HH:mm")}
+          </Text>
+        </View>
+        <Text>
+          <Text style={styles.orderTotal}>Total: </Text>
+          <Text style={styles.orderDate}> ${item.total}</Text>
+        </Text>
+        {/*<Text style={styles.customer}>Cliente: {item.billing.first_name}</Text> */}
+        <Text style={styles.orderTotal}>
+          Products:{" "}
+          {item.line_items.map((i) => (
+            <Text
+              key={i.name}
+              style={[styles.orderDate, { width: widthScreen * 0.8 }]}
+            >
+              {i.name} ({i.quantity}){" ,"}
+            </Text>
+          ))}
+        </Text>
+      </View>
+    </View>
+    /* <View style={styles.item}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Text style={styles.orderNumber}>Order #{item.id}</Text>
 
@@ -93,8 +150,8 @@ export const OrdersScreen = ({ navigation }: Props) => {
         }}
       >
         <Text>Detail</Text>
-      </Button>*/}
-    </View>
+      </Button>
+    </View> */
   );
 
   if (isLoading) {
@@ -169,7 +226,12 @@ export const OrdersScreen = ({ navigation }: Props) => {
               }}
             />
             <Button
-              onPress={() => console.log("p")}
+              onPress={() =>
+                //@ts-ignore
+                navigation.navigate("ProductsNavigator", {
+                  screen: "ProductsScreen",
+                })
+              }
               rippleColor={palette.datesFilter}
               // rippleColor={"#FF5C35"}
               textColor="#fff"
@@ -206,8 +268,22 @@ const styles = StyleSheet.create({
   },
   item: {
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingHorizontal: 4,
+    width: widthScreen * 0.935,
+    marginHorizontal: 10,
+    height: heightScrenn * 0.2,
+    marginVertical: 5,
+    shadowColor: "#000",
+    marginTop: 10,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   orderNumber: {
     fontSize: 24,
@@ -227,6 +303,58 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontFamily: "Avanta-Bold",
     marginVertical: 6,
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    width: widthScreen * 0.95,
+    alignSelf: "center",
+    marginTop: 8,
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  cardContent: {
+    // Contenido de la tarjeta
+  },
+  /*  orderNumber: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },*/
+  date: {
+    fontSize: 14,
+    color: "#888",
+    marginBottom: 5,
+  },
+  status: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#007bff",
+  },
+  total: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  customer: {
+    fontSize: 14,
+    marginBottom: 5,
+  },
+  products: {
+    // Productos de la orden
+  },
+  productItem: {
+    fontSize: 12,
+    marginBottom: 2,
   },
 });
 

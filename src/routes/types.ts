@@ -1,4 +1,5 @@
 import { OrdersDetail } from '../screens/carStore/OrdersDetail';
+import { Address } from '../store/slices/addressesSlice';
 
 
 
@@ -11,6 +12,7 @@ export type MainParamList = {
     ProductsNavigator: undefined;
     CarNavigator?:undefined;
     AuthNavigator?:undefined,
+    AuthProfileNavigator?:undefined,
     ProfileNavigator: undefined,
     TabsNavigator: undefined,
     
@@ -27,6 +29,7 @@ export type MainParamList = {
     ProfileNavigator: undefined,
     CarNavigator?: undefined;
     AuthNavigator?:undefined;
+    AuthProfileNavigator?:undefined;
   };
 
 
@@ -39,8 +42,9 @@ export type HomeParamList = {
     CarScreen: undefined;
     MyCartScreen: undefined;
     MyOrderScreen:undefined;
-    TakeOrderScreen:undefined;
+    TakeOrderScreen:{isSelected:boolean,Address?:Address };
     OrdersDetail:undefined;
+  SelectAddress: undefined;
     SuccessOrder:undefined;
 }
 export type ProductsParamList = {
@@ -49,14 +53,17 @@ export type ProductsParamList = {
     ProductDescrip: {titleScreen:string,id:number}
     SearchProducts: {titleScreen:string}
 }
-
+export type AuthProfileParamsList = {
+  LoginProfileScreen: undefined;
+  RegisterProfileScreen: undefined; 
+}
 export type ProfileParamList = {
   
   ProfileScreen: undefined;
   OrdersScreen:undefined,
   OrdersDetail:undefined,
   AddressScreen: undefined,
-  AddAddress: {type: "DELIVERY" | "PICKUP", title:string, index?:any ,isEditing?: boolean,  firstName?: string,
+  AddAddress: {type: "DELIVERY" | "PICKUP", title:string, id?:any ,isEditing?: boolean,  firstName?: string,
     lastName?: string,
     companyName?: string,
     streetAddress?: string,
@@ -66,6 +73,7 @@ export type ProfileParamList = {
     zipCode?: string | number},
   AccountDetails: undefined,
   WishListScreen:undefined,
-  CompareScreen:undefined
+  CompareScreen:undefined,
+
 
 }
