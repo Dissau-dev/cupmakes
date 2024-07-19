@@ -94,21 +94,25 @@ app.get('/cupacakes/api/products', async (req, res) => {
   const page = parseInt(req.query.page, 10) || 1;
   const perPage = parseInt(req.query.per_page, 10) || 10;
   const filters = {
-    category: req.query.category,
-    rating: req.query.rating,
-    min_price: req.query.min_price,
-    max_price: req.query.max_price,
-    search: req.query.search
+    category: req.query.category ? parseInt(req.query.category, 10) : null,
+    rating: req.query.rating ? parseFloat(req.query.rating) : null,
+    min_price: req.query.min_price ? parseFloat(req.query.min_price) : null,
+    max_price: req.query.max_price ? parseFloat(req.query.max_price) : null,
+    search: req.query.search || null
   };
   const sortBy = req.query.sortBy;
 
+  // Refrescar productos si el caché ha expirado
   if (Date.now() - lastFetchTime > CACHE_DURATION) {
     await fetchAllProducts();
+    lastFetchTime = Date.now();
   }
 
+  // Filtrar y ordenar productos
   let filteredProducts = filterProducts(allProducts, filters);
   let sortedProducts = sortProducts(filteredProducts, sortBy);
 
+  // Paginación
   const start = (page - 1) * perPage;
   const end = start + perPage;
   const paginatedProducts = sortedProducts.slice(start, end);
@@ -121,6 +125,9 @@ app.get('/cupacakes/api/products', async (req, res) => {
   });
 });
 
+
+// Inicializar la carga de productos
+fetchAllProducts()
 
 app.get("/", (req, res) => {
   res.send({ "Welome to": "Expo's Stripe example server!"+stripePublishableKey+"_"+stripeSecretKey });

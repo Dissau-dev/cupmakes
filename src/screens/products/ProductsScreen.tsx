@@ -117,13 +117,14 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
         );
       }
     }
+    console.log("Filtered Items:", filtered); // Agregar este log
     //@ts-ignore
     setFilteredItems(filtered);
   };
 
   useEffect(() => {
     applyLocalFilters();
-    console.log(filteredItems.length);
+    console.log("filter data :" + filteredItems.length);
   }, [items, selectedCategories, selectedRating, priceRange, search]);
 
   const loadMoreProducts = () => {
