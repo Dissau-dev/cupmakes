@@ -10,7 +10,6 @@ import { Button } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useForm } from "react-hook-form";
 import { selectUser } from "../../store/slices/userSlice";
-import PickerControllerAccAso from "../../components/atoms/formControls/PickerControllerAccAso";
 
 import states from "../../utils/Data";
 import PickerController from "../../components/atoms/formControls/PickerController";

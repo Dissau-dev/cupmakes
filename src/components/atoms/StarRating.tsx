@@ -4,8 +4,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { palette } from "../../theme/colors";
 interface Prop {
   rating: number;
+  size?: number;
+  fontSize?: number;
 }
-const StarRating = ({ rating }: Prop) => {
+const StarRating = ({ rating, size, fontSize }: Prop) => {
   const filledStars = Math.floor(rating);
   const halfStarVisible = rating - filledStars >= 0.5;
 
@@ -14,14 +16,21 @@ const StarRating = ({ rating }: Prop) => {
     for (let i = 0; i < 5; i++) {
       if (i < filledStars) {
         stars.push(
-          <Ionicons key={i} name="star" size={22} color={palette.accountCard} />
+          <Ionicons
+            key={i}
+            name="star"
+            size={size || 22}
+            color={palette.accountCard}
+          />
         );
       } else if (i === filledStars && halfStarVisible) {
         stars.push(
-          <Ionicons key={i} name="star-half" size={22} color="gold" />
+          <Ionicons key={i} name="star-half" size={size || 22} color="gold" />
         );
       } else {
-        stars.push(<Ionicons key={i} name="star" size={22} color="#c1c1c1" />);
+        stars.push(
+          <Ionicons key={i} name="star" size={size || 22} color="#c1c1c1" />
+        );
       }
     }
     return stars;
@@ -31,7 +40,11 @@ const StarRating = ({ rating }: Prop) => {
     <View style={{ flexDirection: "row", alignItems: "center" }}>
       {renderStars()}
       <Text
-        style={{ marginLeft: 10, fontFamily: "Avanta-Medium", fontSize: 20 }}
+        style={{
+          marginLeft: 10,
+          fontFamily: "Avanta-Medium",
+          fontSize: fontSize || 20,
+        }}
       >
         {rating}
       </Text>

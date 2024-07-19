@@ -11,12 +11,13 @@ import { authApi } from '../api/authApi';
 interface InitialState {
     user: User | null | undefined;
     isAuth: boolean
-  
+    status: "fullfiled" | "loading" | "rejected" | "idle"
   }
   
   const initialState: InitialState = {
     user: null,
-    isAuth: false
+    isAuth: false,
+    status: "idle"
   };
   
 
@@ -40,7 +41,7 @@ export const fetchUserByEmail = createAsyncThunk(
      Toast.show({
         type: "error",
         text1: "Error",
-        text2: `Usuario no encontrado`,
+        text2: `User not found`,
       })
     )
     }
@@ -75,6 +76,9 @@ export const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(fetchUserByEmail.pending, (state, action) => {
+    state.status = "loading"
+    })
     builder.addCase(fetchUserByEmail.fulfilled, (state, action) => {
         console.log('este es el payload :' +action.payload)
         if(action.payload.lenght === 0) {
@@ -86,15 +90,18 @@ export const userSlice = createSlice({
           state.isAuth = true
           console.log('payload'+ action.payload)
          }
+         state.status = "fullfiled";
     });
     builder.addCase(fetchUserByEmail.rejected, (state, action) => {
       console.error(action.error.message);
+      state.status = "rejected";
     })
-   
+ 
   },
 });
 
 export const { setSessionTokens ,updateUser, regisyterUser, logOut} = userSlice.actions;
 export const selectUser= (state: RootState) => state.user.user;
 export const selectAuth= (state: RootState) => state.user.isAuth;
+export const selectStatus= (state: RootState) => state.user.status;
 export default userSlice.reducer;

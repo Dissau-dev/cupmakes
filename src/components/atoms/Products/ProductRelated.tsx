@@ -1,44 +1,33 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { palette } from "../../../theme/colors";
+import { heightScrenn, widthScreen } from "../../../theme/styles/global";
 import {
+  Image,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { heightScrenn, widthScreen } from "../../../theme/styles/global";
-import { palette } from "../../../theme/colors";
-import { Image } from "expo-image";
-import { Ionicons, Fontisto } from "@expo/vector-icons";
-import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { Ionicons } from "@expo/vector-icons";
 import {
   addLikedProduct,
   productsInterface,
   removeLikedItem,
   selectWitches,
 } from "../../../store/slices/witchesSlice";
-import {
-  addLineItems,
-  addProduct,
-  selectProducts,
-} from "../../../store/slices/cartSlice";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import StarRating from "../StarRating";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   onpress: () => void;
   item: any;
 }
-export const ProductsItem = ({ onpress, item }: Props) => {
+export const ProductRelated = ({ onpress, item }: Props) => {
   const dispatch = useAppDispatch();
   const currentWitches = useAppSelector(selectWitches);
   const [heart, setHeart] = useState(false);
-  /*useEffect(() => {
-    if (!heart)
-      currentWitches.forEach((element: { id: number }) => {
-        if (element.id === item.id) {
-          setHeart(true);
-        }
-      });
-  }, [heart]);*/
 
   useEffect(() => {
     setHeart(currentWitches.some((product) => product.id === item.id));
@@ -49,7 +38,7 @@ export const ProductsItem = ({ onpress, item }: Props) => {
       source={require("../../../../assets/genericImage.jpg")}
       style={{
         width: widthScreen * 0.4,
-        height: heightScrenn * 0.135,
+        height: heightScrenn * 0.12,
         alignSelf: "center",
         borderRadius: 10,
       }}
@@ -77,19 +66,6 @@ export const ProductsItem = ({ onpress, item }: Props) => {
     }
   };
 
-  const handleAddToCart = (item: any) => {
-    const { id, name, price, images } = item;
-    const quantity = 1;
-    const totalItemPrice = price * quantity;
-    const product_id = id;
-    setTimeout(() => {
-      dispatch(
-        addProduct({ id, name, price, quantity, images, totalItemPrice })
-      );
-      dispatch(addLineItems({ product_id, quantity }));
-    }, 200);
-  };
-
   return (
     <Pressable onPress={onpress}>
       <View style={styles.card}>
@@ -98,8 +74,8 @@ export const ProductsItem = ({ onpress, item }: Props) => {
             <Image
               source={{ uri: item.images[0].src }}
               style={{
-                width: widthScreen * 0.4,
-                height: heightScrenn * 0.135,
+                width: widthScreen * 0.3,
+                height: heightScrenn * 0.12,
                 alignSelf: "center",
               }}
             />
@@ -129,64 +105,19 @@ export const ProductsItem = ({ onpress, item }: Props) => {
         ) : (
           <ImagenPorDefecto />
         )}
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginHorizontal: 10,
-          }}
-        >
-          <View>
-            <Text style={{ fontSize: 20, fontFamily: "Avanta-Bold" }}>
-              {item.name}
-            </Text>
-          </View>
-          <View>
-            <Ionicons
-              name="information-circle"
-              size={26}
-              color="#73729A"
-              onPress={onpress}
-            />
-          </View>
-        </View>
-        <View>
-          <Text style={styles.textDescription}>
-            {" "}
-            {item.description.length > 74
-              ? `${item.description
-                  .replace(/^<p>/, "")
-                  .replace(/<\/p>/, "")
-                  .slice(0, 74)}...`
-              : item.description.replace(/^<p>/, "").replace(/<\/p>/, "")}
+
+        <View style={{ marginHorizontal: 10 }}>
+          <Text style={{ fontSize: 20, fontFamily: "Avanta-Bold" }}>
+            {item.name}
           </Text>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginHorizontal: 10,
-            alignContent: "flex-end",
-            alignItems: "center",
-
-            // backgroundColor: "#c1c1c1",
-          }}
-        >
-          <View>
-            <Text style={{ fontFamily: "Avanta-Bold", fontSize: 18 }}>
-              $ {item.price}
-            </Text>
-          </View>
-          <TouchableOpacity
-            onPress={() => handleAddToCart(item)}
-            style={styles.btn}
-          >
-            <Text style={styles.textBtn}>
-              <Fontisto name="shopping-bag" size={14} color={palette.primary} />
-              {"  "}
-              ADD
-            </Text>
-          </TouchableOpacity>
+        <View style={{ marginHorizontal: 10 }}>
+          <StarRating rating={item.average_rating} size={16} fontSize={16} />
+        </View>
+        <View style={{ marginHorizontal: 10 }}>
+          <Text style={{ fontFamily: "Avanta-Bold", fontSize: 18 }}>
+            $ {item.price}
+          </Text>
         </View>
       </View>
     </Pressable>
@@ -201,11 +132,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     width: widthScreen * 0.44,
     marginHorizontal: 10,
-    height: heightScrenn * 0.315,
+    height: heightScrenn * 0.24,
     paddingVertical: 10,
     marginBottom: 10,
     paddingTop: 10,
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
+    justifyContent: "space-around",
     flexDirection: "column",
     shadowColor: "#000",
     marginTop: 10,

@@ -40,15 +40,6 @@ export const AuthNavigator = () => {
         component={RegisterScreen}
         options={{ title: "RegisterScreen" }}
       />
-
-      {/*<Stack.Screen
-        name="ViewTicket"
-        component={ViewTicket}
-        options={({ route, navigation }) => ({
-          headerShown: true,
-          title: route.params.titleScreen,
-        })}
-      />*/}
     </Stack.Navigator>
   );
 };

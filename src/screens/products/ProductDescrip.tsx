@@ -2,7 +2,7 @@ import {
   StackScreenProps,
   createStackNavigator,
 } from "@react-navigation/stack";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { HomeParamList, ProductsParamList } from "../../routes/types";
 import FocusAwareStatusBar from "../../components/atoms/FocusAwareStatusBar";
@@ -29,21 +30,28 @@ import Animation from "../../../assets/looties/Loading2.json";
 
 import Lottie from "lottie-react-native";
 import { Description } from "../../components/atoms/Products/Description";
+import { ProductRelated } from "../../components/atoms/Products/ProductRelated";
+import { RelatedProductsList } from "../../components/atoms/Products/RelatedProductsList";
 
 interface ScreenProps
   extends StackScreenProps<ProductsParamList, "ProductDescrip"> {}
 
 export const ProductDescrip = ({ navigation, route }: ScreenProps) => {
-  const dispatch = useAppDispatch();
-
   const { id } = route.params;
+  const {
+    data: product,
+    error: productError,
+    isLoading: productLoading,
+  } = useGetProductByIdQuery(id);
+  const [relatedIds, setRelatedIds] = useState([]);
 
-  const { data: item, isLoading } = useGetProductByIdQuery(id);
+  useEffect(() => {
+    if (product) {
+      setRelatedIds(product.related_ids || []);
+    }
+  }, [product]);
 
-  const [disabled, setDisabled] = useState<boolean>(true);
-  const [count, setcount] = useState(1);
-
-  if (isLoading) {
+  if (productLoading) {
     return (
       <View>
         <FocusAwareStatusBar
@@ -66,29 +74,6 @@ export const ProductDescrip = ({ navigation, route }: ScreenProps) => {
     );
   }
 
-  const increment = () => {
-    setcount(count + 1);
-    if (count === 1) {
-      setDisabled(false);
-    }
-  };
-  const decrement = () => {
-    if (count === 2) {
-      setcount(count - 1);
-      setDisabled(true);
-    } else {
-      setcount(count - 1);
-    }
-  };
-  const handleAddToCart = (item: any) => {
-    const { id, name, price, images } = item;
-    const quantity = count;
-    const totalItemPrice = quantity * price;
-
-    dispatch(addProduct({ id, name, price, quantity, images, totalItemPrice }));
-    dispatch(addLineItems({ id, quantity }));
-  };
-
   return (
     <View>
       <FocusAwareStatusBar
@@ -100,7 +85,11 @@ export const ProductDescrip = ({ navigation, route }: ScreenProps) => {
         style={{ backgroundColor: "#fff" }}
         showsVerticalScrollIndicator={false}
       >
-        <Description item={item} />
+        <Description item={product} />
+        <View style={{ marginTop: 10 }} />
+
+        <RelatedProductsList relatedIds={relatedIds} />
+        <View style={{ height: heightScrenn * 0.05 }} />
       </ScrollView>
     </View>
   );

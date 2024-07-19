@@ -28,7 +28,7 @@ import { validateEmail } from "../../utils/validation";
 import { loginStyles } from "../../theme/loginTheme";
 import { useGetUserByEmailQuery } from "../../store/api/authApi";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchUserByEmail } from "../../store/slices/userSlice";
+import { fetchUserByEmail, selectStatus } from "../../store/slices/userSlice";
 
 import {
   AuthProfileParamsList,
@@ -46,12 +46,9 @@ interface Props
   extends StackScreenProps<AuthProfileParamsList, "LoginProfileScreen"> {}
 
 export const LoginProfileScreen = ({ navigation }: Props) => {
-  const [loading, setloading] = useState(false);
-  const [showRegister, setshowRegister] = useState(false);
-  const [showLogin, setshowLogin] = useState(true);
+  const status = useAppSelector(selectStatus);
+
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user.user);
-  const [showPassword, setShowPassword] = useState(false);
 
   const {
     handleSubmit,
@@ -67,12 +64,9 @@ export const LoginProfileScreen = ({ navigation }: Props) => {
     const email = data.email;
     console.log(email);
     try {
-      setloading(true);
       //@ts-ignore
       dispatch(fetchUserByEmail(email));
-      setloading(false);
     } catch (error) {
-      setloading(false);
       console.log("error :" + error);
     }
   };
@@ -151,8 +145,8 @@ export const LoginProfileScreen = ({ navigation }: Props) => {
               rippleColor={palette.datesFilter}
               onPress={handleSubmit(onSubmit)}
               textColor={palette.white}
-              loading={isSubmitting}
-              disabled={isSubmitting || loading}
+              loading={status === "loading"}
+              disabled={status === "loading"}
               labelStyle={stylesRegister.textLogIn}
             >
               {isSubmitting ? "Loading" : "Log in"}

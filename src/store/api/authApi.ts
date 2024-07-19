@@ -43,9 +43,6 @@ export const authApi = api.injectEndpoints({
         },
       }),
 
-  
-   
-   
       getMyUser: build.query<User,void>({
         query: () => ({
           url: `/user/myuser`,
@@ -103,22 +100,13 @@ export const authApi = api.injectEndpoints({
             return { error: response.error };
           } catch (error) {
             console.log(error)
-          //  crashlytics().log("Something failed while register  the user");
-         //   crashlytics().recordError(error as any);
+
    return { error: error };
           }
         },
         invalidatesTags: (result) => (result ? ["ORDERS"] : []),
       }),
-    /*   uploadImage: build.mutation<Array<Image>, any>({
-        query: (data) => ({
-          url: `/file/user`,
-          data: data,
-          method: "POST",
-        }),
-        invalidatesTags: ["User"],
-      }),*/
-    
+ 
     };
   },
   overrideExisting: true,

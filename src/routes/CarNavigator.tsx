@@ -30,29 +30,8 @@ export const CarNavigator = () => {
         },
       }}
     >
-      {/*  <Stack.Screen
-        name="CarScreen"
-        component={CarScreen}
-        options={{ title: "Car" }}
-      /> */}
-
-      {/*<Stack.Screen
-        name="ViewTicket"
-        component={ViewTicket}
-        options={({ route, navigation }) => ({
-          headerShown: true,
-          title: route.params.titleScreen,
-        })}
-      />*/}
       <Stack.Screen name="MyCartScreen" component={MyCartScreen} />
-      {/*   <Stack.Screen
-        name="MyOrderScreen"
-        component={MyOrderScreen}
-        options={({ route, navigation }) => ({
-          headerShown: true,
-          title: "My Orders ",
-        })}
-      /> */}
+
       <Stack.Screen
         name="TakeOrderScreen"
         component={TakeOrderScreen}

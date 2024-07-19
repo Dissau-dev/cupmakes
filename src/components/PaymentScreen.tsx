@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text } from "react-native";
 
 import { palette } from "../theme/colors";
-import { fetchPublishableKey } from "../helpers/helper";
+
 import { STRIPE_PUBLISHABLE_KEY } from "../screens/carStore/StripeConfig";
 
 interface Props {

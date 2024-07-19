@@ -43,6 +43,7 @@ import TextInputControllerHolderName from "../../components/atoms/formControls/T
 import { CartItem } from "../../components/atoms/Products/cart/CartItem";
 import { EmptyCart } from "../../components/atoms/Products/cart/EmptyCart";
 import { BarLoading } from "../../components/atoms/Products/cart/BarLoading";
+import Toast from "react-native-toast-message";
 
 interface ProtectedScreenProps
   extends StackScreenProps<CarParamList, "MyCartScreen"> {}
@@ -69,7 +70,7 @@ export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
   const products = useAppSelector(selectProducts);
   const fullPrice = useAppSelector(selectFullPrice);
   const linealItems = useAppSelector(selectLineItems);
-
+  const isAuth = useAppSelector(selectAuth);
   console.log(linealItems);
 
   const isIOS = Platform.OS === "ios";
@@ -80,7 +81,21 @@ export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
 
     setIsExtended(currentScrollPosition <= 0);
   };
-
+  const onCheckout = () => {
+    if (isAuth) {
+      navigation.navigate("SelectAddress");
+    } else {
+      Toast.show({
+        type: "info",
+        text1: "Info",
+        text2: "Auth is required",
+      });
+      //@ts-ignore
+      navigation.navigate("AuthProfileNavigator", {
+        screen: "LoginProfileScreen",
+      });
+    }
+  };
   return (
     <>
       <FocusAwareStatusBar
@@ -138,7 +153,7 @@ export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
           icon={"credit-card-check-outline"}
           label={`Check out : $ ${fullPrice === 0 ? null : fullPrice}`}
           extended={isExtended}
-          onPress={() => navigation.navigate("SelectAddress")}
+          onPress={onCheckout}
           animateFrom={"right"}
           iconMode={"dynamic"}
           color="#fff"

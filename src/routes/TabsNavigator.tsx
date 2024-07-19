@@ -124,6 +124,48 @@ const AndroidBottomTabs = () => {
           headerShown: false,
         })}
       />
+      <AndroidBottomTab.Screen
+        name="CarNavigator"
+        component={CarNavigator}
+        options={({ route }) => ({
+          title: "Cart",
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            return (
+              <View style={{}}>
+                <View
+                  style={{
+                    marginLeft: widthScreen * 0.05,
+                    top: heightScrenn * 0.016,
+                    //position: "absolute",
+                  }}
+                >
+                  {products.length === 0 ? null : (
+                    <Animated.View style={animatedStyle}>
+                      <Badge
+                        style={{
+                          backgroundColor: palette.primary,
+                          elevation: 1,
+                          position: "absolute",
+                          left: 0,
+                          bottom: 2,
+                        }}
+                      >
+                        {products.length > 9 ? "9+" : products.length}
+                      </Badge>
+                    </Animated.View>
+                  )}
+                </View>
+
+                <Ionicons name={"cart-outline"} size={size} color={color} />
+              </View>
+            );
+          },
+
+          headerShown: false,
+        })}
+      />
+
       {isAuth ? (
         <AndroidBottomTab.Screen
           name="ProfileNavigator"
@@ -159,78 +201,6 @@ const AndroidBottomTabs = () => {
           })}
         />
       )}
-
-      {isAuth ? (
-        <AndroidBottomTab.Screen
-          name="CarNavigator"
-          component={CarNavigator}
-          options={({ route }) => ({
-            title: "Cart",
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName;
-              return (
-                <View style={{}}>
-                  <View
-                    style={{
-                      marginLeft: widthScreen * 0.05,
-                      top: heightScrenn * 0.016,
-                      //position: "absolute",
-                    }}
-                  >
-                    {products.length === 0 ? null : (
-                      <Animated.View style={animatedStyle}>
-                        <Badge
-                          style={{
-                            backgroundColor: palette.primary,
-                            elevation: 1,
-                            position: "absolute",
-                            left: 0,
-                            bottom: 2,
-                          }}
-                        >
-                          {products.length > 9 ? "9+" : products.length}
-                        </Badge>
-                      </Animated.View>
-                    )}
-                  </View>
-
-                  <Ionicons name={"cart-outline"} size={size} color={color} />
-                </View>
-              );
-            },
-
-            headerShown: false,
-          })}
-        />
-      ) : (
-        <AndroidBottomTab.Screen
-          name="AuthNavigator"
-          component={AuthNavigator}
-          options={({ route }) => ({
-            title: "Cart",
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName;
-              return (
-                <View style={{}}>
-                  <View
-                    style={{ marginLeft: 22, bottom: 12, position: "absolute" }}
-                  >
-                    {products.length === 0 ? null : (
-                      <Badge style={{ backgroundColor: palette.primary }}>
-                        {products.length > 9 ? "9+" : products.length}
-                      </Badge>
-                    )}
-                  </View>
-
-                  <Ionicons name={"cart-outline"} size={size} color={color} />
-                </View>
-              );
-            },
-
-            headerShown: false,
-          })}
-        />
-      )}
     </AndroidBottomTab.Navigator>
   );
 };
@@ -238,6 +208,22 @@ const IOSBottomTab = createBottomTabNavigator<TabsParamList>();
 const IOSBottomTabs = () => {
   const products = useAppSelector(selectProducts);
   const isAuth = useAppSelector(selectAuth);
+
+  const badgeScale = useSharedValue(1);
+  const lastUpdated = useAppSelector((state) => state.cart.lastUpdated);
+  React.useEffect(() => {
+    if (lastUpdated) {
+      badgeScale.value = withTiming(1.5, { duration: 200 }, () => {
+        badgeScale.value = withTiming(1, { duration: 200 });
+      });
+    }
+  }, [lastUpdated]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: badgeScale.value }],
+    };
+  });
   return (
     <IOSBottomTab.Navigator
       screenOptions={{
@@ -280,57 +266,81 @@ const IOSBottomTabs = () => {
         })}
         component={ProductsNavigator}
       />
-      {isAuth ? (
-        <IOSBottomTab.Screen
-          name="CarNavigator"
-          options={{
-            title: "Cart",
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName;
-              return (
-                <View style={{}}>
-                  <View
-                    style={{ marginLeft: 22, bottom: 12, position: "absolute" }}
-                  >
-                    {products.length === 0 ? null : (
-                      <Badge style={{ backgroundColor: palette.primary }}>
+      <IOSBottomTab.Screen
+        name="CarNavigator"
+        component={CarNavigator}
+        options={({ route }) => ({
+          title: "Cart",
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            return (
+              <View style={{}}>
+                <View
+                  style={{
+                    marginLeft: widthScreen * 0.05,
+                    top: heightScrenn * 0.016,
+                    //position: "absolute",
+                  }}
+                >
+                  {products.length === 0 ? null : (
+                    <Animated.View style={animatedStyle}>
+                      <Badge
+                        style={{
+                          backgroundColor: palette.primary,
+                          elevation: 1,
+                          position: "absolute",
+                          left: 0,
+                          bottom: 2,
+                        }}
+                      >
                         {products.length > 9 ? "9+" : products.length}
                       </Badge>
-                    )}
-                  </View>
-
-                  <Ionicons name={"cart-outline"} size={size} color={color} />
+                    </Animated.View>
+                  )}
                 </View>
+
+                <Ionicons name={"cart-outline"} size={size} color={color} />
+              </View>
+            );
+          },
+
+          headerShown: false,
+        })}
+      />
+
+      {isAuth ? (
+        <IOSBottomTab.Screen
+          name="ProfileNavigator"
+          component={ProfileNavigator}
+          options={({ route }) => ({
+            title: "Profile",
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
+
+              return (
+                <Ionicons name={"person-outline"} size={size} color={color} />
               );
             },
-          }}
-          component={CarNavigator}
+
+            headerShown: false,
+          })}
         />
       ) : (
         <IOSBottomTab.Screen
-          name="AuthNavigator"
-          options={{
-            title: "Cart",
+          name="AuthProfileNavigator"
+          component={AuthProfileNavigator}
+          options={({ route }) => ({
+            title: "Profile",
             tabBarIcon: ({ focused, color, size }) => {
               let iconName;
-              return (
-                <View style={{}}>
-                  <View
-                    style={{ marginLeft: 22, bottom: 12, position: "absolute" }}
-                  >
-                    {products.length === 0 ? null : (
-                      <Badge style={{ backgroundColor: palette.primary }}>
-                        {products.length > 9 ? "9+" : products.length}
-                      </Badge>
-                    )}
-                  </View>
 
-                  <Ionicons name={"cart-outline"} size={size} color={color} />
-                </View>
+              return (
+                <Ionicons name={"person-outline"} size={size} color={color} />
               );
             },
-          }}
-          component={AuthNavigator}
+
+            headerShown: false,
+          })}
         />
       )}
     </IOSBottomTab.Navigator>

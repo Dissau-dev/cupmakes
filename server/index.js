@@ -4,7 +4,8 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const Stripe = require("stripe");
 
-
+const base64 = require("base-64");
+const axios = require("axios");
 const env = require("dotenv");
 env.config({ path: "./server/.env" });
 const stripePublishableKey = process.env.STRIPE_PUBLIC_KEY|| "";
@@ -15,13 +16,111 @@ const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
 const app = express();
 
-app.use((req, res, next) => {
-  if (req.originalUrl === "/webhook") {
-    next();
-  } else {
-    bodyParser.json()(req, res, next);
+
+const wooCommerceApiUrl = 'https://dev.cupmakes.com//wp-json/wc/v3/products';
+const consumerKey = "ck_fd5c542c02aa26ba0073ab69b91b78585e72ca05";
+const consumerSecret = "cs_48662918ad66d95f32f6e2ae55417a63c44fdbd6";
+
+
+const headers = {
+  Authorization: "Basic " + base64.encode(consumerKey + ":" + consumerSecret)
+};
+
+
+let allProducts = [];
+let lastFetchTime = 0;
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutos
+
+const fetchAllProducts = async () => {
+  let page = 1;
+  let fetchedProducts = [];
+  let totalPages = 1;
+
+  while (page <= totalPages) {
+    const response = await axios.get(wooCommerceApiUrl, {
+      headers: headers,
+      params: { page, per_page: 100 }
+    });
+    fetchedProducts = fetchedProducts.concat(response.data);
+    totalPages = parseInt(response.headers['x-wp-totalpages'], 10);
+    page++;
   }
+
+  allProducts = fetchedProducts;
+  lastFetchTime = Date.now();
+  console.log('Productos actualizados:', fetchedProducts.length);
+};
+
+// Middleware para parsear JSON
+app.use(express.json());
+
+// Ruta para manejar los webhooks de WooCommerce
+app.post('/webhook', (req, res) => {
+  const event = req.body.event;
+  const productId = req.body.resource.id;
+
+  if (['created', 'updated', 'deleted'].includes(event)) {
+    fetchAllProducts(); // Actualiza todos los productos cuando ocurra un evento relevante
+  }
+
+  res.sendStatus(200);
 });
+
+
+const filterProducts = (products, filters) => {
+  return products.filter(product => {
+    if (filters.category && !product.categories.some(cat => cat.id == filters.category)) return false;
+    if (filters.rating && product.average_rating < filters.rating) return false;
+    if (filters.min_price && product.price < filters.min_price) return false;
+    if (filters.max_price && product.price > filters.max_price) return false;
+    if (filters.search && !product.name.toLowerCase().includes(filters.search.toLowerCase())) return false;
+    return true;
+  });
+};
+
+const sortProducts = (products, sortBy) => {
+  if (sortBy === 'price_asc') {
+    return products.sort((a, b) => a.price - b.price);
+  } else if (sortBy === 'price_desc') {
+    return products.sort((a, b) => b.price - a.price);
+  } else if (sortBy === 'rating') {
+    return products.sort((a, b) => b.average_rating - a.average_rating);
+  } else {
+    return products;
+  }
+};
+
+app.get('/cupacakes/api/products', async (req, res) => {
+  const page = parseInt(req.query.page, 10) || 1;
+  const perPage = parseInt(req.query.per_page, 10) || 10;
+  const filters = {
+    category: req.query.category,
+    rating: req.query.rating,
+    min_price: req.query.min_price,
+    max_price: req.query.max_price,
+    search: req.query.search
+  };
+  const sortBy = req.query.sortBy;
+
+  if (Date.now() - lastFetchTime > CACHE_DURATION) {
+    await fetchAllProducts();
+  }
+
+  let filteredProducts = filterProducts(allProducts, filters);
+  let sortedProducts = sortProducts(filteredProducts, sortBy);
+
+  const start = (page - 1) * perPage;
+  const end = start + perPage;
+  const paginatedProducts = sortedProducts.slice(start, end);
+
+  res.json({
+    page: page,
+    data: paginatedProducts,
+    totalPages: Math.ceil(sortedProducts.length / perPage),
+    totalProducts: sortedProducts.length
+  });
+});
+
 
 app.get("/", (req, res) => {
   res.send({ "Welome to": "Expo's Stripe example server!"+stripePublishableKey+"_"+stripeSecretKey });

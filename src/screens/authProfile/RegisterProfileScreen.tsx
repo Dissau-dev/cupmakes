@@ -253,7 +253,7 @@ export const RegisterProfileScreen = ({ navigation }: Props) => {
               disabled={(isDirty && !isValid) || isSubmitting || isLoading}
               labelStyle={stylesRegister.textLogIn}
             >
-              {isSubmitting ? "Loading" : "Sing up"}
+              {isSubmitting ? "Loading" : "Sign up"}
             </Button>
 
             <View style={loginStyles.newUserContainer}>

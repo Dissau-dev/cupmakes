@@ -8,7 +8,6 @@ import {
   heightScrenn,
   widthScreen,
 } from "../../../theme/styles/global";
-import { BanerSkeleton } from "../BanerSkeleton";
 
 export default function ProductsSkeleton() {
   return (
@@ -20,7 +19,7 @@ export default function ProductsSkeleton() {
               height={heightScrenn * 0.315}
               width={widthScreen * 0.44}
               radius={10}
-              colorMode="light"
+              colorMode="dark"
               colors={skeletonsColors}
             />
           </View>
