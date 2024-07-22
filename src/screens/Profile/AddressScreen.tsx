@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Pressable,
+  Image,
 } from "react-native";
 import React, { useState } from "react";
 import FocusAwareStatusBar from "../../components/atoms/FocusAwareStatusBar";
@@ -22,12 +23,7 @@ import {
   SegmentedButtons,
 } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { useForm } from "react-hook-form";
-import { selectUser } from "../../store/slices/userSlice";
-import PickerControllerAccAso from "../../components/atoms/formControls/PickerControllerAccAso";
 
-import states from "../../utils/Data";
-import PickerController from "../../components/atoms/formControls/PickerController";
 import {
   addAddress,
   removeAddress,
@@ -36,15 +32,15 @@ import {
 } from "../../store/slices/addressesSlice";
 import { ProfileParamList } from "../../routes/types";
 import { StackScreenProps } from "@react-navigation/stack";
-import Toast from "react-native-toast-message";
+
 import {
   Ionicons,
   MaterialCommunityIcons,
   Entypo,
   AntDesign,
 } from "@expo/vector-icons";
-import LottieView from "lottie-react-native";
-import addressAnimation from "../../../assets/looties/Animation - 2.json";
+
+import Logo from "./placeholders/logo.svg";
 
 interface Props extends StackScreenProps<ProfileParamList, "AddressScreen"> {}
 
@@ -107,31 +103,7 @@ export default function AddressScreen({ navigation }: Props) {
       {value === "pickUp" ? (
         <View>
           <FlatList
-            ListEmptyComponent={
-              <View>
-                <Text
-                  style={{
-                    color: palette.secondary,
-                    fontFamily: "Avanta-Medium",
-                    fontSize: 30,
-                    textAlign: "center",
-                    marginVertical: heightScrenn * 0.05,
-                  }}
-                >
-                  No pick up addresses
-                </Text>
-                <LottieView
-                  source={addressAnimation}
-                  autoPlay
-                  loop
-                  style={{
-                    width: widthScreen * 1,
-                    height: heightScrenn * 0.45,
-                    alignSelf: "center",
-                  }}
-                />
-              </View>
-            }
+            ListEmptyComponent={<Logo width={120} height={40} />}
             ListHeaderComponent={
               <TouchableOpacity
                 onPress={() =>
@@ -278,16 +250,6 @@ export default function AddressScreen({ navigation }: Props) {
                 >
                   No delivery addresses
                 </Text>
-                <LottieView
-                  source={addressAnimation}
-                  autoPlay
-                  loop
-                  style={{
-                    width: widthScreen * 1,
-                    height: heightScrenn * 0.45,
-                    alignSelf: "center",
-                  }}
-                />
               </View>
             }
             data={dataDelivery}

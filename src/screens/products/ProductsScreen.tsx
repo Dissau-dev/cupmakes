@@ -117,14 +117,12 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
         );
       }
     }
-    console.log("Filtered Items:", filtered); // Agregar este log
     //@ts-ignore
     setFilteredItems(filtered);
   };
 
   useEffect(() => {
     applyLocalFilters();
-    console.log("filter data :" + filteredItems.length);
   }, [items, selectedCategories, selectedRating, priceRange, search]);
 
   const loadMoreProducts = () => {
@@ -161,6 +159,15 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
     setTempSelectedRating(null);
     setTempPriceRange([0, 1000]);
     setTempSearch("");
+    const filters = {
+      categories: [],
+      rating: null,
+      min_price: 0,
+      max_price: 1000,
+      search: "",
+    };
+    dispatch(setFilters(filters));
+    dispatch(fetchProducts(1));
   };
 
   const removeCategoryFilter = (id: number) => {
@@ -175,11 +182,29 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
   const removeRatingFilter = () => {
     setSelectedRating(null);
     setTempSelectedRating(null);
+    const filters = {
+      categories: selectedCategories,
+      rating: null,
+      min_price: priceRange[0],
+      max_price: priceRange[1],
+      search: search,
+    };
+    dispatch(setFilters(filters));
+    dispatch(fetchProducts(1));
   };
 
   const removePriceFilter = () => {
     setPriceRange([0, 1000]);
     setTempPriceRange([0, 1000]);
+    const filters = {
+      categories: selectedCategories,
+      rating: selectedRating,
+      min_price: 0,
+      max_price: 1000,
+      search: search,
+    };
+    dispatch(setFilters(filters));
+    dispatch(fetchProducts(1));
   };
 
   const renderFooter = () => {

@@ -31,14 +31,6 @@ export const ProductsItem = ({ onpress, item }: Props) => {
   const dispatch = useAppDispatch();
   const currentWitches = useAppSelector(selectWitches);
   const [heart, setHeart] = useState(false);
-  /*useEffect(() => {
-    if (!heart)
-      currentWitches.forEach((element: { id: number }) => {
-        if (element.id === item.id) {
-          setHeart(true);
-        }
-      });
-  }, [heart]);*/
 
   useEffect(() => {
     setHeart(currentWitches.some((product) => product.id === item.id));

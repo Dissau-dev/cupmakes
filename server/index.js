@@ -3,7 +3,7 @@
 const bodyParser = require("body-parser");
 const express = require("express");
 const Stripe = require("stripe");
-
+const cron = require('node-cron');
 const base64 = require("base-64");
 const axios = require("axios");
 const env = require("dotenv");
@@ -29,9 +29,14 @@ const headers = {
 
 let allProducts = [];
 let lastFetchTime = 0;
-const CACHE_DURATION = 10 * 60 * 1000; // 10 minutos
+const CACHE_DURATION = 30 * 60 * 1000; // 10 minutos
+
+let isFetching = false;
 
 const fetchAllProducts = async () => {
+  if (isFetching) return; // Si ya se está actualizando, no hacer nada
+  isFetching = true;
+  
   let page = 1;
   let fetchedProducts = [];
   let totalPages = 1;
@@ -48,9 +53,15 @@ const fetchAllProducts = async () => {
 
   allProducts = fetchedProducts;
   lastFetchTime = Date.now();
+  isFetching = false;
   console.log('Productos actualizados:', fetchedProducts.length);
 };
 
+
+// Actualiza productos cada 10 minutos
+cron.schedule('*/10 * * * *', async () => {
+  await fetchAllProducts();
+});
 // Middleware para parsear JSON
 app.use(express.json());
 
@@ -104,8 +115,9 @@ app.get('/cupacakes/api/products', async (req, res) => {
 
   // Refrescar productos si el caché ha expirado
   if (Date.now() - lastFetchTime > CACHE_DURATION) {
-    await fetchAllProducts();
-    lastFetchTime = Date.now();
+    if (!isFetching) {
+      fetchAllProducts(); // Actualización en segundo plano
+    }
   }
 
   // Filtrar y ordenar productos
@@ -125,14 +137,11 @@ app.get('/cupacakes/api/products', async (req, res) => {
   });
 });
 
-
 // Inicializar la carga de productos
 fetchAllProducts()
 
 app.get("/", (req, res) => {
   res.send({ "Welome to": "Expo's Stripe example server!"+stripePublishableKey+"_"+stripeSecretKey });
-  console.log(stripeSecretKey)
-  console.log(stripePublishableKey)
 });
 
 const calculateOrderAmount = _order => {

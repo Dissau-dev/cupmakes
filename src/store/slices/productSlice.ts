@@ -57,8 +57,7 @@ const fetchProductsFromNodeServer = async (page: number, perPage: number, filter
 
   const response = await axios.get(`${nodeServerBaseUrl}/products`, { params });
 
- console.log('Response:', response.data);  // Agregar este log
- 
+
   const totalPages = response.data.totalPages; 
   const totalProducts = response.data.totalProducts; 
   return { data: response.data.data, totalPages, totalProducts };
@@ -74,7 +73,7 @@ export const fetchProducts = createAsyncThunk(
       // Asegúrate de que `page` sea un entero
       page = Math.floor(page);
       const filters = state.product.filters;
-      console.log('page: ' + page);
+     
 
       // Obtener productos de la página actual
       const currentProductsResponse = await fetchProductsFromNodeServer(page, 10, filters);
