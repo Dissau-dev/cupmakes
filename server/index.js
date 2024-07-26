@@ -61,21 +61,12 @@ const fetchAllProducts = async () => {
 // Actualiza productos cada 10 minutos
 cron.schedule('*/10 * * * *', async () => {
   await fetchAllProducts();
+  console.log("se ejecuta fetchProducts")
 });
 // Middleware para parsear JSON
 app.use(express.json());
 
-// Ruta para manejar los webhooks de WooCommerce
-app.post('/webhook', (req, res) => {
-  const event = req.body.event;
-  const productId = req.body.resource.id;
 
-  if (['created', 'updated', 'deleted'].includes(event)) {
-    fetchAllProducts(); // Actualiza todos los productos cuando ocurra un evento relevante
-  }
-
-  res.sendStatus(200);
-});
 
 
 const filterProducts = (products, filters) => {
