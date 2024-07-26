@@ -29,7 +29,7 @@ const headers = {
 
 let allProducts = [];
 let lastFetchTime = 0;
-const CACHE_DURATION = 30 * 60 * 1000; // 10 minutos
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutos
 
 let isFetching = false;
 
