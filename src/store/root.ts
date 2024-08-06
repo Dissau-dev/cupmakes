@@ -19,6 +19,7 @@ import {
 
 
 import { api } from "./api/api";
+import { sellersApi} from "./api/sellersApi"
 
 import { configReducer } from "./slices/configSlice";
 import cartSlice from "./slices/cartSlice";
@@ -46,7 +47,7 @@ const rootReducer = combineReducers({
   addresses: addressesSlice,
    user: userSlice,
   [api.reducerPath]: api.reducer,
-  
+  [ sellersApi.reducerPath]:  sellersApi.reducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -58,7 +59,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat([api.middleware]),
+    }).concat([api.middleware,  sellersApi.middleware]),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

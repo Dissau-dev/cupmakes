@@ -161,7 +161,7 @@ app.post('/upload', async function(req, res) {
   const nameExtention = archivo.name.split(".");
   const extension = nameExtention[nameExtention.length - 1].toLowerCase(); // Convertir a minúsculas
 
-  const validExtension = ["jpg", "png", "jpeg"];
+  const validExtension = ["jpg", "png", "jpeg","webp"];
 
   // Verificar si la extensión es válida
   if (!validExtension.includes(extension)) {
@@ -186,49 +186,40 @@ app.post('/upload', async function(req, res) {
 const SellerProduct = [{id: 1, name: "Cherry Sprinkles PinkCream",  "images": [
   {
       "id": 1,
-      "src": "https://asset.cloudinary.com/dew8qnaad/15bf2263a00ee880416be41f4b15e7cd",
-      "name": "bmbtwbaye3q9sp8jxzhf",
-      "alt": ""
+      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722874467/ncd3aw6b4uu3menjfaiq.png",
+
   }
 ]},{id: 2, name: "Cream Chocolate Pink Sprinkles",  "images": [
   {
       "id": 2,
-      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722874467/ncd3aw6b4uu3menjfaiq.png",
-      "name": "ncd3aw6b4uu3menjfaiq",
-      "alt": ""
+      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722866715/ghpe6mxfnew17scevn8z.png",
+
   }
 ]},{id: 3, name: "Yellow Cream Star Sprinkles",  "images": [
   {
       "id": 3,
-      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722876219/fe5raeww0b1uzdcgiy7z.png",
-      "name": "fe5raeww0b1uzdcgiy7z",
-      "alt": ""
+      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722875536/lcopwdwilad7a3h3qdsa.png",
   }
 ]},{id: 4, name: "Raspberry Chocolate",  "images": [
   {
       "id": 4,
       "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722876792/lc6ssprwikvx4z41tao0.png",
-      "name": "lc6ssprwikvx4z41tao0",
-      "alt": ""
   }
 ]},{id: 5, name: "BlueBerry Cream Cupacke",  "images": [
   {
       "id": 5,
       "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722877969/juqyzfwwsflhl9ihgtsl.png",
-      "name": "lc6ssprwikvx4z41tao0",
-      "alt": ""
   }
 ]},{id: 6, name: "Pink StrawBerry Cream",  "images": [
   {
       "id": 6,
-      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722878956/hiw9labruc4qljfedn7u.png",
-      "name": "lc6ssprwikvx4z41tao0",
-      "alt": ""
+      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722972100/vfkjkjl6rhtzbf1cwlig.png",
   }
 ]}]
 
 app.get("/api/sellers", (req,res)=> {
-  res.json({SellerProduct})
+  res.json(SellerProduct)
+console.log(SellerProduct[0])
 });
 
 app.get("/", (req, res) => {
