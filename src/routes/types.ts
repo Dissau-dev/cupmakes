@@ -35,7 +35,8 @@ export type MainParamList = {
 
 export type HomeParamList = {
     HomeScreen:undefined;
-  WitchesListScreen:undefined
+  WitchesListScreen:undefined;
+  LocationScreen: undefined;
   };
 
   export type CarParamList = {

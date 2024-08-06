@@ -82,7 +82,7 @@ export const ProfileScreen = ({ navigation }: Props) => {
             marginHorizontal: 20,
             fontFamily: "Avanta-Medium",
             //fontSize: 36,
-            fontSize: 46,
+            fontSize: 30,
             marginTop: 40,
             color: "#646464",
           }}
@@ -103,7 +103,7 @@ export const ProfileScreen = ({ navigation }: Props) => {
               color: "#646464",
               fontFamily: "Avanta-Medium",
               //  fontSize: 24,
-              fontSize: 28,
+              fontSize: 18,
             }}
           >
             Not {userName} {userLastName} ?
@@ -115,7 +115,7 @@ export const ProfileScreen = ({ navigation }: Props) => {
                 color: palette.secondary,
                 fontFamily: "Avanta-Medium",
                 // fontSize: 24,
-                fontSize: 28,
+                fontSize: 18,
               }}
             >
               {"Log out "}

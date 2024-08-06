@@ -1,10 +1,9 @@
 import React from "react";
 import ProductsSkeleton from "../skeletons/ProductsSkeleton";
 import { heightScrenn, widthScreen } from "../../../theme/styles/global";
-import Lottie from "lottie-react-native";
+import Logo from "../../../../assets/placeholders/empty_search.svg";
 import { Text } from "react-native";
 import { palette } from "../../../theme/colors";
-import cartAnimation from "../../../../assets/looties/bagAnimation.json";
 
 interface Props {
   status: "loading" | "failed" | "idle" | "succeeded";
@@ -18,7 +17,7 @@ export const ProductsEmpty = ({ status, isLoading }: Props) => {
       <>
         <Text
           style={{
-            marginTop: 50,
+            marginTop: heightScrenn * 0.14,
             fontFamily: "Avanta-Medium",
             color: palette.secondary,
             fontSize: 40,
@@ -27,15 +26,10 @@ export const ProductsEmpty = ({ status, isLoading }: Props) => {
         >
           No results found
         </Text>
-        <Lottie
-          source={cartAnimation}
-          autoPlay
-          loop
-          style={{
-            width: widthScreen * 1,
-            height: heightScrenn * 0.5,
-            alignSelf: "center",
-          }}
+        <Logo
+          width={widthScreen * 0.8}
+          height={heightScrenn * 0.4}
+          style={{ alignSelf: "center" }}
         />
       </>
     );

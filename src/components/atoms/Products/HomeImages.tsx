@@ -3,6 +3,9 @@ import { palette } from "../../../theme/colors";
 import { heightScrenn, widthScreen } from "../../../theme/styles/global";
 import { FlatList, Image, Text, View, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
+import { HomeParamList } from "../../../routes/types";
 
 const HomeData = [
   {
@@ -11,7 +14,7 @@ const HomeData = [
     text2: "Simple - Classic",
     text4: "- Delicious -",
     tex3: "Delivery and Pick up options",
-    image: require("../../../../assets/images/slider 2.jpg"),
+    image: require("../../../../assets/images/imagenes webp/HOME.webp"),
   },
   {
     id: 2,
@@ -19,7 +22,7 @@ const HomeData = [
     text2: "Make your own cupcake",
     text4: " ",
     tex3: "",
-    image: require("../../../../assets/images/slider 3.jpg"),
+    image: require("../../../../assets/images/imagenes webp/3.webp"),
   },
   {
     id: 3,
@@ -27,7 +30,7 @@ const HomeData = [
     text2: "Fresh Bred Every Day",
     text4: " ",
     tex3: "Only Natural Ingredients",
-    image: require("../../../../assets/images/slider 1.jpg"),
+    image: require("../../../../assets/images/imagenes webp/4.webp"),
   },
 ];
 
@@ -36,6 +39,7 @@ interface Props {
 }
 export const HomeImages = ({ onPress }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigation = useNavigation();
   const onScroll = (event: {
     nativeEvent: {
       contentOffset: { x: number };
@@ -60,40 +64,30 @@ export const HomeImages = ({ onPress }: Props) => {
           }}
         >
           <Image source={item.image} style={styles.image} />
-          <View style={styles.titlesContainer}>
+          <Button
+            style={{
+              backgroundColor: "#000",
+              position: "absolute",
+              top: heightScrenn * 0.758,
+              left: widthScreen * 0.12,
+              width: widthScreen * 0.5,
+              height: heightScrenn * 0.06,
+              justifyContent: "center",
+            }}
+            rippleColor={palette.icons}
+            //@ts-ignore
+            onPress={() => navigation.navigate("LocationScreen")}
+          >
             <Text
-              style={[
-                styles.title1,
-                item.id === 2 ? { marginTop: heightScrenn * -0.01 } : {},
-              ]}
-            >
-              {item.text1}
-            </Text>
-            <Text style={item.id === 2 ? styles.title2Alt : styles.title2}>
-              {item.text2}
-            </Text>
-
-            <Text style={styles.title4}>{item.text4}</Text>
-
-            <Text style={styles.title3}>{item.tex3}</Text>
-
-            <Button
-              onPress={onPress}
-              rippleColor={palette.datesFilter}
-              // rippleColor={"#FF5C35"}
-              textColor="#fff"
               style={{
-                borderRadius: 100,
-                backgroundColor: palette.primary,
-                marginVertical:
-                  item.id === 2 ? heightScrenn * 0.018 : heightScrenn * 0.028,
-                marginRight: widthScreen * 0.11,
-                alignSelf: "flex-end",
+                color: palette.white,
+                fontFamily: "Montserrat-Bold",
+                fontSize: 18,
               }}
             >
-              <Text style={{ fontSize: 20 }}>ORDER NOW</Text>
-            </Button>
-          </View>
+              Order now
+            </Text>
+          </Button>
           <View style={styles.sliderContainer}>
             <Text style={styles.sliderText}>{`${index + 1} / ${
               HomeData.length
@@ -141,7 +135,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: widthScreen,
-    height: heightScrenn * 0.5,
+    height: heightScrenn * 0.87,
   },
   titlesContainer: {
     position: "absolute",

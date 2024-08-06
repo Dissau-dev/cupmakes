@@ -50,5 +50,6 @@ const states = [
     { id: 49, name: 'Wisconsin' },
     { id: 50, name: 'Wyoming' }
   ];
+
   
   export default states;

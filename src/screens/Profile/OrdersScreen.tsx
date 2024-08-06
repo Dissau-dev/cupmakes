@@ -18,6 +18,7 @@ import { selectUser } from "../../store/slices/userSlice";
 import cartAnimation from "../../../assets/looties/Animation - 3.json";
 import Animation from "../../../assets/looties/Loading2.json";
 import Lottie from "lottie-react-native";
+import Logo from "../../../assets/placeholders/empty_orders.svg";
 
 interface Props extends StackScreenProps<ProfileParamList, "OrdersScreen"> {}
 export const OrdersScreen = ({ navigation }: Props) => {
@@ -86,72 +87,6 @@ export const OrdersScreen = ({ navigation }: Props) => {
         </Text>
       </View>
     </View>
-    /* <View style={styles.item}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={styles.orderNumber}>Order #{item.id}</Text>
-
-        <View
-          style={{
-            // backgroundColor: "#c11717",
-            justifyContent: "center",
-            padding: 6,
-            borderWidth: 0.5,
-            borderRadius: 10,
-
-            width: widthScreen * 0.4,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 22,
-              fontFamily: "Avanta-Medium",
-              //color: "#fff",
-              color: palette.secondary,
-              textAlign: "center",
-            }}
-          >
-            {item.status === "completed" ? (
-              <Fontisto name={"checkbox-active"} size={14} />
-            ) : (
-              <Fontisto name={"checkbox-passive"} size={14} />
-            )}
-
-            {"  "}
-            {item.status}
-          </Text>
-        </View>
-      </View>
-      <Text>
-        <Text style={styles.orderTotal}>Date:</Text>
-        <Text style={styles.orderDate}>
-          {" "}
-          {moment(item.date_created).format("DD-MM-YYYY,  HH:mm")}
-        </Text>
-      </Text>
-      <Text>
-        <Text style={styles.orderTotal}>Total:</Text>
-        <Text style={styles.orderDate}> {item.total}</Text>
-      </Text>
-
-      {/*  <Button
-        onPress={() => navigation.navigate("OrdersDetail")}
-        style={{
-          backgroundColor: palette.primary,
-          borderRadius: 10,
-          width: widthScreen * 0.4,
-          alignSelf: "center",
-          marginTop: 10,
-        }}
-        rippleColor={palette.datesFilter}
-        labelStyle={{
-          color: "#fff",
-          fontFamily: "Avanta-Medium",
-          fontSize: 22,
-        }}
-      >
-        <Text>Detail</Text>
-      </Button>
-    </View> */
   );
 
   if (isLoading) {
@@ -215,15 +150,10 @@ export const OrdersScreen = ({ navigation }: Props) => {
             >
               No order history
             </Text>
-            <Lottie
-              source={cartAnimation}
-              autoPlay
-              loop
-              style={{
-                width: widthScreen * 1,
-                height: heightScrenn * 0.45,
-                alignSelf: "center",
-              }}
+            <Logo
+              width={widthScreen * 0.8}
+              height={heightScrenn * 0.4}
+              style={{ alignSelf: "center" }}
             />
             <Button
               onPress={() =>

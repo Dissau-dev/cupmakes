@@ -7,9 +7,7 @@ import { useAppSelector } from "../../store/hooks";
 import { selectWitches } from "../../store/slices/witchesSlice";
 import { ProductList } from "../../components/atoms/Products/ProductList";
 import { heightScrenn, widthScreen } from "../../theme/styles/global";
-import LottieView from "lottie-react-native";
-
-import addressAnimation from "../../../assets/looties/Animation - 4.json";
+import Logo from "../../../assets/placeholders/empty_list.svg";
 
 export const WitchesListScreen = () => {
   const witches = useAppSelector(selectWitches);
@@ -40,14 +38,10 @@ export const WitchesListScreen = () => {
             >
               Whishlist Empty
             </Text>
-            <LottieView
-              source={addressAnimation}
-              autoPlay
-              loop
-              style={{
-                width: widthScreen * 1,
-                height: heightScrenn * 0.5,
-              }}
+            <Logo
+              width={widthScreen * 0.8}
+              height={heightScrenn * 0.4}
+              style={{ alignSelf: "center" }}
             />
           </View>
         }

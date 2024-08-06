@@ -185,4 +185,4 @@ export const palette = {
 };
 
 //export const skeletonsColors = ["#EFEFEF99", "#F1F1F199"];
-export const skeletonsColors = ["#F2F2F2", "#FFF"];
+export const skeletonsColors = ["#EFEFEF99", "#F1F1F199"];

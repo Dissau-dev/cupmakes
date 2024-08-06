@@ -6,6 +6,7 @@ import { HomeScreen } from "../screens/home/HomeScreen";
 import { HomeParamList } from "./types";
 import { WitchesListScreen } from "../screens/home/WitchesListScreen";
 import AppBar from "../components/containers/AppBar";
+import { LocationScreen } from "../screens/home/LocationScreen";
 
 const HomeStack = createStackNavigator<HomeParamList>();
 
@@ -37,6 +38,12 @@ export const HomeNavigator = () => {
         initialParams={undefined}
         component={WitchesListScreen}
         options={{ title: "Witches List", headerShown: true }}
+      />
+      <HomeStack.Screen
+        name="LocationScreen"
+        initialParams={undefined}
+        component={LocationScreen}
+        options={{ title: "Local to us", headerShown: true }}
       />
     </HomeStack.Navigator>
   );

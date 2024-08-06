@@ -11,7 +11,18 @@ env.config({ path: "./server/.env" });
 const stripePublishableKey = process.env.STRIPE_PUBLIC_KEY|| "";
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "";
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
+const fileUpload =require("express-fileupload")
+const path = require('path');
 
+const cloudinary = require("cloudinary").v2;
+
+
+// Configurar Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+})
 
 
 const app = express();
@@ -25,6 +36,7 @@ const consumerSecret = "cs_48662918ad66d95f32f6e2ae55417a63c44fdbd6";
 const headers = {
   Authorization: "Basic " + base64.encode(consumerKey + ":" + consumerSecret)
 };
+
 
 
 let allProducts = [];
@@ -66,7 +78,11 @@ cron.schedule('*/10 * * * *', async () => {
 // Middleware para parsear JSON
 app.use(express.json());
 
-
+// Middleware para manejar la subida de archivos
+app.use(fileUpload({
+  useTempFiles : true,
+  tempFileDir : '/tmp/'
+}));
 
 
 const filterProducts = (products, filters) => {
@@ -130,6 +146,90 @@ app.get('/cupacakes/api/products', async (req, res) => {
 
 // Inicializar la carga de productos
 fetchAllProducts()
+
+// Endpoint para subir imágenes
+
+app.post('/upload', async function(req, res) {
+  const { archivo } = req.files;
+
+  // Verificar si no hay archivos subidos
+  if (!req.files || Object.keys(req.files).length === 0 || !archivo) {
+    return res.status(400).send('No files were uploaded.');
+  }
+
+  // Obtener la extensión del archivo
+  const nameExtention = archivo.name.split(".");
+  const extension = nameExtention[nameExtention.length - 1].toLowerCase(); // Convertir a minúsculas
+
+  const validExtension = ["jpg", "png", "jpeg"];
+
+  // Verificar si la extensión es válida
+  if (!validExtension.includes(extension)) {
+    return res.status(400).json({
+      Error: `${extension} File format not supported`
+    });
+  }
+
+  try {
+    const result = await cloudinary.uploader.upload(archivo.tempFilePath);
+    res.json({
+      message: 'Imagen subida exitosamente',
+      url: result.secure_url, // URL de la imagen subida
+    });
+  } catch (error) {
+    console.error(error); // Registrar el error en la consola
+    res.status(500).send('Error al subir la imagen.');
+  }  
+
+});
+
+const SellerProduct = [{id: 1, name: "Cherry Sprinkles PinkCream",  "images": [
+  {
+      "id": 1,
+      "src": "https://asset.cloudinary.com/dew8qnaad/15bf2263a00ee880416be41f4b15e7cd",
+      "name": "bmbtwbaye3q9sp8jxzhf",
+      "alt": ""
+  }
+]},{id: 2, name: "Cream Chocolate Pink Sprinkles",  "images": [
+  {
+      "id": 2,
+      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722874467/ncd3aw6b4uu3menjfaiq.png",
+      "name": "ncd3aw6b4uu3menjfaiq",
+      "alt": ""
+  }
+]},{id: 3, name: "Yellow Cream Star Sprinkles",  "images": [
+  {
+      "id": 3,
+      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722876219/fe5raeww0b1uzdcgiy7z.png",
+      "name": "fe5raeww0b1uzdcgiy7z",
+      "alt": ""
+  }
+]},{id: 4, name: "Raspberry Chocolate",  "images": [
+  {
+      "id": 4,
+      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722876792/lc6ssprwikvx4z41tao0.png",
+      "name": "lc6ssprwikvx4z41tao0",
+      "alt": ""
+  }
+]},{id: 5, name: "BlueBerry Cream Cupacke",  "images": [
+  {
+      "id": 5,
+      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722877969/juqyzfwwsflhl9ihgtsl.png",
+      "name": "lc6ssprwikvx4z41tao0",
+      "alt": ""
+  }
+]},{id: 6, name: "Pink StrawBerry Cream",  "images": [
+  {
+      "id": 6,
+      "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722878956/hiw9labruc4qljfedn7u.png",
+      "name": "lc6ssprwikvx4z41tao0",
+      "alt": ""
+  }
+]}]
+
+app.get("/api/sellers", (req,res)=> {
+  res.json({SellerProduct})
+});
 
 app.get("/", (req, res) => {
   res.send({ "Welome to": "Expo's Stripe example server!"+stripePublishableKey+"_"+stripeSecretKey });

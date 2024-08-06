@@ -3,10 +3,9 @@ import { Button } from "react-native-paper";
 import { heightScrenn, widthScreen } from "../../../../theme/styles/global";
 import { palette } from "../../../../theme/colors";
 import { Text, View } from "react-native";
-import LottieView from "lottie-react-native";
-
-import cartAnimation from "../../../../../assets/looties/cartEmpty.json";
 import { useNavigation } from "@react-navigation/native";
+import Logo from "../../../../../assets/placeholders/70014175_JEMA GER 1722-09.svg";
+import { AntDesign } from "@expo/vector-icons";
 
 export const EmptyCart = () => {
   const navigation = useNavigation();
@@ -23,15 +22,22 @@ export const EmptyCart = () => {
       >
         Cart is Empty
       </Text>
-      <LottieView
-        source={cartAnimation}
-        autoPlay
-        loop
+      <AntDesign
+        size={45}
+        color={palette.lightRed}
+        name="questioncircleo"
         style={{
-          width: widthScreen * 1,
-          height: heightScrenn * 0.45,
-          alignSelf: "center",
+          position: "absolute",
+          top: heightScrenn * 0.23,
+          right: widthScreen * 0.12,
+          alignSelf: "flex-end",
         }}
+      />
+      <Logo
+        width={widthScreen * 0.8}
+        height={heightScrenn * 0.4}
+        style={{ alignSelf: "center" }}
+        fill={palette.secondary}
       />
       <Button
         onPress={() =>

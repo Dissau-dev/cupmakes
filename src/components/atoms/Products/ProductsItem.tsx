@@ -136,7 +136,7 @@ export const ProductsItem = ({ onpress, item }: Props) => {
           <View>
             <Ionicons
               name="information-circle"
-              size={26}
+              size={28}
               color="#73729A"
               onPress={onpress}
             />
@@ -165,7 +165,7 @@ export const ProductsItem = ({ onpress, item }: Props) => {
           }}
         >
           <View>
-            <Text style={{ fontFamily: "Avanta-Bold", fontSize: 18 }}>
+            <Text style={{ fontFamily: "Avanta-Bold", fontSize: 17 }}>
               $ {item.price}
             </Text>
           </View>
@@ -174,7 +174,7 @@ export const ProductsItem = ({ onpress, item }: Props) => {
             style={styles.btn}
           >
             <Text style={styles.textBtn}>
-              <Fontisto name="shopping-bag" size={14} color={palette.primary} />
+              <Fontisto name="shopping-bag" size={13} color={palette.primary} />
               {"  "}
               ADD
             </Text>
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     color: "#908f8f",
     fontFamily: "Avanta-Light",
-    fontSize: 16,
+    fontSize: 12,
     marginTop: 4,
     height: heightScrenn * 0.06,
   },
@@ -250,14 +250,6 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: 16,
-  },
-  bubble: {
-    position: "absolute",
-    left: widthScreen * 0.16,
-    width: 20,
-    height: 20,
-    borderRadius: 15,
-    backgroundColor: palette.primary,
+    fontSize: 12,
   },
 });

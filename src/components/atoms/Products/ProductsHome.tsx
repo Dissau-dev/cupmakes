@@ -29,7 +29,12 @@ export const ProductsHome = ({ id, index, images, name, onpress }: Props) => {
         style={[index % 2 === 0 ? styles.imageRight : styles.imageLeft]}
       />
       <View>
-        <Text style={[index % 2 === 0 ? styles.textRight : styles.textLeft]}>
+        <Text
+          style={[
+            index % 2 === 0 ? styles.textRight : styles.textLeft,
+            { fontFamily: "Montserrat-Bold" },
+          ]}
+        >
           {name}
         </Text>
         <View
@@ -41,23 +46,15 @@ export const ProductsHome = ({ id, index, images, name, onpress }: Props) => {
             <Text
               style={[
                 index % 2 === 0 ? styles.textBtnLeft : styles.textBtnRight,
+                { fontFamily: "Montserrat-Thin" },
               ]}
             >
-              Learn More{" "}
+              Learn more{" "}
             </Text>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color={palette.secondary}
-              style={{
-                justifyContent: "center",
-                alignSelf: "center",
-                marginTop: 2,
-              }}
-            />
           </TouchableOpacity>
         </View>
       </View>
+      <View style={[index === 5 && { height: heightScrenn * 0.8 }]} />
     </View>
   );
 };
@@ -100,11 +97,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   even: {
-    backgroundColor: "#fff",
     flexDirection: "row",
   },
   odd: {
-    backgroundColor: "#ffffff",
     flexDirection: "row-reverse",
   },
   imageRight: {
@@ -122,25 +117,23 @@ const styles = StyleSheet.create({
     transform: [{ rotate: "-35deg" }],
   },
   textLeft: {
-    fontSize: 30,
+    fontSize: 28,
     textAlign: "left",
-    color: palette.primary,
+    maxWidth: widthScreen * 0.4,
   },
   textRight: {
-    fontSize: 30,
+    fontSize: 28,
     textAlign: "right",
     marginRight: 30,
-    color: palette.primary,
+    fontFamily: "Montserrat-Bold",
+    maxWidth: widthScreen * 0.4,
   },
   textBtnLeft: {
-    fontSize: 18,
-    textAlign: "left",
-    // marginLeft: 20,
-    color: palette.secondary,
+    fontSize: 16,
+    textAlign: "right",
   },
   textBtnRight: {
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "right",
-    color: palette.secondary,
   },
 });

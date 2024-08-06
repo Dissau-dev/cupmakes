@@ -25,22 +25,16 @@ import {
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 import {
-  addAddress,
   removeAddress,
   selectAddresses,
-  selectPickupAddresses,
 } from "../../store/slices/addressesSlice";
 import { ProfileParamList } from "../../routes/types";
 import { StackScreenProps } from "@react-navigation/stack";
 
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  Entypo,
-  AntDesign,
-} from "@expo/vector-icons";
+import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 
-import Logo from "./placeholders/logo.svg";
+import Logo from "../../../assets/placeholders/empty_Delivery_address.svg";
+import PickUp from "../../../assets/placeholders/12083606_Wavy_Bus-26_Single-10.svg";
 
 interface Props extends StackScreenProps<ProfileParamList, "AddressScreen"> {}
 
@@ -103,7 +97,26 @@ export default function AddressScreen({ navigation }: Props) {
       {value === "pickUp" ? (
         <View>
           <FlatList
-            ListEmptyComponent={<Logo width={120} height={40} />}
+            ListEmptyComponent={
+              <View>
+                <Text
+                  style={{
+                    color: palette.secondary,
+                    fontFamily: "Avanta-Medium",
+                    fontSize: 30,
+                    textAlign: "center",
+                    marginVertical: heightScrenn * 0.05,
+                  }}
+                >
+                  No pick up addresses
+                </Text>
+                <PickUp
+                  width={widthScreen * 0.8}
+                  height={heightScrenn * 0.4}
+                  style={{ alignSelf: "center" }}
+                />
+              </View>
+            }
             ListHeaderComponent={
               <TouchableOpacity
                 onPress={() =>
@@ -250,6 +263,11 @@ export default function AddressScreen({ navigation }: Props) {
                 >
                   No delivery addresses
                 </Text>
+                <Logo
+                  width={widthScreen * 0.8}
+                  height={heightScrenn * 0.4}
+                  style={{ alignSelf: "center" }}
+                />
               </View>
             }
             data={dataDelivery}

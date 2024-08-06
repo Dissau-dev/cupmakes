@@ -23,14 +23,15 @@ import { lightTheme } from "./src/theme/colors/index";
 
 export default function AppEntry() {
   const [fontsLoaded] = useFonts({
-    "Poppins-Light": require("./assets/fonts/Poppins-Light.ttf"),
-    "Poppins-Medium": require("./assets/fonts/Poppins-Medium.ttf"),
-    "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
     "Xamire-Medium": require("./assets/fonts/Xamire/Xamire.ttf"),
     "Xamire-Light": require("./assets/fonts/SFProDisplay-Light-1.ttf"),
-    "Avanta-Medium": require("./assets/fonts/avantgarde-sans-serif-font/Avantgarde-Regular.otf"),
-    "Avanta-Light": require("./assets/fonts/avantgarde-sans-serif-font/Avantgarde-Light.otf"),
-    "Avanta-Bold": require("./assets/fonts/avantgarde-sans-serif-font/Avantgarde-Bold.otf"),
+    "Avanta-Medium": require("./assets/fonts/Montserrat-Medium (2021_07_02 08_48_42 UTC).otf"),
+    "Avanta-Light": require("./assets/fonts/Montserrat-Thin (2021_07_02 08_48_42 UTC).otf"),
+    "Avanta-Bold": require("./assets/fonts/Montserrat-Bold (2021_07_02 08_48_42 UTC).otf"),
+    "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
+    "Montserrat-Bold": require("./assets/fonts/static/Montserrat-Bold.ttf"),
+    "Montserrat-Thin": require("./assets/fonts/static/Montserrat-Thin.ttf"),
+    "Montserrat-Medium": require("./assets/fonts/static/Montserrat-Medium.ttf"),
   });
 
   //Initial Load
