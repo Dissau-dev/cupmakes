@@ -8,14 +8,7 @@ import StarRating from "../StarRating";
 import { addLineItems, addProduct } from "../../../store/slices/cartSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { useNavigation } from "@react-navigation/native";
-import Animated, {
-  Easing,
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withTiming,
-} from "react-native-reanimated";
+
 import { ModalComponent } from "../ModalComponent";
 import {
   addLikedProduct,
@@ -157,11 +150,20 @@ export const Description = ({ item }: Props) => {
             backgroundColor:
               item.stock_status === "instock" ? "#83d964" : "#d96464",
             padding: 6,
-            width: widthScreen * 0.16,
+            width: widthScreen * 0.2,
+
             borderRadius: 6,
           }}
         >
-          <Text style={{ color: "white" }}>{item.stock_status}</Text>
+          <Text
+            style={{
+              color: "white",
+              fontFamily: "Avanta-Medium",
+              textAlign: "center",
+            }}
+          >
+            {item.stock_status}
+          </Text>
         </View>
         <View style={{ marginHorizontal: 40, alignSelf: "center" }}>
           <StarRating rating={item.average_rating} />
@@ -174,7 +176,7 @@ export const Description = ({ item }: Props) => {
             fontFamily: "Avanta-Medium",
             color: palette.secondary,
             marginBottom: 6,
-            fontSize: 28,
+            fontSize: 22,
             marginTop: 6,
           }}
         >
@@ -191,8 +193,8 @@ export const Description = ({ item }: Props) => {
         </Text>
         <Text
           style={{
-            fontFamily: "Avanta-Light",
-            fontSize: 18,
+            fontFamily: "Montserrat-Thin",
+            fontSize: 16,
             marginTop: 6,
           }}
         >
@@ -279,8 +281,8 @@ export const Description = ({ item }: Props) => {
           >
             <Text
               style={{
-                fontSize: 24,
-                fontFamily: "Avanta-Bold",
+                fontSize: 16,
+                fontFamily: "Avanta-Medium",
                 color: "#fff",
                 textAlign: "center",
               }}

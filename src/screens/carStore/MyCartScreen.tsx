@@ -15,31 +15,17 @@ import { CarParamList } from "../../routes/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   cleanCart,
-  decreaseQuantity,
-  increaseQuantity,
-  removeItem,
   selectFullPrice,
-  selectLineItems,
   selectProducts,
-  setInputQuantity,
-  setQuantity,
 } from "../../store/slices/cartSlice";
-import { api_configs } from "../../config/system_config";
-import axios from "axios";
 
 import FocusAwareStatusBar from "../../components/atoms/FocusAwareStatusBar";
 import { palette } from "../../theme/colors";
 import { Baner } from "../../components/atoms/Baner";
 import { heightScrenn, widthScreen } from "../../theme/styles/global";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
-import { AnimatedFAB, Button, TextInput } from "react-native-paper";
-
-import cartAnimation from "../../../assets/looties/cartEmpty.json";
-import { selectAuth, selectUser } from "../../store/slices/userSlice";
-import Lottie from "lottie-react-native";
-import { useForm } from "react-hook-form";
-import TextInputController from "../../components/atoms/formControls/TextInputController";
-import TextInputControllerHolderName from "../../components/atoms/formControls/TextInputControllerHolderName";
+import { Ionicons } from "@expo/vector-icons";
+import { AnimatedFAB } from "react-native-paper";
+import { selectAuth } from "../../store/slices/userSlice";
 import { CartItem } from "../../components/atoms/Products/cart/CartItem";
 import { EmptyCart } from "../../components/atoms/Products/cart/EmptyCart";
 import { BarLoading } from "../../components/atoms/Products/cart/BarLoading";
@@ -50,28 +36,12 @@ interface ProtectedScreenProps
 
 export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
   const dispatch = useAppDispatch();
-  /*  const line_Items: { product_id: number; quantity: number }[] = [];
-
-  const formatLineItems = () => {
-    products.forEach((i) => {
-      line_Items.push({ product_id: i.id, quantity: i.quantity });
-    });
-
-    return line_Items;
-  };*/
-
-  useEffect(() => {
-    // formatLineItems();
-    //console.log(line_Items);
-  }, []);
 
   const [isExtended, setIsExtended] = React.useState(true);
 
   const products = useAppSelector(selectProducts);
   const fullPrice = useAppSelector(selectFullPrice);
-  const linealItems = useAppSelector(selectLineItems);
   const isAuth = useAppSelector(selectAuth);
-  console.log(linealItems);
 
   const isIOS = Platform.OS === "ios";
   //@ts-ignore
@@ -126,14 +96,14 @@ export const MyCartScreen = ({ navigation }: ProtectedScreenProps) => {
               >
                 <Text
                   style={{
-                    fontSize: 20,
+                    fontSize: 18,
                     fontFamily: "Avanta-Medium",
                     color: "#fff",
                     //color: palette.secondary,
                     textAlign: "center",
                   }}
                 >
-                  <Ionicons name="trash-bin" size={14} />
+                  <Ionicons name="trash-bin" size={18} />
                   {"  "}
                   Clean cart
                 </Text>
@@ -172,7 +142,6 @@ const styles = StyleSheet.create({
   fabStyle: {
     bottom: heightScrenn * 0.02,
     right: widthScreen * 0.03,
-
     // left: 16,
     backgroundColor: palette.primary,
     position: "absolute",

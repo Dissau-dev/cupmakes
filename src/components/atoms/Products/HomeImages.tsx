@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { palette } from "../../../theme/colors";
 import { heightScrenn, widthScreen } from "../../../theme/styles/global";
 import { FlatList, Image, Text, View, StyleSheet } from "react-native";
@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { HomeParamList } from "../../../routes/types";
 
+import { Video, ResizeMode } from "expo-av";
 const HomeData = [
   {
     id: 1,
@@ -14,7 +15,7 @@ const HomeData = [
     text2: "Simple - Classic",
     text4: "- Delicious -",
     tex3: "Delivery and Pick up options",
-    image: require("../../../../assets/images/imagenes webp/HOME.webp"),
+    image: require("../../../../assets/Secuencia 04/Secuencia 04.mp4"),
   },
   {
     id: 2,
@@ -22,7 +23,7 @@ const HomeData = [
     text2: "Make your own cupcake",
     text4: " ",
     tex3: "",
-    image: require("../../../../assets/images/imagenes webp/3.webp"),
+    image: require("../../../../assets/images/imagenes webp/HOME.webp"),
   },
   {
     id: 3,
@@ -38,20 +39,6 @@ interface Props {
   onPress: () => void;
 }
 export const HomeImages = ({ onPress }: Props) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const navigation = useNavigation();
-  const onScroll = (event: {
-    nativeEvent: {
-      contentOffset: { x: number };
-      layoutMeasurement: { width: number };
-    };
-  }) => {
-    const slide = Math.ceil(
-      event.nativeEvent.contentOffset.x /
-        event.nativeEvent.layoutMeasurement.width
-    );
-    setCurrentIndex(slide - 1);
-  };
   return (
     <FlatList
       data={HomeData}
@@ -63,7 +50,32 @@ export const HomeImages = ({ onPress }: Props) => {
             alignItems: "center",
           }}
         >
-          <Image source={item.image} style={styles.image} />
+          {index === 0 ? (
+            <View
+              style={{
+                alignItems: "center",
+                alignContent: "center",
+                alignSelf: "center",
+              }}
+            >
+              <Video
+                shouldPlay={true}
+                source={item.image}
+                style={{
+                  width: widthScreen * 1,
+                  height: heightScrenn * 0.87,
+                }}
+                isLooping={true}
+                resizeMode={ResizeMode.COVER}
+              />
+            </View>
+          ) : (
+            <Image
+              source={item.image}
+              style={{ width: widthScreen, height: heightScrenn * 0.87 }}
+            />
+          )}
+
           <Button
             style={{
               backgroundColor: "#000",
@@ -75,8 +87,8 @@ export const HomeImages = ({ onPress }: Props) => {
               justifyContent: "center",
             }}
             rippleColor={palette.icons}
-            //@ts-ignore
-            onPress={() => navigation.navigate("LocationScreen")}
+            //@ts-ignor
+            // onPress={() => navigation.navigate("LocationScreen")}
           >
             <Text
               style={{
@@ -205,54 +217,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     justifyContent: "space-around",
-  },
-  even: {
-    backgroundColor: "#fff",
-    flexDirection: "row",
-  },
-  odd: {
-    backgroundColor: "#ffffff",
-    flexDirection: "row-reverse",
-  },
-  imageRight: {
-    width: widthScreen * 0.5,
-    height: heightScrenn * 0.25,
-    marginRight: 10,
-    marginLeft: 10,
-    transform: [{ rotate: "35deg" }],
-  },
-  imageLeft: {
-    width: widthScreen * 0.5,
-    height: heightScrenn * 0.25,
-    marginRight: 10,
-    marginLeft: 10,
-    transform: [{ rotate: "-35deg" }],
-  },
-  textLeft: {
-    fontSize: 30,
-    textAlign: "left",
-    color: palette.primary,
-  },
-  textRight: {
-    fontSize: 30,
-    textAlign: "right",
-    marginRight: 30,
-    color: palette.primary,
-  },
-  textBtnLeft: {
-    fontSize: 18,
-    textAlign: "left",
-    // marginLeft: 20,
-    color: palette.secondary,
-  },
-  textBtnRight: {
-    fontSize: 18,
-    textAlign: "right",
-    color: palette.secondary,
-  },
-  skeleton: {
-    width: 200,
-    height: 200,
-    backgroundColor: "#EFEFEF",
   },
 });

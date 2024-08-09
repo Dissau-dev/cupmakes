@@ -13,20 +13,36 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
 import { HomeParamList } from "../../routes/types";
 
-import Animation from "../../../assets/looties/Loading2.json";
+import Animation from "../../../assets/looties/loaderSpinner.json";
 
 import Lottie from "lottie-react-native";
 
 import { ProductsHome } from "../../components/atoms/Products/ProductsHome";
 import { HomeImages } from "../../components/atoms/Products/HomeImages";
 import { useGetSellersQuery } from "../../store/api/sellersApi";
+import { Video, ResizeMode } from "expo-av";
 
 interface Props extends StackScreenProps<HomeParamList, "HomeScreen"> {}
 export const HomeScreen = ({ navigation }: Props) => {
   const { data: sellers, isLoading } = useGetSellersQuery();
 
-  const blurhash =
-    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+  const [showButton, setShowButton] = useState(false);
+
+  const handleScroll = (event: {
+    nativeEvent: { contentOffset: { y: any } };
+  }) => {
+    const yOffset = event.nativeEvent.contentOffset.y;
+
+    // Establece el punto en el que quieres que aparezca el botón.
+    const threshold = heightScrenn * 0.9; // Se muestra después de una pantalla completa.
+
+    if (yOffset > threshold && !showButton) {
+      setShowButton(true);
+    } else if (yOffset <= threshold && showButton) {
+      setShowButton(false);
+    }
+  };
+
   return (
     <View>
       <FocusAwareStatusBar
@@ -37,21 +53,10 @@ export const HomeScreen = ({ navigation }: Props) => {
       <ScrollView
         style={styles.scrollViewContainer}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16} // Para que el scroll capture movimientos más frecuentemente.
       >
         <Baner />
-
-        <Image
-          source={{
-            uri: "https://res.cloudinary.com/dew8qnaad/image/upload/v1722877969/juqyzfwwsflhl9ihgtsl.png",
-            //uri: "https://img.freepik.com/free-photo/psychedelic-paper-shapes-with-copy-space_23-2149378246.jpg?w=826&t=st=1722975449~exp=1722976049~hmac=a82c1202ab96c02ff71668c09658c88c3747e776b488c4bf560e4fa0c6f69c01",
-          }}
-          style={{
-            width: 200,
-            height: 200,
-            borderWidth: 1,
-            alignSelf: "center",
-          }}
-        />
 
         <HomeImages
           onPress={() => {
@@ -67,37 +72,58 @@ export const HomeScreen = ({ navigation }: Props) => {
             autoPlay
             loop
             style={{
-              width: widthScreen * 1,
-              height: heightScrenn * 0.4,
+              width: widthScreen * 0.6,
+              height: heightScrenn * 0.6,
               alignSelf: "center",
             }}
           />
         ) : (
-          //@ts-ignore
-          sellers?.SellerProduct.map((product: any, index: number) => (
-            <View key={product.id}>
-              <Text>{product.name}</Text>
-            </View>
-            /*<ProductsHome
-              onpress={() => {
-                //@ts-ignore
-                navigation.navigate("ProductsNavigator", {
-                  screen: "ProductDescrip",
-                  params: {
-                    titleScreen: product.name,
-                    id: product.id,
-                  },
-                });
+          <>
+            <Image
+              source={require("../../../assets/images/imagenes webp/d7dadb.png")}
+              style={{
+                width: widthScreen,
+                height: heightScrenn * 2.63,
+                position: "relative",
               }}
-              id={product.id}
-              images={product.images[0].src}
-              index={index}
-              name={product.name}
-              key={product.id}
-            />*/
-          ))
+            />
+            <View
+              style={{ position: "absolute", marginTop: heightScrenn * 0.94 }}
+            >
+              {
+                //@ts-ignore
+                sellers?.map((item: any, index: number) => (
+                  <ProductsHome
+                    onpress={() =>
+                      navigation.navigate("NutritionalScreen", {
+                        item: item,
+                      })
+                    }
+                    id={item.id}
+                    images={item.images[0].src}
+                    index={index}
+                    name={item.name}
+                    key={item.id}
+                  />
+                ))
+              }
+            </View>
+          </>
         )}
       </ScrollView>
+      {showButton && (
+        <Button
+          style={styles.floatBtn}
+          onPress={() => {
+            //@ts-ignore
+            navigation.navigate("ProductsNavigator", {
+              screen: "ProductsScreen",
+            });
+          }}
+        >
+          <Text style={styles.textBtn}>Order Now</Text>
+        </Button>
+      )}
     </View>
   );
 };
@@ -105,5 +131,20 @@ export const HomeScreen = ({ navigation }: Props) => {
 const styles = StyleSheet.create({
   scrollViewContainer: {
     backgroundColor: "#fff",
+  },
+  floatBtn: {
+    marginTop: heightScrenn * 0.82,
+    alignSelf: "center",
+    backgroundColor: "#000",
+    position: "absolute",
+    width: widthScreen * 0.7,
+
+    height: heightScrenn * 0.06,
+    justifyContent: "center",
+  },
+  textBtn: {
+    color: palette.white,
+    fontFamily: "Montserrat-Bold",
+    fontSize: 18,
   },
 });

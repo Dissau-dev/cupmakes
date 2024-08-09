@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Appbar, Avatar, Provider } from "react-native-paper";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { globals } from "../../theme/styles/global";
-
-import AvatarComponent from "../atoms/AvatarComponent";
 import { Dimensions, View } from "react-native";
 import { palette } from "../../theme/colors";
 
@@ -56,12 +54,7 @@ export default function AppBar(props: AppBarProps) {
           }
         />
       )}
-      <Appbar.Action
-        animated={false}
-        // onPress={openModal}
-        icon={() => <View />}
-      />
+      <Appbar.Action animated={false} icon={() => <View />} />
     </Appbar.Header>
-    // </Provider>
   );
 }

@@ -127,7 +127,8 @@ export const CartItem = ({ item }: Props) => {
               color: palette.secondary,
               marginVertical: 6,
               fontFamily: "Avanta-Medium",
-              fontSize: 28,
+              fontSize: 20,
+              maxWidth: widthScreen * 0.4,
             }}
           >
             {item.name}
@@ -136,7 +137,7 @@ export const CartItem = ({ item }: Props) => {
             style={{
               color: palette.primary,
               fontFamily: "Avanta-Medium",
-              fontSize: 24,
+              fontSize: 20,
             }}
           >
             $ {item.price}
@@ -189,6 +190,7 @@ export const CartItem = ({ item }: Props) => {
                       textAlign: "center",
                       color: palette.secondary,
                       fontSize: 18,
+                      fontFamily: "Avanta-Medium",
                       borderRightColor: "#eee",
                       borderLeftColor: "#eee",
                       borderRightWidth: 1,
@@ -203,10 +205,9 @@ export const CartItem = ({ item }: Props) => {
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
-                  width: 50,
-                  borderTopRightRadius: 100,
-                  borderBottomRightRadius: 100,
-                  backgroundColor: palette.white,
+                  width: 45,
+                  borderTopLeftRadius: 100,
+                  borderBottomLeftRadius: 100,
                 }}
                 onPress={() => increase(item)}
               >
@@ -230,8 +231,8 @@ export const CartItem = ({ item }: Props) => {
           style={{
             // color: "#fff",
             color: palette.secondary,
-            fontFamily: "Avanta-Bold",
-            fontSize: 26,
+            fontFamily: "Avanta-Medium",
+            fontSize: 18,
           }}
         >
           $ {item.totalItemPrice}

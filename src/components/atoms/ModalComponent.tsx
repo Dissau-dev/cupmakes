@@ -57,7 +57,7 @@ export const ModalComponent = ({
                   textAlign: "center",
                   margin: 6,
                   marginLeft: 14,
-                  fontSize: 26,
+                  fontSize: 24,
 
                   fontFamily: "Avanta-Medium",
                 }}

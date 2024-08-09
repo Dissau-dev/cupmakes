@@ -25,13 +25,14 @@ export default function AppEntry() {
   const [fontsLoaded] = useFonts({
     "Xamire-Medium": require("./assets/fonts/Xamire/Xamire.ttf"),
     "Xamire-Light": require("./assets/fonts/SFProDisplay-Light-1.ttf"),
-    "Avanta-Medium": require("./assets/fonts/Montserrat-Medium (2021_07_02 08_48_42 UTC).otf"),
+    "Avanta-Medium": require("./assets/fonts/static/Montserrat-Bold.ttf"),
     "Avanta-Light": require("./assets/fonts/Montserrat-Thin (2021_07_02 08_48_42 UTC).otf"),
     "Avanta-Bold": require("./assets/fonts/Montserrat-Bold (2021_07_02 08_48_42 UTC).otf"),
-    "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
+
     "Montserrat-Bold": require("./assets/fonts/static/Montserrat-Bold.ttf"),
     "Montserrat-Thin": require("./assets/fonts/static/Montserrat-Thin.ttf"),
     "Montserrat-Medium": require("./assets/fonts/static/Montserrat-Medium.ttf"),
+    "Montserrat-Light": require("./assets/fonts/Montserrat-Light.ttf"),
   });
 
   //Initial Load

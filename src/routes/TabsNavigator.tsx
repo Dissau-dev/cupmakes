@@ -72,7 +72,7 @@ const AndroidBottomTabs = () => {
       //screenOptions={{ headerShown: false}}
       screenOptions={({ route }) => ({
         tabBarLabelStyle: {
-          fontSize: 14,
+          fontSize: 13,
           fontFamily: "Avanta-Medium",
         },
         tabBarIcon: ({ focused, color, size }: IconProps) => {

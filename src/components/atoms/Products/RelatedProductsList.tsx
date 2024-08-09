@@ -17,7 +17,7 @@ export const RelatedProductsList = ({ relatedIds }: Props) => {
   const navigation = useNavigation();
 
   if (isLoading) {
-    return <ActivityIndicator size="large" color={palette.secondary} />;
+    return <ActivityIndicator size="large" color={palette.darkGray} />;
   }
 
   if (error) {
@@ -29,7 +29,7 @@ export const RelatedProductsList = ({ relatedIds }: Props) => {
         <View>
           <Text
             style={{
-              fontSize: 26,
+              fontSize: 22,
               marginHorizontal: 20,
               marginVertical: 10,
               fontFamily: "Avanta-Medium",
@@ -52,6 +52,7 @@ export const RelatedProductsList = ({ relatedIds }: Props) => {
               navigation.navigate("ProductDescrip", {
                 id: item.id,
                 titleScreen: item.name,
+                item: item,
               })
             }
           />

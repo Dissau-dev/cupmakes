@@ -129,8 +129,15 @@ export const ProductsItem = ({ onpress, item }: Props) => {
           }}
         >
           <View>
-            <Text style={{ fontSize: 20, fontFamily: "Avanta-Bold" }}>
-              {item.name}
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: "Avanta-Medium",
+              }}
+            >
+              {item.name.length > 10
+                ? `${item.name.slice(0, 10)}...`
+                : item.name}
             </Text>
           </View>
           <View>
@@ -165,7 +172,7 @@ export const ProductsItem = ({ onpress, item }: Props) => {
           }}
         >
           <View>
-            <Text style={{ fontFamily: "Avanta-Bold", fontSize: 17 }}>
+            <Text style={{ fontFamily: "Avanta-Medium", fontSize: 15 }}>
               $ {item.price}
             </Text>
           </View>
@@ -174,7 +181,7 @@ export const ProductsItem = ({ onpress, item }: Props) => {
             style={styles.btn}
           >
             <Text style={styles.textBtn}>
-              <Fontisto name="shopping-bag" size={13} color={palette.primary} />
+              <Fontisto name="shopping-bag" size={12} color={palette.primary} />
               {"  "}
               ADD
             </Text>
@@ -211,14 +218,13 @@ const styles = StyleSheet.create({
   },
   textTitle: {
     textAlign: "center",
-    fontFamily: "Avanta-Bold",
+    fontFamily: "Avanta-Medium",
     fontSize: 22,
     color: palette.primary,
   },
   textDescription: {
     marginHorizontal: 10,
-    color: "#908f8f",
-    fontFamily: "Avanta-Light",
+    fontFamily: "Montserrat-Thin",
     fontSize: 12,
     marginTop: 4,
     height: heightScrenn * 0.06,
@@ -245,11 +251,11 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   textBtn: {
-    fontFamily: "Avanta-Bold",
+    fontFamily: "Avanta-Medium",
     color: palette.primary,
     textAlignVertical: "center",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: 12,
+    fontSize: 10,
   },
 });

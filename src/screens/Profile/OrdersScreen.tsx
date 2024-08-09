@@ -16,7 +16,7 @@ import { useAppSelector } from "../../store/hooks";
 import { selectUser } from "../../store/slices/userSlice";
 
 import cartAnimation from "../../../assets/looties/Animation - 3.json";
-import Animation from "../../../assets/looties/Loading2.json";
+import Animation from "../../../assets/looties/loaderSpinner.json";
 import Lottie from "lottie-react-native";
 import Logo from "../../../assets/placeholders/empty_orders.svg";
 
@@ -38,7 +38,7 @@ export const OrdersScreen = ({ navigation }: Props) => {
           <View>
             <Text
               style={{
-                fontSize: 23,
+                fontSize: 20,
                 fontFamily: "Avanta-Medium",
                 //color: "#fff",
                 color: palette.secondary,
@@ -100,8 +100,8 @@ export const OrdersScreen = ({ navigation }: Props) => {
 
         <Text
           style={{
-            fontFamily: "Xamire-Medium",
-            fontSize: 50,
+            fontFamily: "Avanta-Medium",
+            fontSize: 36,
             textAlign: "center",
 
             marginVertical: 20,
@@ -110,15 +110,15 @@ export const OrdersScreen = ({ navigation }: Props) => {
             height: 50,
           }}
         >
-          Fresh and Tasty
+          Loading Orders
         </Text>
         <Lottie
           source={Animation}
           autoPlay
           loop
           style={{
-            width: widthScreen * 1,
-            height: heightScrenn * 0.68,
+            width: widthScreen * 0.6,
+            height: heightScrenn * 0.6,
             alignSelf: "center",
           }}
         />
@@ -142,8 +142,8 @@ export const OrdersScreen = ({ navigation }: Props) => {
             <Text
               style={{
                 color: palette.secondary,
-                fontFamily: "Xamire-Medium",
-                fontSize: 70,
+                fontFamily: "Avanta-Medium",
+                fontSize: 36,
                 textAlign: "center",
                 marginVertical: heightScrenn * 0.05,
               }}
@@ -216,22 +216,22 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   orderNumber: {
-    fontSize: 24,
-    fontFamily: "Avanta-Bold",
+    fontSize: 22,
+    fontFamily: "Avanta-Medium",
     color: palette.primary,
   },
   orderDate: {
-    fontSize: 20,
-    color: "#888",
-    fontFamily: "Avanta-Bold",
+    fontSize: 18,
+
+    fontFamily: "Montserrat-Thin",
   },
   orderStatus: {
     fontSize: 14,
     color: "#000",
   },
   orderTotal: {
-    fontSize: 22,
-    fontFamily: "Avanta-Bold",
+    fontSize: 18,
+    fontFamily: "Avanta-Medium",
     marginVertical: 6,
   },
   card: {

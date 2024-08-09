@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     // width: 100
   },
   listItemText: {
-    fontSize: 20,
+    fontSize: 17,
     fontFamily: "Avanta-Medium",
     // fontWeight: "500",
     color: palette.secondary,

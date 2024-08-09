@@ -26,7 +26,6 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Address, selectAddresses } from "../../store/slices/addressesSlice";
 import PickerController from "../atoms/formControls/PickerController";
-import PickerControllerAccAso from "../atoms/formControls/PickerControllerAccAso";
 import { STRIPE_PUBLISHABLE_KEY } from "../../screens/carStore/StripeConfig";
 import { initStripe, usePaymentSheet } from "@stripe/stripe-react-native";
 import axios from "axios";
@@ -447,7 +446,7 @@ export const TakeDelivery = ({ Address, isSelected }: Props) => {
               labelStyle={{
                 color: palette.secondary,
                 fontFamily: "Avanta-Medium",
-                fontSize: 22,
+                fontSize: 20,
               }}
             >
               OK
@@ -501,7 +500,7 @@ const styles = StyleSheet.create({
   },
   textLogIn: {
     marginBottom: 2,
-    fontSize: 24,
+    fontSize: 20,
     alignSelf: "center",
     justifyContent: "center",
     fontFamily: "Avanta-Medium",

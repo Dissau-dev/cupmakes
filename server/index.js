@@ -187,20 +187,96 @@ const SellerProduct = [{id: 1, name: "Cherry Sprinkles PinkCream",  "images": [
   {
       "id": 1,
       "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722874467/ncd3aw6b4uu3menjfaiq.png",
-
   }
-]},{id: 2, name: "Cream Chocolate Pink Sprinkles",  "images": [
+],   nutrition_facts: {
+  serving_size: '1 cupcake (57g)',
+  calories: 210,
+  total_fat: '12g',
+  saturated_fat: '7g',
+  trans_fat: '0g',
+  cholesterol: '30mg',
+  sodium: '170mg',
+  total_carbohydrate: '28g',
+  dietary_fiber: '1g',
+  sugars: '18g',
+  protein: '2g',
+  ingredients: [
+    'Sugar',
+    'Wheat Flour',
+    'Butter',
+    'Eggs',
+    'Vanilla Extract',
+    'Baking Powder',
+    'Salt'
+  ],
+  contains: [
+    'Wheat',
+    'Eggs',
+    'Milk'
+  ]
+}},{id: 2, name: "Cream Chocolate Pink Sprinkles",  "images": [
   {
       "id": 2,
       "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722866715/ghpe6mxfnew17scevn8z.png",
-
-  }
-]},{id: 3, name: "Yellow Cream Star Sprinkles",  "images": [
+  },
+],  nutrition_facts: {
+  serving_size: '1 cupcake (80g)',
+  calories: 310,
+  total_fat: '18g',
+  saturated_fat: '12g',
+  trans_fat: '0g',
+  cholesterol: '40mg',
+  sodium: '190mg',
+  total_carbohydrate: '34g',
+  dietary_fiber: '1.5g',
+  sugars: '22g',
+  protein: '3g',
+  ingredients: [
+    'Sugar',
+    'Wheat Flour',
+    'Butter',
+    'Eggs',
+    'Vanilla Extract',
+    'Baking Powder',
+    'Salt'
+  ],
+  contains: [
+    'Wheat',
+    'Eggs',
+    'Milk'
+  ]
+}},{id: 3, name: "Yellow Cream Star Sprinkles",  "images": [
   {
       "id": 3,
       "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722875536/lcopwdwilad7a3h3qdsa.png",
   }
-]},{id: 4, name: "Raspberry Chocolate",  "images": [
+],  nutrition_facts: {
+  serving_size: '1 cupcake (157g)',
+  calories: 440,
+  total_fat: '12g',
+  saturated_fat: '8g',
+  trans_fat: '0g',
+  cholesterol: '36mg',
+  sodium: '190mg',
+  total_carbohydrate: '28g',
+  dietary_fiber: '1g',
+  sugars: '18g',
+  protein: '2g',
+  ingredients: [
+    'Sugar',
+    'Wheat Flour',
+    'Butter',
+    'Eggs',
+    'Vanilla Extract',
+    'Baking Powder',
+    'Salt'
+  ],
+  contains: [
+    'Wheat',
+    'Eggs',
+    'Milk'
+  ]
+}},{id: 4, name: "Raspberry Chocolate",  "images": [
   {
       "id": 4,
       "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722876792/lc6ssprwikvx4z41tao0.png",
@@ -210,12 +286,64 @@ const SellerProduct = [{id: 1, name: "Cherry Sprinkles PinkCream",  "images": [
       "id": 5,
       "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722877969/juqyzfwwsflhl9ihgtsl.png",
   }
-]},{id: 6, name: "Pink StrawBerry Cream",  "images": [
+],  nutrition_facts: {
+  serving_size: '1 cupcake (57g)',
+  calories: 210,
+  total_fat: '12g',
+  saturated_fat: '7g',
+  trans_fat: '0g',
+  cholesterol: '30mg',
+  sodium: '170mg',
+  total_carbohydrate: '28g',
+  dietary_fiber: '1g',
+  sugars: '18g',
+  protein: '2g',
+  ingredients: [
+    'Sugar',
+    'Wheat Flour',
+    'Butter',
+    'Eggs',
+    'Vanilla Extract',
+    'Baking Powder',
+    'Salt'
+  ],
+  contains: [
+    'Wheat',
+    'Eggs',
+    'Milk'
+  ]
+}},{id: 6, name: "Pink StrawBerry Cream",  "images": [
   {
       "id": 6,
       "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722972100/vfkjkjl6rhtzbf1cwlig.png",
   }
-]}]
+],  nutrition_facts: {
+  serving_size: '1 cupcake (57g)',
+  calories: 210,
+  total_fat: '12g',
+  saturated_fat: '7g',
+  trans_fat: '0g',
+  cholesterol: '30mg',
+  sodium: '170mg',
+  total_carbohydrate: '28g',
+  dietary_fiber: '1g',
+  sugars: '18g',
+  protein: '2g',
+  ingredients: [
+    'Sugar',
+    'Wheat Flour',
+    'Butter',
+    'Eggs',
+    'Vanilla Extract',
+    'Baking Powder',
+    'Salt'
+  ],
+  contains: [
+    'Wheat',
+    'Eggs',
+    'Milk'
+  ]
+}}]
 
 app.get("/api/sellers", (req,res)=> {
   res.json(SellerProduct)

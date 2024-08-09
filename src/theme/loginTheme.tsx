@@ -30,7 +30,7 @@ export const loginStyles = StyleSheet.create({
   },
   btnRegisterText: {
     color: palette.primary,
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: "Avanta-Medium",
     marginHorizontal: 10,
     marginVertical: 15,

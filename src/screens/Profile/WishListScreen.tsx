@@ -6,7 +6,6 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useAppSelector } from "../../store/hooks";
 import { selectWitches } from "../../store/slices/witchesSlice";
 import { ProductList } from "../../components/atoms/Products/ProductList";
-import LottieView from "lottie-react-native";
 import { heightScrenn, widthScreen } from "../../theme/styles/global";
 
 import Logo from "../../../assets/placeholders/empty_list.svg";
@@ -33,7 +32,7 @@ export const WishListScreen = () => {
               style={{
                 color: palette.secondary,
                 fontFamily: "Avanta-Medium",
-                fontSize: 40,
+                fontSize: 36,
                 textAlign: "center",
                 marginTop: heightScrenn * 0.2,
               }}

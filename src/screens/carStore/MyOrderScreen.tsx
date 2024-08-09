@@ -16,7 +16,7 @@ import { useAppSelector } from "../../store/hooks";
 import { selectUser } from "../../store/slices/userSlice";
 
 import cartAnimation from "../../../assets/looties/bagEmpty.json";
-import Animation from "../../../assets/looties/Loading2.json";
+import Animation from "../../../assets/looties/loaderSpinner.json";
 import Lottie from "lottie-react-native";
 
 interface Props extends StackScreenProps<CarParamList, "MyOrderScreen"> {}
@@ -75,25 +75,6 @@ export const MyOrderScreen = ({ navigation }: Props) => {
         <Text style={styles.orderTotal}>Total:</Text>
         <Text style={styles.orderDate}> {item.total}</Text>
       </Text>
-
-      {/*  <Button
-        onPress={() => navigation.navigate("OrdersDetail")}
-        style={{
-          backgroundColor: palette.primary,
-          borderRadius: 10,
-          width: widthScreen * 0.4,
-          alignSelf: "center",
-          marginTop: 10,
-        }}
-        rippleColor={palette.datesFilter}
-        labelStyle={{
-          color: "#fff",
-          fontFamily: "Avanta-Medium",
-          fontSize: 22,
-        }}
-      >
-        <Text>Detail</Text>
-      </Button>*/}
     </View>
   );
 
@@ -108,8 +89,8 @@ export const MyOrderScreen = ({ navigation }: Props) => {
 
         <Text
           style={{
-            fontFamily: "Xamire-Medium",
-            fontSize: 50,
+            fontFamily: "Avanta-Medium",
+            fontSize: 30,
             textAlign: "center",
 
             marginVertical: 20,
@@ -118,7 +99,7 @@ export const MyOrderScreen = ({ navigation }: Props) => {
             height: 50,
           }}
         >
-          Fresh and Tasty
+          My Orders
         </Text>
         <Lottie
           source={Animation}

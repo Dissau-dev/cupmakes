@@ -7,6 +7,8 @@ import { HomeParamList } from "./types";
 import { WitchesListScreen } from "../screens/home/WitchesListScreen";
 import AppBar from "../components/containers/AppBar";
 import { LocationScreen } from "../screens/home/LocationScreen";
+import { NutritionalScreen } from "../screens/home/NutritionalScreen";
+import ContactUsScreen from "../screens/home/ContactUsScreen";
 
 const HomeStack = createStackNavigator<HomeParamList>();
 
@@ -44,6 +46,18 @@ export const HomeNavigator = () => {
         initialParams={undefined}
         component={LocationScreen}
         options={{ title: "Local to us", headerShown: true }}
+      />
+      <HomeStack.Screen
+        name="NutritionalScreen"
+        initialParams={undefined}
+        component={NutritionalScreen}
+        options={{ title: "CUPMAKES", headerShown: true }}
+      />
+      <HomeStack.Screen
+        name="ContactUsScreen"
+        initialParams={undefined}
+        component={ContactUsScreen}
+        options={{ title: "CUPMAKES", headerShown: true }}
       />
     </HomeStack.Navigator>
   );

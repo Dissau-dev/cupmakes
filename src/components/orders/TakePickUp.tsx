@@ -366,7 +366,7 @@ export const TakePickUp = ({ Address, isSelected }: Props) => {
                 labelStyle={{
                   color: palette.secondary,
                   fontFamily: "Avanta-Medium",
-                  fontSize: 22,
+                  fontSize: 20,
                 }}
               >
                 OK
@@ -384,8 +384,6 @@ const styles = StyleSheet.create({
     marginRight: 40,
     marginLeft: 40,
     marginTop: 20,
-    // flex: 1,
-    // backgroundColor: "#20a17c",
   },
   flex: {
     flex: 1,
@@ -460,7 +458,7 @@ const styles = StyleSheet.create({
   },
   textLogIn: {
     marginBottom: 2,
-    fontSize: 24,
+    fontSize: 22,
     alignSelf: "center",
     justifyContent: "center",
     fontFamily: "Avanta-Medium",

@@ -51,7 +51,7 @@ export default function TextInputControllerHolderName(
               style={{
                 borderColor: palette.icons,
                 fontSize: 14,
-                fontWeight: "300",
+                fontWeight: "900",
               }}
               {...rest}
             />

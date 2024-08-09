@@ -20,8 +20,8 @@ export const globals = StyleSheet.create({
     elevation: 5,
   },
   headerTitle: {
-    fontSize: 20,
-    fontFamily:'Poppins-Medium',
+    fontSize: 18,
+    fontFamily:'Avanta-Medium',
     color: "#fff",
     // textTransform: "capitalize",
   },

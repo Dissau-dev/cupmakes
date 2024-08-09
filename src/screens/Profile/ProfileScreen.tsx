@@ -92,7 +92,7 @@ export const ProfileScreen = ({ navigation }: Props) => {
         <View
           style={{
             flexDirection: "row",
-            marginHorizontal: 50,
+            alignItems: "center",
             justifyContent: "space-evenly",
             marginTop: 12,
           }}

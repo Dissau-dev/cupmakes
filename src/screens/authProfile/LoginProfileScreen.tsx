@@ -153,16 +153,14 @@ export const LoginProfileScreen = ({ navigation }: Props) => {
             </Button>
 
             <View style={loginStyles.newUserContainer}>
-              <Text style={{ fontSize: 20, fontFamily: "Avanta-Medium" }}>
+              <Text style={{ fontSize: 16, fontFamily: "Avanta-Medium" }}>
                 You do not have an account?
               </Text>
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => navigation.navigate("RegisterProfileScreen")}
               >
-                <Text style={loginStyles.btnRegisterText}>
-                  {""} Sign up here
-                </Text>
+                <Text style={loginStyles.btnRegisterText}>{""} Sign up</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -208,17 +206,12 @@ export const stylesRegister = StyleSheet.create({
   viewContainer: {
     marginRight: 40,
     marginLeft: 40,
-
-    // flex: 1,
-    // backgroundColor: "#20a17c",
   },
 
   formContainer: {
-    // flex: 1,
     paddingVertical: 20,
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor: "#3425ad",
   },
 
   btnLogIn: {
@@ -231,7 +224,7 @@ export const stylesRegister = StyleSheet.create({
   },
   textLogIn: {
     marginBottom: 2,
-    fontSize: 24,
+    fontSize: 20,
     alignSelf: "center",
     justifyContent: "center",
     fontFamily: "Avanta-Medium",
@@ -245,8 +238,6 @@ const styles = StyleSheet.create({
     marginRight: 40,
     marginLeft: 40,
     marginTop: 20,
-    // flex: 1,
-    // backgroundColor: "#20a17c",
   },
 
   formContainer: {

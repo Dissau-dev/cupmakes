@@ -42,12 +42,10 @@ export default function AccounDetail({ navigation }: Props) {
     },
   });
   const user = useAppSelector(selectUser);
-  console.log(user?.first_name);
   const dispatch = useAppDispatch();
   const [updateCustomer, { isLoading }] = useUpdateCustomerMutation();
 
   const handleUpdateCustomer = async (data: any) => {
-    const currentPassword = data.currentPassword;
     const newPassword = data.newPassword;
     const confirmPassword = data.confirmPassword;
     let datosActualizados = {
@@ -94,52 +92,6 @@ export default function AccounDetail({ navigation }: Props) {
         });
       });
   };
-  /*const handleUpdateCustomer = async (data) => {
-    const customerId = user?.id;
-    const currentPassword = data.currentPassword;
-    const newPassword = data.newPassword;
-    const confirmPassword = data.confirmPassword;
-
-    let datosActualizados = {
-      first_name: data.first_name || user?.first_name,
-      last_name: data.last_name || user?.last_name,
-      email: data.email || user?.email,
-    };
-
-    if (newPassword && newPassword !== confirmPassword) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "The passwords do not match",
-      });
-      return;
-    }
-
-    if (newPassword) {
-      datosActualizados = { ...datosActualizados, password: newPassword };
-    }
-
-    try {
-      const resultado = await updateCustomer({
-        customerId,
-        datosActualizados,
-      }).unwrap();
-      console.log("Cliente actualizado con éxito:", resultado);
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: "Changes saved successfully",
-      });
-      navigation.goBack();
-    } catch (error) {
-      console.error("Error al actualizar el cliente:", error);
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.data || "Something went wrong",
-      });
-    }
-  };*/
 
   return (
     <View>
@@ -218,7 +170,7 @@ export default function AccounDetail({ navigation }: Props) {
             <View
               style={{
                 position: "absolute",
-                bottom: heightScrenn * 0.41,
+                bottom: heightScrenn * 0.49,
                 marginLeft: 18,
                 backgroundColor: palette.white,
                 padding: 6,

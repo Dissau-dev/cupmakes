@@ -53,17 +53,6 @@ export const ModalProductContent = ({
     setTimeout(() => {
       setQuantity(parseInt(text));
     }, 200);
-    /* setInputValues((prevValues) => ({
-      ...prevValues,
-      [item.id]: value.replace(/[^0-9]/g, "").toString(),
-    }));
-    const quantity = parseInt(value);
-    setSelectedValue(null);
-    if (!isNaN(quantity)) {
-      console.log("se despachò");
-      // Despachar la acción setQuantity cuando se ingresan cambios válidos en el input
-      dispatch(setQuantity({ id: item.id, quantity }));
-    }*/
   };
 
   const data = Array.from({ length: 100 }, (_, index) => ({
@@ -157,8 +146,10 @@ export const ModalProductContent = ({
                         borderRightWidth: 1,
                       }}
                     >
-                      <Text style={{ fontFamily: "Avanta-Medium" }}>
-                        Quantity{""}
+                      <Text
+                        style={{ fontFamily: "Avanta-Medium", fontSize: 12 }}
+                      >
+                        Quantity
                       </Text>
                     </View>
                   )}

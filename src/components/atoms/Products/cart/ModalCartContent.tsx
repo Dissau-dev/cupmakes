@@ -81,7 +81,6 @@ export const ModalCartContent = ({ item }: Props) => {
     }
     if (selectedItemKey === itemKey) {
       setSelectedItemKey(null);
-      console.log("se dispara la 2");
     } else {
       dispatch(setQuantity({ id: item.id, quantity }));
       setSelectedItemKey(itemKey);
@@ -89,7 +88,6 @@ export const ModalCartContent = ({ item }: Props) => {
         ...prevValues,
         [item.id]: quantity,
       }));
-      console.log("se dispara la 3");
     }
   };
 
@@ -148,8 +146,10 @@ export const ModalCartContent = ({ item }: Props) => {
                         borderRightWidth: 1,
                       }}
                     >
-                      <Text style={{ fontFamily: "Avanta-Medium" }}>
-                        Quantity{""}
+                      <Text
+                        style={{ fontFamily: "Avanta-Medium", fontSize: 12 }}
+                      >
+                        Quantity
                       </Text>
                     </View>
                   )}

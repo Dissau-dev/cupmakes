@@ -29,12 +29,19 @@ export const BarLoading = ({ level }: Props) => {
         <View style={[level < 2 ? styles.normal : styles.full]}></View>
       </View>
       <View
-        style={{
-          flexDirection: "row",
-          width: widthScreen * 0.7,
-          justifyContent: "space-between",
-          alignSelf: "center",
-        }}
+        style={[
+          level === 1
+            ? { marginRight: 10 }
+            : level === 2
+            ? { marginRight: 10 }
+            : { marginRight: 20 },
+          {
+            flexDirection: "row",
+            width: widthScreen * 0.7,
+            justifyContent: "space-between",
+            alignSelf: "center",
+          },
+        ]}
       >
         <Text style={styles.textFull}>Cart</Text>
         <Text style={[level < 1 ? styles.textMidNormal : styles.textMidFull]}>
@@ -66,31 +73,31 @@ const styles = StyleSheet.create({
   line: {
     backgroundColor: palette.secondary,
     borderRadius: 100,
-    width: 110,
+    width: widthScreen * 0.3,
     height: 2,
   },
   textFull: {
     color: palette.secondary,
     fontFamily: "Avanta-Medium",
-    fontSize: 16,
+    fontSize: 12,
     top: 10,
   },
   textNormal: {
     color: palette.icons,
     fontFamily: "Avanta-Medium",
-    fontSize: 16,
+    fontSize: 12,
     top: 10,
   },
   textMidFull: {
     color: palette.secondary,
     fontFamily: "Avanta-Medium",
-    fontSize: 16,
+    fontSize: 12,
     top: 10,
   },
   textMidNormal: {
     color: palette.icons,
     fontFamily: "Avanta-Medium",
-    fontSize: 16,
+    fontSize: 12,
     top: 10,
     marginHorizontal: widthScreen * 0.22,
   },

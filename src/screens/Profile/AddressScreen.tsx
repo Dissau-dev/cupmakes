@@ -31,7 +31,7 @@ import {
 import { ProfileParamList } from "../../routes/types";
 import { StackScreenProps } from "@react-navigation/stack";
 
-import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
+import { Entypo, AntDesign } from "@expo/vector-icons";
 
 import Logo from "../../../assets/placeholders/empty_Delivery_address.svg";
 import PickUp from "../../../assets/placeholders/12083606_Wavy_Bus-26_Single-10.svg";
@@ -71,6 +71,7 @@ export default function AddressScreen({ navigation }: Props) {
           alignSelf: "center",
         }}
         onValueChange={setValue}
+        theme={{ roundness: 2 }}
         buttons={[
           {
             value: "delivery",
@@ -80,6 +81,8 @@ export default function AddressScreen({ navigation }: Props) {
               backgroundColor:
                 value === "delivery" ? palette.primary : palette.white,
             },
+            labelStyle: { fontFamily: "Avanta-Medium" },
+
             showSelectedCheck: true,
           },
           {
@@ -90,6 +93,7 @@ export default function AddressScreen({ navigation }: Props) {
               backgroundColor:
                 value === "pickUp" ? palette.primary : palette.white,
             },
+            labelStyle: { fontFamily: "Avanta-Medium" },
             showSelectedCheck: true,
           },
         ]}
@@ -127,10 +131,7 @@ export default function AddressScreen({ navigation }: Props) {
                 }
                 style={styles.addButton}
               >
-                <Text style={styles.textAddBtn}>
-                  <Ionicons name="add" size={20} />
-                  {"  "} Add Address
-                </Text>
+                <Text style={styles.textAddBtn}>{"  "} Add Address</Text>
               </TouchableOpacity>
             }
             data={dataPickUp}
@@ -188,7 +189,11 @@ export default function AddressScreen({ navigation }: Props) {
                   </View>
                 </Pressable>
                 <Portal>
-                  <Dialog visible={visible} onDismiss={hideDialog}>
+                  <Dialog
+                    visible={visible}
+                    onDismiss={hideDialog}
+                    style={{ backgroundColor: palette.white }}
+                  >
                     <Dialog.Title
                       style={{ fontFamily: "Avanta-Medium", fontSize: 30 }}
                     >
@@ -209,14 +214,22 @@ export default function AddressScreen({ navigation }: Props) {
                     <Dialog.Actions style={{ justifyContent: "space-evenly" }}>
                       <Button
                         onPress={() => handleYes(item.id)}
-                        labelStyle={{ color: palette.secondary }}
+                        labelStyle={{
+                          color: palette.secondary,
+                          fontFamily: "Avanta-Medium",
+                          fontSize: 18,
+                        }}
                         rippleColor={palette.secondary}
                       >
                         OK
                       </Button>
                       <Button
                         onPress={hideDialog}
-                        labelStyle={{ color: palette.secondary }}
+                        labelStyle={{
+                          color: palette.secondary,
+                          fontFamily: "Avanta-Medium",
+                          fontSize: 18,
+                        }}
                         rippleColor={palette.secondary}
                       >
                         Cancel
@@ -243,10 +256,7 @@ export default function AddressScreen({ navigation }: Props) {
                   }
                   style={styles.addButton}
                 >
-                  <Text style={styles.textAddBtn}>
-                    <Ionicons name="add" size={20} />
-                    {"  "} Add Address
-                  </Text>
+                  <Text style={styles.textAddBtn}>{"  "} Add Address</Text>
                 </TouchableOpacity>
               </>
             }
@@ -256,7 +266,7 @@ export default function AddressScreen({ navigation }: Props) {
                   style={{
                     color: palette.secondary,
                     fontFamily: "Avanta-Medium",
-                    fontSize: 30,
+                    fontSize: 28,
                     textAlign: "center",
                     marginVertical: heightScrenn * 0.05,
                   }}
@@ -325,7 +335,11 @@ export default function AddressScreen({ navigation }: Props) {
                   </View>
                 </Pressable>
                 <Portal>
-                  <Dialog visible={visible} onDismiss={hideDialog}>
+                  <Dialog
+                    visible={visible}
+                    onDismiss={hideDialog}
+                    style={{ backgroundColor: palette.white }}
+                  >
                     <Dialog.Title
                       style={{ fontFamily: "Avanta-Medium", fontSize: 30 }}
                     >
@@ -336,7 +350,7 @@ export default function AddressScreen({ navigation }: Props) {
                       <Paragraph
                         style={{
                           fontFamily: "Avanta-Medium",
-                          fontSize: 20,
+                          fontSize: 18,
                           marginTop: 6,
                         }}
                       >
@@ -346,14 +360,22 @@ export default function AddressScreen({ navigation }: Props) {
                     <Dialog.Actions style={{ justifyContent: "space-evenly" }}>
                       <Button
                         onPress={() => handleYes(item.id)}
-                        labelStyle={{ color: palette.secondary }}
+                        labelStyle={{
+                          color: palette.secondary,
+                          fontFamily: "Avanta-Medium",
+                          fontSize: 18,
+                        }}
                         rippleColor={palette.secondary}
                       >
                         OK
                       </Button>
                       <Button
                         onPress={hideDialog}
-                        labelStyle={{ color: palette.secondary }}
+                        labelStyle={{
+                          color: palette.secondary,
+                          fontFamily: "Avanta-Medium",
+                          fontSize: 18,
+                        }}
                         rippleColor={palette.secondary}
                       >
                         Cancel

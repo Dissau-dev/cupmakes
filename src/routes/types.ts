@@ -37,6 +37,8 @@ export type HomeParamList = {
     HomeScreen:undefined;
   WitchesListScreen:undefined;
   LocationScreen: undefined;
+  ContactUsScreen:undefined,
+  NutritionalScreen:{item:any};
   };
 
   export type CarParamList = {
@@ -51,7 +53,7 @@ export type HomeParamList = {
 export type ProductsParamList = {
     ProductsScreen: undefined;
     ProductListScreen: {id:number | any, titleScreen:string} ;
-    ProductDescrip: {titleScreen:string,id:number}
+    ProductDescrip: {titleScreen:string,id?:number, item?:any}
     SearchProducts: {titleScreen:string}
 }
 export type AuthProfileParamsList = {

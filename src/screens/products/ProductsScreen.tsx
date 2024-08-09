@@ -31,7 +31,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 import { useGetAllCategoriesQuery } from "../../store/api/productsApi";
 
-import { Ionicons, Fontisto } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useForm } from "react-hook-form";
 
 import { ProductsEmpty } from "../../components/atoms/Products/ProductsEmpty";
@@ -208,10 +208,10 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
   };
 
   const renderFooter = () => {
-    if (isLoading || status === "loading") {
+    if ((isLoading || status === "loading") && items.length !== 0) {
       return (
         <View style={{ padding: 10 }}>
-          <ActivityIndicator size="large" color={palette.secondary} />
+          <ActivityIndicator size="large" color={palette.darkGray} />
         </View>
       );
     }
@@ -330,6 +330,7 @@ export const ProductsScreen = ({ navigation }: ProtectedScreenProps) => {
                 navigation.navigate("ProductDescrip", {
                   //@ts-ignore
                   id: item.id,
+                  item: item,
                   //@ts-ignore
                   titleScreen: item.name,
                 })
@@ -432,7 +433,7 @@ const stylesP = StyleSheet.create({
     width: widthScreen * 0.8,
   },
   aplyText: {
-    fontSize: 22,
+    fontSize: 18,
     color: palette.white,
     fontFamily: "Avanta-Medium",
   },
@@ -451,10 +452,10 @@ const stylesP = StyleSheet.create({
   },
   textPrice: {
     fontFamily: "Avanta-Medium",
-    fontSize: 26,
+    fontSize: 20,
     marginHorizontal: 10,
     marginBottom: 10,
     textAlignVertical: "center",
-    width: widthScreen * 0.22,
+    width: widthScreen * 0.3,
   },
 });

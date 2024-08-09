@@ -257,16 +257,14 @@ export const RegisterProfileScreen = ({ navigation }: Props) => {
             </Button>
 
             <View style={loginStyles.newUserContainer}>
-              <Text style={{ fontSize: 20, fontFamily: "Avanta-Medium" }}>
+              <Text style={{ fontSize: 16, fontFamily: "Avanta-Medium" }}>
                 Do you have an account?
               </Text>
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => navigation.replace("LoginProfileScreen")}
               >
-                <Text style={loginStyles.btnRegisterText}>
-                  {""} Sign in here
-                </Text>
+                <Text style={loginStyles.btnRegisterText}>{""} Sign in</Text>
               </TouchableOpacity>
             </View>
           </View>

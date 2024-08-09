@@ -171,7 +171,7 @@ export const DialogContent = ({
             autoCapitalize={"none"}
             keyboardType="numeric"
             returnKeyType="next"
-            style={stylesP.inputPrice}
+            style={[stylesP.inputPrice]}
           />
           <Text style={stylesP.textPrice}>Max Price :</Text>
           <TextInputControllerHolderName

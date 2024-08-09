@@ -73,20 +73,20 @@ export const ProductList = ({
             style={{
               color: palette.secondary,
               marginBottom: 6,
-              fontSize: 20,
+              fontSize: 15,
+              fontFamily: "Avanta-Medium",
             }}
           >
             {name}
           </Text>
           {/* <Text>{item.short_description}</Text> */}
-          <Text style={{ fontFamily: "Avanta-Bold", fontSize: 18 }}>
+          <Text style={{ fontFamily: "Avanta-Medium", fontSize: 15 }}>
             $ {price}
           </Text>
           <Text
             style={{
-              fontFamily: "Avanta-Bold",
-              fontSize: 18,
-              color: palette.darkGray,
+              fontFamily: "Montserrat-Thin",
+              fontSize: 15,
             }}
           >
             {moment(date).format("MMM DD, YYYY")}
@@ -110,17 +110,18 @@ export const ProductList = ({
             padding: 6,
             marginRight: widthScreen * 0.14,
             marginTop: 10,
+            left: 20,
           }}
         >
           <Text
             style={{
               color: palette.white,
               fontFamily: "Avanta-Medium",
-              fontSize: 20,
+              fontSize: 14,
             }}
           >
             {" "}
-            <Fontisto name="shopping-bag" size={16} />
+            <Fontisto name="shopping-bag" size={14} />
             {"  "}Add to cart
           </Text>
         </TouchableOpacity>

@@ -19,7 +19,11 @@ export const ProductsHome = ({ id, index, images, name, onpress }: Props) => {
   return (
     <View
       key={id}
-      style={[styles.container, index % 2 === 0 ? styles.even : styles.odd]}
+      style={[
+        styles.container,
+        index % 2 === 0 ? styles.even : styles.odd,
+        index === 5 && { marginBottom: heightScrenn },
+      ]}
     >
       <Image
         placeholder={{ blurhash }}
@@ -28,11 +32,13 @@ export const ProductsHome = ({ id, index, images, name, onpress }: Props) => {
         source={{ uri: images }}
         style={[index % 2 === 0 ? styles.imageRight : styles.imageLeft]}
       />
-      <View>
+      <View
+        style={[index % 2 === 0 ? { marginRight: 20 } : { marginLeft: 10 }]}
+      >
         <Text
           style={[
             index % 2 === 0 ? styles.textRight : styles.textLeft,
-            { fontFamily: "Montserrat-Bold" },
+            { fontFamily: "Avanta-Medium" },
           ]}
         >
           {name}
@@ -50,11 +56,16 @@ export const ProductsHome = ({ id, index, images, name, onpress }: Props) => {
               ]}
             >
               Learn more{" "}
+              <Ionicons
+                name="chevron-forward"
+                color={"#515050"}
+                style={{ marginTop: 2 }}
+                size={12}
+              />
             </Text>
           </TouchableOpacity>
         </View>
       </View>
-      <View style={[index === 5 && { height: heightScrenn * 0.8 }]} />
     </View>
   );
 };
@@ -103,37 +114,36 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
   },
   imageRight: {
-    width: widthScreen * 0.5,
-    height: heightScrenn * 0.25,
-    marginRight: 10,
-    marginLeft: 10,
-    transform: [{ rotate: "35deg" }],
+    width: widthScreen * 0.6,
+    height: heightScrenn * 0.4,
+    right: widthScreen * 0.14,
+    transform: [{ rotate: "15deg" }],
   },
   imageLeft: {
-    width: widthScreen * 0.5,
-    height: heightScrenn * 0.25,
-    marginRight: 10,
-    marginLeft: 10,
-    transform: [{ rotate: "-35deg" }],
+    width: widthScreen * 0.6,
+    height: heightScrenn * 0.4,
+    right: widthScreen * 0.14,
+
+    transform: [{ rotate: "-15deg" }],
   },
   textLeft: {
     fontSize: 28,
     textAlign: "left",
-    maxWidth: widthScreen * 0.4,
+
+    maxWidth: widthScreen * 0.5,
   },
   textRight: {
     fontSize: 28,
     textAlign: "right",
-    marginRight: 30,
-    fontFamily: "Montserrat-Bold",
-    maxWidth: widthScreen * 0.4,
+    maxWidth: widthScreen * 0.5,
   },
   textBtnLeft: {
     fontSize: 16,
-    textAlign: "right",
+    textAlign: "center",
+    marginLeft: widthScreen * 0.1,
   },
   textBtnRight: {
     fontSize: 16,
-    textAlign: "right",
+    textAlign: "center",
   },
 });

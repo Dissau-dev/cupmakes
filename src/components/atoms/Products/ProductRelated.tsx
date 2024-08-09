@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { palette } from "../../../theme/colors";
 import { heightScrenn, widthScreen } from "../../../theme/styles/global";
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   StyleSheet,
@@ -23,8 +24,9 @@ import { useNavigation } from "@react-navigation/native";
 interface Props {
   onpress: () => void;
   item: any;
+  isLoading?: any;
 }
-export const ProductRelated = ({ onpress, item }: Props) => {
+export const ProductRelated = ({ onpress, item, isLoading }: Props) => {
   const dispatch = useAppDispatch();
   const currentWitches = useAppSelector(selectWitches);
   const [heart, setHeart] = useState(false);
@@ -67,60 +69,70 @@ export const ProductRelated = ({ onpress, item }: Props) => {
   };
 
   return (
-    <Pressable onPress={onpress}>
-      <View style={styles.card}>
-        {item.images.length > 0 ? (
-          <View>
-            <Image
-              source={{ uri: item.images[0].src }}
-              style={{
-                width: widthScreen * 0.3,
-                height: heightScrenn * 0.12,
-                alignSelf: "center",
-              }}
-            />
-            <TouchableOpacity
-              onPress={() => onLikedProduct(item)}
-              style={{
-                position: "absolute",
-                alignSelf: "flex-end",
-                height: heightScrenn * 0.05,
-                width: widthScreen * 0.1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {heart ? (
-                <Ionicons
-                  name="heart-sharp"
-                  size={24}
-                  style={{}}
-                  color={palette.lightRed}
+    <>
+      {isLoading ? (
+        <ActivityIndicator size="large" color={palette.darkGray} />
+      ) : (
+        <Pressable onPress={onpress}>
+          <View style={styles.card}>
+            {item.images.length > 0 ? (
+              <View>
+                <Image
+                  source={{ uri: item.images[0].src }}
+                  style={{
+                    width: widthScreen * 0.3,
+                    height: heightScrenn * 0.12,
+                    alignSelf: "center",
+                  }}
                 />
-              ) : (
-                <Ionicons name="heart-outline" size={24} style={{}} />
-              )}
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <ImagenPorDefecto />
-        )}
+                <TouchableOpacity
+                  onPress={() => onLikedProduct(item)}
+                  style={{
+                    position: "absolute",
+                    alignSelf: "flex-end",
+                    height: heightScrenn * 0.05,
+                    width: widthScreen * 0.1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {heart ? (
+                    <Ionicons
+                      name="heart-sharp"
+                      size={24}
+                      style={{}}
+                      color={palette.lightRed}
+                    />
+                  ) : (
+                    <Ionicons name="heart-outline" size={24} style={{}} />
+                  )}
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <ImagenPorDefecto />
+            )}
 
-        <View style={{ marginHorizontal: 10 }}>
-          <Text style={{ fontSize: 20, fontFamily: "Avanta-Bold" }}>
-            {item.name}
-          </Text>
-        </View>
-        <View style={{ marginHorizontal: 10 }}>
-          <StarRating rating={item.average_rating} size={16} fontSize={16} />
-        </View>
-        <View style={{ marginHorizontal: 10 }}>
-          <Text style={{ fontFamily: "Avanta-Bold", fontSize: 18 }}>
-            $ {item.price}
-          </Text>
-        </View>
-      </View>
-    </Pressable>
+            <View style={{ marginHorizontal: 10 }}>
+              <Text style={{ fontSize: 14, fontFamily: "Avanta-Medium" }}>
+                {item.name}
+              </Text>
+            </View>
+            <View style={{ marginHorizontal: 10 }}>
+              <StarRating
+                rating={item.average_rating}
+                size={16}
+                fontSize={16}
+              />
+            </View>
+            <View style={{ marginHorizontal: 10 }}>
+              <Text style={{ fontFamily: "Avanta-Medium", fontSize: 16 }}>
+                $ {item.price}
+              </Text>
+            </View>
+          </View>
+        </Pressable>
+      )}
+    </>
   );
 };
 

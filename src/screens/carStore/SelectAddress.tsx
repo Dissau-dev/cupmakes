@@ -128,7 +128,7 @@ export const SelectAddress = ({ navigation }: Props) => {
             paddingVertical: 10,
           }}
         >
-          <Dialog.Title style={{ fontFamily: "Avanta-Medium", fontSize: 28 }}>
+          <Dialog.Title style={{ fontFamily: "Avanta-Medium", fontSize: 22 }}>
             {dialogTitle}
           </Dialog.Title>
           <Divider />
@@ -137,7 +137,7 @@ export const SelectAddress = ({ navigation }: Props) => {
               <View>
                 <Text
                   style={{
-                    fontSize: 24,
+                    fontSize: 20,
                     fontFamily: "Avanta-Medium",
                     margin: 20,
                   }}
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   titleCard: {
     fontFamily: "Avanta-Medium",
-    fontSize: 30,
+    fontSize: 20,
     color: palette.primary,
     textAlign: "center",
     width: widthScreen * 0.4,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   },
   titleCard1: {
     fontFamily: "Avanta-Medium",
-    fontSize: 20,
+    fontSize: 16,
     color: palette.secondary,
     textAlign: "left",
     width: widthScreen * 0.4,
