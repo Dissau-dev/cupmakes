@@ -11,6 +11,7 @@ import NutrionalTable from "../../components/atoms/Products/NutrionalTable";
 interface Props extends StackScreenProps<HomeParamList, "NutritionalScreen"> {}
 export const NutritionalScreen = ({ route, navigation }: Props) => {
   const { item } = route.params;
+  console.log(item);
 
   const nutritionData = [
     { nutrient: "Calories", amount: "200 kcal" },
