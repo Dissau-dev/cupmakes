@@ -281,7 +281,33 @@ const SellerProduct = [{id: 1, name: "Cherry Sprinkles PinkCream",  "images": [
       "id": 4,
       "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722876792/lc6ssprwikvx4z41tao0.png",
   }
-]},{id: 5, name: "BlueBerry Cream Cupacke",  "images": [
+], nutrition_facts: {
+  serving_size: '1 cupcake (80g)',
+  calories: 310,
+  total_fat: '18g',
+  saturated_fat: '12g',
+  trans_fat: '0g',
+  cholesterol: '40mg',
+  sodium: '190mg',
+  total_carbohydrate: '34g',
+  dietary_fiber: '1.5g',
+  sugars: '22g',
+  protein: '3g',
+  ingredients: [
+    'Sugar',
+    'Wheat Flour',
+    'Butter',
+    'Eggs',
+    'Vanilla Extract',
+    'Baking Powder',
+    'Salt'
+  ],
+  contains: [
+    'Wheat',
+    'Eggs',
+    'Milk'
+  ]
+}},{id: 5, name: "BlueBerry Cream Cupacke",  "images": [
   {
       "id": 5,
       "src": "https://res.cloudinary.com/dew8qnaad/image/upload/v1722877969/juqyzfwwsflhl9ihgtsl.png",

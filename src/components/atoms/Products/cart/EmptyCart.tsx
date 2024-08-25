@@ -14,8 +14,8 @@ export const EmptyCart = () => {
       <Text
         style={{
           color: palette.secondary,
-          fontFamily: "Xamire-Medium",
-          fontSize: 70,
+          fontFamily: "Montserrat-Bold",
+          fontSize: 40,
           textAlign: "center",
           marginVertical: heightScrenn * 0.05,
         }}
@@ -35,7 +35,7 @@ export const EmptyCart = () => {
       />
       <Logo
         width={widthScreen * 0.8}
-        height={heightScrenn * 0.4}
+        height={heightScrenn * 0.44}
         style={{ alignSelf: "center" }}
         fill={palette.secondary}
       />

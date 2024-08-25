@@ -22,7 +22,7 @@ export default function AnimatedLogo() {
         style={{ width: 200, height: 200 }}
   /> */}
       <MotiImage
-        source={require("../../../assets/3.png")}
+        source={require("../../../assets/adaptive-icon.png")}
         from={{
           rotate: "0deg",
         }}

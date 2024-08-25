@@ -32,11 +32,11 @@ export interface Address {
         firstName: "", lastName: "", 
         companyName: "",
         country: "United States",
-        streetAddress: "Bon Avenue #9001",
+        streetAddress: "422 E Campbell Ave, Campbell",
         apartmentSuiteUnitEtc: "",
-        townCity: "San Jose",
-        state: "california",
-        zipCode: "",
+        townCity: "San José",
+        state: "CA",
+        zipCode: "95008",
       }
     ],
   };

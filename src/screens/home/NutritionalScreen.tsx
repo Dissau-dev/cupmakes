@@ -11,19 +11,6 @@ import NutrionalTable from "../../components/atoms/Products/NutrionalTable";
 interface Props extends StackScreenProps<HomeParamList, "NutritionalScreen"> {}
 export const NutritionalScreen = ({ route, navigation }: Props) => {
   const { item } = route.params;
-  console.log(item);
-
-  const nutritionData = [
-    { nutrient: "Calories", amount: "200 kcal" },
-    { nutrient: "Total Fat", amount: "10 g" },
-    { nutrient: "Saturated Fat", amount: "3 g" },
-    { nutrient: "Cholesterol", amount: "30 mg" },
-    { nutrient: "Sodium", amount: "150 mg" },
-    { nutrient: "Total Carbohydrates", amount: "30 g" },
-    { nutrient: "Dietary Fiber", amount: "5 g" },
-    { nutrient: "Sugars", amount: "10 g" },
-    { nutrient: "Protein", amount: "5 g" },
-  ];
   const hash = "LEHV6nWB2yk8pyo0adR*.7kCMdnj";
 
   return (
@@ -44,7 +31,7 @@ export const NutritionalScreen = ({ route, navigation }: Props) => {
           style={styles.imageRight}
         />
         <View style={{ marginTop: heightScrenn * 0.06 }} />
-        <NutrionalTable />
+        <NutrionalTable data={item.nutrition_facts} />
       </ScrollView>
     </View>
   );

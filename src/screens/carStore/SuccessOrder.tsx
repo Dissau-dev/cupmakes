@@ -11,6 +11,7 @@ import { cleanCart } from "../../store/slices/cartSlice";
 import { heightScrenn, widthScreen } from "../../theme/styles/global";
 import Lottie from "lottie-react-native";
 import Animation from "../../../assets/looties/cartSuccessFully.json";
+import { AntDesign } from "@expo/vector-icons";
 
 interface ProtectedScreenProps
   extends StackScreenProps<CarParamList, "SuccessOrder"> {}
@@ -33,30 +34,26 @@ export const SuccessOrder = ({ navigation }: ProtectedScreenProps) => {
       <Text
         style={{
           textAlign: "center",
-          fontSize: 50,
+          fontSize: 36,
           marginVertical: heightScrenn * 0.05,
-          fontFamily: "Xamire-Medium",
+          fontFamily: "Montserrat-Bold",
           color: palette.secondary,
         }}
       >
         Order received
       </Text>
-      <Lottie
-        source={Animation}
-        autoPlay
-        loop
+      <AntDesign
+        name="downcircle"
+        size={224}
+        color={palette.lightGreen}
         style={{
-          width: widthScreen * 0.8,
-          height: heightScrenn * 0.5,
           alignSelf: "center",
         }}
       />
-
       <Button
+        rippleColor={palette.icons}
         style={[styles.btnLogIn]}
         mode="contained"
-        buttonColor={palette.primary}
-        rippleColor={palette.datesFilter}
         onPress={onPress}
         textColor={palette.white}
         labelStyle={styles.textLogIn}
@@ -75,16 +72,15 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "flex-end",
-    marginTop: heightScrenn * 0.1,
+    marginTop: heightScrenn * 0.25,
+    backgroundColor: "#000",
   },
   textLogIn: {
-    marginBottom: 2,
-    fontSize: 18,
-    alignSelf: "center",
+    width: widthScreen * 0.5,
+    height: heightScrenn * 0.037,
     justifyContent: "center",
-
-    height: heightScrenn * 0.05,
-    textAlignVertical: "center",
-    width: widthScreen * 0.62,
+    verticalAlign: "middle",
+    fontFamily: "Montserrat-Bold",
+    fontSize: 18,
   },
 });

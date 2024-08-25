@@ -36,10 +36,11 @@ export const ModalCartContent = ({ item }: Props) => {
     return acc;
   }, {} as InputValues);
 
+
   const [selectedItemKey, setSelectedItemKey] = useState(null);
   const [inputValues, setInputValues] =
     useState<InputValues>(initialInputValues);
-  const [inputText, setInputText] = useState("");
+ 
   const dispatch = useAppDispatch();
 
   const onHandleInput = (value: string, item: { id: any }) => {
@@ -90,6 +91,7 @@ export const ModalCartContent = ({ item }: Props) => {
       }));
     }
   };
+  console.log(selectedItemKey);
 
   const renderItem = ({ item }: any) => (
     <>
@@ -98,11 +100,14 @@ export const ModalCartContent = ({ item }: Props) => {
         style={[styles.touchableOpacity]}
       >
         <Text
-          style={[styles.text, selectedItemKey === item.key && styles.selected]}
+          style={[
+            styles.text,
+            parseInt(item.key) === selectedItemKey && styles.selected,
+          ]}
         >
           {item.number}
         </Text>
-        {selectedItemKey === item.key && (
+        {parseInt(item.key) === selectedItemKey && (
           <MaterialIcons name="done" size={24} color={palette.secondary} />
         )}
       </TouchableOpacity>

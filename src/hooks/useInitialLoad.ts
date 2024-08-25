@@ -46,7 +46,7 @@ export const useInitialLoad = () => {
       // Load fonts
        await Font.loadAsync({
         ...Ionicons.font,
-         "poppins-300": require("../../assets/fonts/Poppins-Light.ttf"),
+     
       //   "poppins-medium": require("../../assets/fonts/Poppins-Medium.ttf"),
       //   "poppins-bold": require("../../assets/fonts/Poppins-Bold.ttf"),
       //   "sf-300": require("../../assets/fonts/SFProDisplay-Light-1.ttf"),

@@ -156,7 +156,7 @@ export const SelectAddress = ({ navigation }: Props) => {
                       flexDirection: "row",
                     }}
                   >
-                    {shop ? (
+                    {!shop ? (
                       <AntDesign
                         name="home"
                         size={16}
@@ -220,11 +220,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     width: widthScreen * 0.8,
     marginHorizontal: 10,
-    height: heightScrenn * 0.12,
+
     paddingVertical: 10,
     marginBottom: 10,
     alignSelf: "center",
-    alignItems: "flex-start",
+
     shadowColor: "#000",
     marginTop: 10,
     shadowOffset: {
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: palette.secondary,
     textAlign: "left",
-    width: widthScreen * 0.4,
+    width: widthScreen * 0.7,
     marginHorizontal: widthScreen * 0.04,
     // marginRight: widthScreen * 0.01,
   },

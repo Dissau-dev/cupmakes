@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#D12489"
+      "backgroundColor": "#D53772"
     },
    
     "ios": {
@@ -17,10 +17,15 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#D12489"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#D53772"
       },
-      "package": "com.mauriciogaraco.baverydevapp"
+      "package": "com.mauriciogaraco.baverydevapp", 
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBN1FTGbjsKDx_l-uLAvHGsofnd3FbXeOY6v"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -35,6 +40,7 @@
           "enableGooglePay": true
         }
       ]
+    
     ],
     "extra": {
       "eas": {

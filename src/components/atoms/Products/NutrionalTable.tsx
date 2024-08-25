@@ -1,7 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const NutrionalTable = () => {
+interface Props {
+  data: any;
+}
+const NutrionalTable = ({ data }: Props) => {
   return (
     <View
       style={{
@@ -12,49 +15,53 @@ const NutrionalTable = () => {
       <View style={{ borderWidth: 0.85, padding: 20, borderRadius: 10 }}>
         <Text style={styles.title}>Nutrition Facts</Text>
         <View style={styles.line} />
-        <Text style={styles.servingSize}>Serving Size 1 cupcake (57g)</Text>
+        <Text style={styles.servingSize}>Serving Size {data.serving_size}</Text>
         <View style={styles.lineThick} />
         <View style={styles.row}>
           <Text style={styles.largeText}>Calories </Text>
-          <Text style={styles.largeText}>210 </Text>
+          <Text style={styles.largeText}>{data.calories} </Text>
         </View>
         <View style={styles.lineThick} />
         <View style={styles.nutrientContainer}>
           <View style={styles.row}>
             <Text style={styles.boldText}>Total Fat</Text>
-            <Text style={styles.boldText}>12g</Text>
+            <Text style={styles.boldText}>{data.total_fat}</Text>
           </View>
-          <Text style={styles.indentText}>Saturated Fat 7g</Text>
-          <Text style={styles.indentText}>Trans Fat 0g</Text>
+          <Text style={styles.indentText}>
+            Saturated Fat {data.saturated_fat}
+          </Text>
+          <Text style={styles.indentText}>Trans Fat {data.trans_fat}</Text>
         </View>
         <View style={styles.line} />
         <View style={styles.nutrientContainer}>
           <View style={styles.row}>
             <Text style={styles.boldText}>Cholesterol</Text>
-            <Text style={styles.boldText}>30mg</Text>
+            <Text style={styles.boldText}>{data.cholesterol}</Text>
           </View>
         </View>
         <View style={styles.line} />
         <View style={styles.nutrientContainer}>
           <View style={styles.row}>
             <Text style={styles.boldText}>Sodium</Text>
-            <Text style={styles.boldText}>170mg</Text>
+            <Text style={styles.boldText}>{data.sodium}</Text>
           </View>
         </View>
         <View style={styles.line} />
         <View style={styles.nutrientContainer}>
           <View style={styles.row}>
             <Text style={styles.boldText}>Total Carbohydrate</Text>
-            <Text style={styles.boldText}>28g</Text>
+            <Text style={styles.boldText}>{data.total_carbohydrate}</Text>
           </View>
-          <Text style={styles.indentText}>Dietary Fiber 1g</Text>
-          <Text style={styles.indentText}>Sugars 18g</Text>
+          <Text style={styles.indentText}>
+            Dietary Fiber {data.dietary_fiber}
+          </Text>
+          <Text style={styles.indentText}>Sugars {data.sugars}</Text>
         </View>
         <View style={styles.line} />
         <View style={styles.nutrientContainer}>
           <View style={styles.row}>
             <Text style={styles.boldText}>Protein</Text>
-            <Text style={styles.boldText}>2g</Text>
+            <Text style={styles.boldText}>{data.protein}</Text>
           </View>
         </View>
         <View style={styles.lineThick} />
@@ -63,12 +70,10 @@ const NutrionalTable = () => {
         </Text>
         <View style={styles.line} />
         <Text style={styles.subTitle}>Ingredients:</Text>
-        <Text style={styles.ingredientText}>
-          Sugar, Wheat Flour, Butter, Eggs, Vanilla Extract, Baking Powder, Salt
-        </Text>
+        <Text style={styles.ingredientText}>{data.ingredients.join(", ")}</Text>
         <View style={styles.line} />
         <Text style={styles.subTitle}>Contains:</Text>
-        <Text style={styles.ingredientText}>Wheat, Eggs, Milk,Soy</Text>
+        <Text style={styles.ingredientText}>{data.contains.join(", ")}</Text>
       </View>
     </View>
   );

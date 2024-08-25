@@ -23,11 +23,7 @@ import { lightTheme } from "./src/theme/colors/index";
 
 export default function AppEntry() {
   const [fontsLoaded] = useFonts({
-    "Xamire-Medium": require("./assets/fonts/Xamire/Xamire.ttf"),
-    "Xamire-Light": require("./assets/fonts/SFProDisplay-Light-1.ttf"),
     "Avanta-Medium": require("./assets/fonts/static/Montserrat-Bold.ttf"),
-    "Avanta-Light": require("./assets/fonts/Montserrat-Thin (2021_07_02 08_48_42 UTC).otf"),
-    "Avanta-Bold": require("./assets/fonts/Montserrat-Bold (2021_07_02 08_48_42 UTC).otf"),
 
     "Montserrat-Bold": require("./assets/fonts/static/Montserrat-Bold.ttf"),
     "Montserrat-Thin": require("./assets/fonts/static/Montserrat-Thin.ttf"),

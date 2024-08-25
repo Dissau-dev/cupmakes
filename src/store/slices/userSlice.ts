@@ -81,7 +81,7 @@ export const userSlice = createSlice({
     })
     builder.addCase(fetchUserByEmail.fulfilled, (state, action) => {
         console.log('este es el payload :' +action.payload)
-        if(action.payload.lenght === 0) {
+        if(action.payload === undefined ||action.payload && action.payload.lenght === 0) {
             state.user = null;
             state.isAuth = false
           }

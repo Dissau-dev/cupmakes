@@ -9,7 +9,6 @@ import { ProductsScreen } from "../screens/products/ProductsScreen";
 import { palette } from "../theme/colors";
 import { ProductListScreen } from "../screens/products/ProductListScreen";
 import { ProductDescrip } from "../screens/products/ProductDescrip";
-import { SearchProducts } from "../screens/products/SearchProducts";
 
 const ProductsStack = createStackNavigator<ProductsParamList>();
 
@@ -37,25 +36,10 @@ export const ProductsNavigator = () => {
           headerShown: false,
         })}
       />
-      <ProductsStack.Screen
-        name="ProductListScreen"
-        component={ProductListScreen}
-        options={({ route, navigation }) => ({
-          headerShown: true,
-          title: route.params.titleScreen,
-        })}
-      />
+
       <ProductsStack.Screen
         name="ProductDescrip"
         component={ProductDescrip}
-        options={({ route, navigation }) => ({
-          headerShown: true,
-          title: route.params.titleScreen,
-        })}
-      />
-      <ProductsStack.Screen
-        name="SearchProducts"
-        component={SearchProducts}
         options={({ route, navigation }) => ({
           headerShown: true,
           title: route.params.titleScreen,

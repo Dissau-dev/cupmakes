@@ -34,7 +34,7 @@ export const ProductsEmpty = ({ status, isLoading }: Props) => {
             marginTop: heightScrenn * 0.14,
             fontFamily: "Avanta-Medium",
             color: palette.secondary,
-            fontSize: 40,
+            fontSize: 38,
             textAlign: "center",
           }}
         >
@@ -43,7 +43,7 @@ export const ProductsEmpty = ({ status, isLoading }: Props) => {
         <Logo
           width={widthScreen * 0.8}
           height={heightScrenn * 0.4}
-          style={{ alignSelf: "center" }}
+          style={{ alignSelf: "center", marginTop: heightScrenn * 0.08 }}
         />
       </>
     );

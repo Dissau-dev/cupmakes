@@ -105,7 +105,7 @@ export default function AddressScreen({ navigation }: Props) {
               <View>
                 <Text
                   style={{
-                    color: palette.secondary,
+                    //  color: palette.secondary,
                     fontFamily: "Avanta-Medium",
                     fontSize: 30,
                     textAlign: "center",
@@ -264,8 +264,8 @@ export default function AddressScreen({ navigation }: Props) {
               <View>
                 <Text
                   style={{
-                    color: palette.secondary,
-                    fontFamily: "Avanta-Medium",
+                    //     color: palette.secondary,
+                    fontFamily: "Montserrat-Bold",
                     fontSize: 28,
                     textAlign: "center",
                     marginVertical: heightScrenn * 0.05,

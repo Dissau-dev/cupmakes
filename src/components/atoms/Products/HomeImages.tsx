@@ -25,20 +25,35 @@ const HomeData = [
     tex3: "",
     image: require("../../../../assets/images/imagenes webp/HOME.webp"),
   },
-  {
-    id: 3,
-    text1: "Best Choice",
-    text2: "Fresh Bred Every Day",
-    text4: " ",
-    tex3: "Only Natural Ingredients",
-    image: require("../../../../assets/images/imagenes webp/4.webp"),
-  },
 ];
 
 interface Props {
   onPress: () => void;
 }
 export const HomeImages = ({ onPress }: Props) => {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const playVideo = async () => {
+      if (videoRef.current) {
+        await videoRef.current.playAsync();
+      }
+    };
+    playVideo();
+  }, []);
+  const naviagtion = useNavigation();
+
+  const handlePress = (index: number) => {
+    if (index === 1) {
+      //@ts-ignore
+      return naviagtion.navigate("LocationScreen");
+    } else {
+      //@ts-ignore
+      return naviagtion.navigate("ProductsNavigator", {
+        screen: "ProductsScreen",
+      });
+    }
+  };
   return (
     <FlatList
       data={HomeData}
@@ -59,7 +74,7 @@ export const HomeImages = ({ onPress }: Props) => {
               }}
             >
               <Video
-                shouldPlay={true}
+                ref={videoRef}
                 source={item.image}
                 style={{
                   width: widthScreen * 1,
@@ -75,29 +90,19 @@ export const HomeImages = ({ onPress }: Props) => {
               style={{ width: widthScreen, height: heightScrenn * 0.87 }}
             />
           )}
-
           <Button
-            style={{
-              backgroundColor: "#000",
-              position: "absolute",
-              top: heightScrenn * 0.758,
-              left: widthScreen * 0.12,
-              width: widthScreen * 0.5,
-              height: heightScrenn * 0.06,
-              justifyContent: "center",
-            }}
+            style={styles.Btn}
             rippleColor={palette.icons}
-            //@ts-ignor
-            // onPress={() => navigation.navigate("LocationScreen")}
+            onPress={() => handlePress(index)}
+            labelStyle={{
+              width: widthScreen * 0.5,
+              height: heightScrenn * 0.037,
+              justifyContent: "center",
+              verticalAlign: "middle",
+            }}
           >
-            <Text
-              style={{
-                color: palette.white,
-                fontFamily: "Montserrat-Bold",
-                fontSize: 18,
-              }}
-            >
-              Order now
+            <Text style={styles.textBtn}>
+              {index === 1 ? "Contact us" : "Order now"}
             </Text>
           </Button>
           <View style={styles.sliderContainer}>
@@ -120,31 +125,7 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     backgroundColor: "#fff",
   },
-  fabStyle: {
-    bottom: heightScrenn * 0.01,
-    right: widthScreen * 0.3,
-    backgroundColor: palette.primary,
-    position: "absolute",
-  },
-  deliveryCard: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
 
-    height: 90,
-    width: widthScreen * 0.3,
-
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    marginTop: 10,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
   image: {
     width: widthScreen,
     height: heightScrenn * 0.87,
@@ -212,10 +193,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "white",
   },
-
   container: {
     alignItems: "center",
     padding: 10,
     justifyContent: "space-around",
+  },
+  Btn: {
+    backgroundColor: "#000",
+    position: "absolute",
+    top: heightScrenn * 0.758,
+    left: widthScreen * 0.12,
+    width: widthScreen * 0.5,
+    height: heightScrenn * 0.06,
+    justifyContent: "center",
+  },
+  textBtn: {
+    color: palette.white,
+    fontFamily: "Montserrat-Bold",
+    fontSize: 18,
   },
 });

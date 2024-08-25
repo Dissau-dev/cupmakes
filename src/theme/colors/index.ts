@@ -161,7 +161,7 @@ export const CombinedDarkTheme = {
 
 export const palette = {
   // primary: "#FFB305",
-  primary: "#D12489",
+  primary: "#D53772",
   secondary: "#7EBBC0",
   logo: "#E25E28",
   icons: "#BABABA",
