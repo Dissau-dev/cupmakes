@@ -7,8 +7,8 @@ import { AuthToken } from "./Interfaces";
 import { api_configs } from "../config/system_config";
 
 
-const consumerKey = "ck_fd5c542c02aa26ba0073ab69b91b78585e72ca05";
-const consumerSecret = "cs_48662918ad66d95f32f6e2ae55417a63c44fdbd6";
+const consumerKey = "ck_5de7da364189e7750dfb0fba452c1a3f13066c33";
+const consumerSecret = "cs_c220c4893cb347dddea2cb645d94148d001ccdb9";
 
 const base64 = require("base-64");
 
